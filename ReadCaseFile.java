@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class ReadCaseFile {
     static FieldElementMapping fieldElementMapping = new FieldElementMapping();
@@ -15,15 +17,18 @@ public class ReadCaseFile {
         fieldPropertyMapping.addFieldPropertyMap("factor","enodePnodeFactor");
 
         String file =
-                "/Users/davidbullen/java/examples/cplex_demo/src/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
+                "/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 
         String curLine;
         while ((curLine = bufferedReader.readLine()) != null){
             //process the line as required
             if (curLine.startsWith("I")) {
+                //Get the headers and see which match elements and properties
                 System.out.println(curLine);
-                String[] fieldNames = curLine.split(",");
+                List<String> fieldNames = Arrays.asList(curLine.split(","));
+                List<String> elementTypes = fieldElementMapping.elementTypesForFieldNums(fieldNames);
+                System.out.println(elementTypes);
             }
         }
         bufferedReader.close();
