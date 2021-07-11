@@ -4,16 +4,15 @@ import java.io.IOException;
 import java.util.*;
 
 public class ReadCaseFile {
-    static FieldElementMapping fieldElementMapping = new FieldElementMapping();
-    static FieldPropertyMapping fieldPropertyMapping = new FieldPropertyMapping();
+    static InputFieldMapping inputFieldMapping = new InputFieldMapping();
 
     public static void readCase() throws IOException {
-        fieldElementMapping.addFieldElementMap("pnodename","pnode",1);
-        fieldElementMapping.addFieldElementMap("key1","enode",1);
-        fieldElementMapping.addFieldElementMap("key2","enode",2);
-        fieldElementMapping.addFieldElementMap("key3","enode",3);
+        inputFieldMapping.addFieldElementMap("pnodename","pnode",1);
+        inputFieldMapping.addFieldElementMap("key1","enode",1);
+        inputFieldMapping.addFieldElementMap("key2","enode",2);
+        inputFieldMapping.addFieldElementMap("key3","enode",3);
 
-        fieldPropertyMapping.addFieldPropertyMap("factor","enodePnodeFactor");
+        inputFieldMapping.addFieldPropertyMap("factor","enodePnodeFactor");
 
         String file =
                 "/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
@@ -21,25 +20,28 @@ public class ReadCaseFile {
 
         String curLine;
         HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
+        HashMap<String,Integer> propertyTypeFieldMaps = new HashMap<>();
         while ((curLine = bufferedReader.readLine()) != null){
-            //Get the headers and see which match elements and properties
+            //HEADER: Get the headers and see which match elements and properties
             if (curLine.startsWith("I")) {
 
                 System.out.println(curLine);
                 List<String> fieldNames = Arrays.asList(curLine.split(","));
 
                 //Element mapping
-                elementTypeFieldMaps
-                        = fieldElementMapping.elementTypeFieldMap(fieldNames);
+                elementTypeFieldMaps = inputFieldMapping.elementTypeFieldMap(fieldNames);
+                //Property mapping
+                propertyTypeFieldMaps = inputFieldMapping.propertyTypeFieldMap(fieldNames);
 
                 System.out.println(elementTypeFieldMaps);
-
             }
+            //DATA: Create the elements and properties
             else if (curLine.startsWith("D")) {
-                //Create the elements and properties
                 List<String> fieldData = Arrays.asList(curLine.split(","));
 
+                //Elements
                 //The elementId is a concatenation of the fields for the elementType
+                //For each element type that has a mapping
                 for (String elementType : elementTypeFieldMaps.keySet()) {
                     Map<Integer,Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
                     String elementId = "";
@@ -47,12 +49,13 @@ public class ReadCaseFile {
                         Integer fieldNum = orderNumFieldNum.get(orderNum);
                         elementId += " " + fieldData.get(fieldNum - 1);
                     }
-                    System.out.println(elementType + ": " + elementId);
+                    //Create the element if not already
+                    //System.out.println(elementType + ": " + elementId);
                 }
-                //Integer arrayPos = 0;
-
-                //Use elementType to fieldNums
-                //For elementType, create array, array[order] = fieldData[fieldNum]
+                //Properties
+                //For each of the element types
+                //Check for elements that are properties
+                //And check for properties that have mappings
 
             }
         }

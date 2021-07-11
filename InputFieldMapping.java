@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FieldElementMapping {
+public class InputFieldMapping {
+
+    //-------Element mapping-------
 
     private class FieldElementMap {
         String fieldName;
@@ -43,17 +45,9 @@ public class FieldElementMapping {
         }
     }
 
-    //For the Header row, return matching elements and the fieldNum
-    public HashMap<String,Integer> propertyTypeFieldMap (List<String> fieldNames) {
-        //The return
-        HashMap<String,Integer> propertyTypeFieldMap = new HashMap<>();
-
-        return propertyTypeFieldMap;
-    }
-
-    //For the Header row, return matching elements and the orderNum,fieldNum that hold their component(s)
+    //For the Header row, return matching ELEMENTS and the orderNum,fieldNum that hold their component(s)
     public HashMap<String,Map<Integer,Integer>> elementTypeFieldMap (List<String> fieldNames) {
-        //The return
+        //The return... elementType : [orderNum : fieldNum]
         HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
         //Go through all the fieldNames, add those that have a mapping
         Integer thisFieldNum = 0;
@@ -66,14 +60,15 @@ public class FieldElementMapping {
                             .filter(fem -> fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase()))
                             .collect(Collectors.toList());
 
-            System.out.println("thisFieldName:" + thisFieldName);
+            //System.out.println("thisFieldName:" + thisFieldName);
             //Create a mapping from the elementType to an map of orderNum,fieldNum
             //https://stackoverflow.com/questions/63349403/how-to-efficiently-merge-two-lists-in-java
             for (FieldElementMap thisFieldElementMap : matchingFieldElementMaps) {
                 String thisElementType = thisFieldElementMap.elementType;
                 Integer orderForThisFieldNum = thisFieldElementMap.order;
 
-                System.out.println("thisElementType:" + thisElementType + " orderForThisFieldNum:" + orderForThisFieldNum);
+                System.out.println("Element:" + thisElementType
+                        + " FieldName:" + thisFieldName + " order:" + orderForThisFieldNum);
                 Map<Integer,Integer> foundOrderNumFieldNumMap = elementTypeFieldMaps.get(thisElementType);
 
                 //Add or update map from orderNum to fieldNum
@@ -90,10 +85,57 @@ public class FieldElementMapping {
             }
         }
         return elementTypeFieldMaps;
-        /*
+    }
+
+    //-------Property mapping-------
+
+    private class FieldPropertyMap {
+        String fieldName;
+        String propertyType;
+        Integer order;
+
+        private FieldPropertyMap(
+                String fieldName,
+                String propertyType){
+            this.fieldName = fieldName;
+            this.propertyType = propertyType;
+        }
+    }
+
+    private ArrayList<FieldPropertyMap> fieldPropertyMaps = new ArrayList<>();
+
+    public void addFieldPropertyMap(String fieldName, String propertyType) {
+        this.fieldPropertyMaps.add(
+                new FieldPropertyMap(fieldName, propertyType));
+    }
+
+    //For the Header row, return matching PROPERTY and the fieldNum
+    public HashMap<String,Integer> propertyTypeFieldMap (List<String> fieldNames) {
+        //The return... propertyType : fieldNum
+        HashMap<String,Integer> propertyTypeFieldMap = new HashMap<>();
+
+        Integer thisFieldNum = 0;
+        for (String thisFieldName : fieldNames) {
+            thisFieldNum++;
+            //Get the PROPERTY mappings (if any) for this fieldname
+            List<FieldPropertyMap> matchingFieldPropertyMaps =
+                    fieldPropertyMaps
+                            .stream()
+                            .filter(fem -> fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase()))
+                            .collect(Collectors.toList());
+
+            //Create a mapping from the elementType to an map of orderNum,fieldNum
+            //https://stackoverflow.com/questions/63349403/how-to-efficiently-merge-two-lists-in-java
+            for (FieldPropertyMap thisFieldPropertyMap : matchingFieldPropertyMaps) {
+                System.out.println("Property:" + thisFieldPropertyMap.propertyType + " FieldName:" + thisFieldName);
+            }
+        }
+                /*
         return fieldNames
                 .stream()
                 .map(fn -> elementTypeForFieldName(fn))
                 .collect(Collectors.toList());*/
+
+        return propertyTypeFieldMap;
     }
 }
