@@ -2,7 +2,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReadCaseFile {
     static FieldElementMapping fieldElementMapping = new FieldElementMapping();
@@ -21,14 +23,28 @@ public class ReadCaseFile {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 
         String curLine;
+        HashMap<String,Integer[]> elementTypeFieldNums = new HashMap<>();
         while ((curLine = bufferedReader.readLine()) != null){
             //process the line as required
             if (curLine.startsWith("I")) {
                 //Get the headers and see which match elements and properties
                 System.out.println(curLine);
                 List<String> fieldNames = Arrays.asList(curLine.split(","));
-                List<String> elementTypes = fieldElementMapping.elementTypesForFieldNums(fieldNames);
-                System.out.println(elementTypes);
+                //map of fieldname to index
+
+                HashMap<String,List<Map<Integer,Integer>>> elementTypeFieldMap
+                        = fieldElementMapping.elementTypeFieldMap(fieldNames);
+                System.out.println(elementTypeFieldMap);
+
+            }
+            else if (curLine.startsWith("D")) {
+                //Create the elements
+                List<String> fieldData = Arrays.asList(curLine.split(","));
+                //Integer arrayPos = 0;
+
+                //Use elementType to fieldNums
+                //For elementType, create array, array[order] = fieldData[fieldNum]
+
             }
         }
         bufferedReader.close();
