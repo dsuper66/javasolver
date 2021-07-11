@@ -1,10 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ReadCaseFile {
     static FieldElementMapping fieldElementMapping = new FieldElementMapping();
@@ -23,7 +20,7 @@ public class ReadCaseFile {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 
         String curLine;
-        HashMap<String,Integer[]> elementTypeFieldNums = new HashMap<>();
+        HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
         while ((curLine = bufferedReader.readLine()) != null){
             //process the line as required
             if (curLine.startsWith("I")) {
@@ -32,14 +29,26 @@ public class ReadCaseFile {
                 List<String> fieldNames = Arrays.asList(curLine.split(","));
                 //map of fieldname to index
 
-                HashMap<String,List<Map<Integer,Integer>>> elementTypeFieldMap
+                elementTypeFieldMaps
                         = fieldElementMapping.elementTypeFieldMap(fieldNames);
-                System.out.println(elementTypeFieldMap);
+
+                System.out.println(elementTypeFieldMaps);
 
             }
             else if (curLine.startsWith("D")) {
                 //Create the elements
                 List<String> fieldData = Arrays.asList(curLine.split(","));
+
+                //The elementId is a concatenation of the fields for the elementType
+                for (String elementType : elementTypeFieldMaps.keySet()) {
+                    Map<Integer,Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
+                    String elementId = "";
+                    for (Integer orderNum : orderNumFieldNum.keySet()) {
+                        Integer fieldNum = orderNumFieldNum.get(orderNum);
+                        elementId += " " + fieldData.get(fieldNum - 1);
+                    }
+                    System.out.println(elementType + ": " + elementId);
+                }
                 //Integer arrayPos = 0;
 
                 //Use elementType to fieldNums

@@ -3,7 +3,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class FieldElementMapping {
 
@@ -45,37 +44,52 @@ public class FieldElementMapping {
     }
 
     //Return matching elements and the orderNum,fieldNum that hold their component(s)
-    public HashMap<String,List<Map<Integer,Integer>>> elementTypeFieldMap (List<String> fieldNames) {
-        HashMap<String,List<Map<Integer,Integer>>> fieldNumElementMap = new HashMap<>();
+    public HashMap<String,Map<Integer,Integer>> elementTypeFieldMap (List<String> fieldNames) {
+        //The return
+        HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
+        //Go through all the fieldNames, add those that have a mapping
         Integer thisFieldNum = 0;
         for (String thisFieldName : fieldNames) {
             thisFieldNum++;
             //Get the mappings (if any) for this fieldname
-            List<FieldElementMap> matchingFeildElementMaps =
-                    (List<FieldElementMap>) fieldElementMaps
+            List<FieldElementMap> matchingFieldElementMaps =
+                    fieldElementMaps
                             .stream()
                             .filter(fem -> fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase()))
                             .collect(Collectors.toList());
 
-            //Create a mapping from the elementType to array of orderNum,fieldNum
+            System.out.println("thisFieldName:" + thisFieldName);
+            //Create a mapping from the elementType to an map of orderNum,fieldNum
             //https://stackoverflow.com/questions/63349403/how-to-efficiently-merge-two-lists-in-java
-            for (FieldElementMap thisFieldElementMap : matchingFeildElementMaps) {
+            for (FieldElementMap thisFieldElementMap : matchingFieldElementMaps) {
                 String thisElementType = thisFieldElementMap.elementType;
                 Integer orderForThisFieldNum = thisFieldElementMap.order;
-                List<Map<Integer,Integer>> foundOrderNumFieldNums = fieldNumElementMap.get(thisElementType);
-                List<Map<Integer,Integer>> thisOrderNumFieldNum = List.of(Map.of(orderForThisFieldNum,thisFieldNum));
-                if (foundOrderNumFieldNums == null) {
-                    fieldNumElementMap.put(thisElementType,thisOrderNumFieldNum);
+
+                System.out.println("thisElementType:" + thisElementType + " orderForThisFieldNum:" + orderForThisFieldNum);
+                //Map<Integer,Integer> thisOrderNumFieldNumMap = Map.of(orderForThisFieldNum,thisFieldNum);
+
+                //elementTypeFieldMaps.put(thisElementType,thisOrderNumFieldNum);
+
+                Map<Integer,Integer> foundOrderNumFieldNumMap = elementTypeFieldMaps.get(thisElementType);
+                //Map<Integer,Integer> thisOrderNumFieldNum = Map.of(orderForThisFieldNum,thisFieldNum);
+                if (foundOrderNumFieldNumMap == null) {
+                    elementTypeFieldMaps.put(thisElementType,Map.of(orderForThisFieldNum,thisFieldNum));
                 }
                 else {
+                    /*
                     List<Map<Integer,Integer>> updatedList =
-                            Stream.concat(foundOrderNumFieldNums.parallelStream(), thisOrderNumFieldNum.parallelStream())
-                            .collect(Collectors.toList());
-                    fieldNumElementMap.put(thisElementType,updatedList);
+                            Stream.concat(foundOrderNumFieldNums.parallelStream(), thisOrderNumFieldNumMap.parallelStream())
+                            .collect(Collectors.toList());*/
+                    HashMap<Integer,Integer> updatedMap = new HashMap(foundOrderNumFieldNumMap);
+                    updatedMap.put(orderForThisFieldNum,thisFieldNum);
+                    //elementTypeFieldMaps.put(thisElementType,updatedMap);
+                    System.out.println("hashmap: " + updatedMap);
+                    elementTypeFieldMaps.put(thisElementType,updatedMap);
                 }
+
             }
         }
-        return fieldNumElementMap;
+        return elementTypeFieldMaps;
         /*
         return fieldNames
                 .stream()
