@@ -43,7 +43,15 @@ public class FieldElementMapping {
         }
     }
 
-    //Return matching elements and the orderNum,fieldNum that hold their component(s)
+    //For the Header row, return matching elements and the fieldNum
+    public HashMap<String,Integer> propertyTypeFieldMap (List<String> fieldNames) {
+        //The return
+        HashMap<String,Integer> propertyTypeFieldMap = new HashMap<>();
+
+        return propertyTypeFieldMap;
+    }
+
+    //For the Header row, return matching elements and the orderNum,fieldNum that hold their component(s)
     public HashMap<String,Map<Integer,Integer>> elementTypeFieldMap (List<String> fieldNames) {
         //The return
         HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
@@ -66,23 +74,15 @@ public class FieldElementMapping {
                 Integer orderForThisFieldNum = thisFieldElementMap.order;
 
                 System.out.println("thisElementType:" + thisElementType + " orderForThisFieldNum:" + orderForThisFieldNum);
-                //Map<Integer,Integer> thisOrderNumFieldNumMap = Map.of(orderForThisFieldNum,thisFieldNum);
-
-                //elementTypeFieldMaps.put(thisElementType,thisOrderNumFieldNum);
-
                 Map<Integer,Integer> foundOrderNumFieldNumMap = elementTypeFieldMaps.get(thisElementType);
-                //Map<Integer,Integer> thisOrderNumFieldNum = Map.of(orderForThisFieldNum,thisFieldNum);
+
+                //Add or update map from orderNum to fieldNum
                 if (foundOrderNumFieldNumMap == null) {
                     elementTypeFieldMaps.put(thisElementType,Map.of(orderForThisFieldNum,thisFieldNum));
                 }
                 else {
-                    /*
-                    List<Map<Integer,Integer>> updatedList =
-                            Stream.concat(foundOrderNumFieldNums.parallelStream(), thisOrderNumFieldNumMap.parallelStream())
-                            .collect(Collectors.toList());*/
                     HashMap<Integer,Integer> updatedMap = new HashMap(foundOrderNumFieldNumMap);
                     updatedMap.put(orderForThisFieldNum,thisFieldNum);
-                    //elementTypeFieldMaps.put(thisElementType,updatedMap);
                     System.out.println("hashmap: " + updatedMap);
                     elementTypeFieldMaps.put(thisElementType,updatedMap);
                 }

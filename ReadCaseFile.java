@@ -22,13 +22,13 @@ public class ReadCaseFile {
         String curLine;
         HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
         while ((curLine = bufferedReader.readLine()) != null){
-            //process the line as required
+            //Get the headers and see which match elements and properties
             if (curLine.startsWith("I")) {
-                //Get the headers and see which match elements and properties
+
                 System.out.println(curLine);
                 List<String> fieldNames = Arrays.asList(curLine.split(","));
-                //map of fieldname to index
 
+                //Element mapping
                 elementTypeFieldMaps
                         = fieldElementMapping.elementTypeFieldMap(fieldNames);
 
@@ -36,7 +36,7 @@ public class ReadCaseFile {
 
             }
             else if (curLine.startsWith("D")) {
-                //Create the elements
+                //Create the elements and properties
                 List<String> fieldData = Arrays.asList(curLine.split(","));
 
                 //The elementId is a concatenation of the fields for the elementType
