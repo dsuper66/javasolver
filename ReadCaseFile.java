@@ -66,23 +66,26 @@ public class ReadCaseFile {
                 //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
 
                 //Add the elements
+                for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
+                    modelElementDataService.addElement(
+                            elementIdAndType.getKey(),elementIdAndType.getValue());
+                }
 
-                //Get the Properties
+                //Get and assign the Properties
                 for (String propertyType : propertyTypeFieldMaps.keySet()) {
                     Integer fieldNum = propertyTypeFieldMaps.get(propertyType);
                     String propertyValue = fieldData.get(fieldNum - 1);
-                    System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
+                    //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
-                    //If any of the element types have this property then set the value
-                    for (var elementIdAndTypeToAdd : elementIdsAndTypeToAdd.entrySet()) {
+                    //If any of the element types have this property then assign the value
+                    for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
                         if (modelElementDefService.elementTypeHasProperty(
-                                elementIdAndTypeToAdd.getValue(),propertyType)) {
-                            modelElementDataService.setProperty(
-                                    propertyType,elementIdAndTypeToAdd.getKey(),propertyValue);
+                                elementIdAndType.getValue(),propertyType)) {
+                            modelElementDataService.assignPropertyValue(
+                                    propertyType,elementIdAndType.getKey(),propertyValue);
                         }
                     }
                 }
-
             }
         }
         bufferedReader.close();

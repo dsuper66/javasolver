@@ -4,8 +4,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ModelElementDataService {
-    ModelElementDefService modelElementDefService = new ModelElementDefService();
-    ArrayList<ModelElement> modelElements = new ArrayList<>();
+    private ModelElementDefService modelElementDefService = new ModelElementDefService();
+    private ArrayList<ModelElement> modelElements = new ArrayList<>();
 
     //Add element with properties
     public void addElement(
@@ -33,12 +33,14 @@ public class ModelElementDataService {
     }
 
     //Set the property of the element (if it exists)
-    public void setProperty(String propertyType, String elementId, String value) {
+    public void assignPropertyValue(String propertyType, String elementId, String value) {
         ModelElement modelElement =
                 (ModelElement) modelElements.stream().filter(
                         e -> e.elementId.equals(elementId));
 
+        System.out.println("elementId:" + elementId + " propertyType:" + propertyType + " propertyValue:" + value);
     }
+
     public ModelElement getElement(String elementId) {
         ModelElement modelElement =
                 (ModelElement) modelElements
