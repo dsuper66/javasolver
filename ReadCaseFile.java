@@ -5,14 +5,23 @@ import java.util.*;
 
 public class ReadCaseFile {
     static InputFieldMapping inputFieldMapping = new InputFieldMapping();
+    static ModelElementDefService modelElementDefService = new ModelElementDefService();
+    static ModelElementDataService modelElementDataService = new ModelElementDataService();
 
     public static void readCase() throws IOException {
+        //Map a field name to an element type
         inputFieldMapping.addFieldElementMap("pnodename","pnode",1);
         inputFieldMapping.addFieldElementMap("key1","enode",1);
         inputFieldMapping.addFieldElementMap("key2","enode",2);
         inputFieldMapping.addFieldElementMap("key3","enode",3);
 
+        //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap("factor","enodePnodeFactor");
+        inputFieldMapping.addFieldPropertyMap("pnodename","enodePnode");
+
+        //Map an element type to a property type
+        //(allows for concatenated element i.d.)
+        inputFieldMapping.addElementPropertyMap("enode","pnodeEnode");
 
         String file =
                 "/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
@@ -30,10 +39,10 @@ public class ReadCaseFile {
 
                 //Element mapping
                 elementTypeFieldMaps = inputFieldMapping.elementTypeFieldMap(fieldNames);
+                System.out.println(elementTypeFieldMaps);
                 //Property mapping
                 propertyTypeFieldMaps = inputFieldMapping.propertyTypeFieldMap(fieldNames);
-
-                System.out.println(elementTypeFieldMaps);
+                System.out.println(propertyTypeFieldMaps);
             }
             //DATA: Create the elements and properties
             else if (curLine.startsWith("D")) {
@@ -41,21 +50,38 @@ public class ReadCaseFile {
 
                 //Elements
                 //The elementId is a concatenation of the fields for the elementType
-                //For each element type that has a mapping
+                //For each element type that has a mapping from the header processing
+                //create the elementId
+                HashMap<String,String> elementIdsAndTypeToAdd = new HashMap<>();
                 for (String elementType : elementTypeFieldMaps.keySet()) {
                     Map<Integer,Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
                     String elementId = "";
+                    //Create the elementId from one or more fields
                     for (Integer orderNum : orderNumFieldNum.keySet()) {
                         Integer fieldNum = orderNumFieldNum.get(orderNum);
                         elementId += " " + fieldData.get(fieldNum - 1);
                     }
-                    //Create the element if not already
-                    //System.out.println(elementType + ": " + elementId);
+                    elementIdsAndTypeToAdd.put(elementId,elementType);
                 }
-                //Properties
-                //For each of the element types
-                //Check for elements that are properties
-                //And check for properties that have mappings
+                //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
+
+                //Add the elements
+
+                //Get the Properties
+                for (String propertyType : propertyTypeFieldMaps.keySet()) {
+                    Integer fieldNum = propertyTypeFieldMaps.get(propertyType);
+                    String propertyValue = fieldData.get(fieldNum - 1);
+                    System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
+
+                    //If any of the element types have this property then set the value
+                    for (var elementIdAndTypeToAdd : elementIdsAndTypeToAdd.entrySet()) {
+                        if (modelElementDefService.elementTypeHasProperty(
+                                elementIdAndTypeToAdd.getValue(),propertyType)) {
+                            modelElementDataService.setProperty(
+                                    propertyType,elementIdAndTypeToAdd.getKey(),propertyValue);
+                        }
+                    }
+                }
 
             }
         }

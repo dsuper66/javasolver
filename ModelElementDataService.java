@@ -1,6 +1,6 @@
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ModelElementDataService {
@@ -23,7 +23,7 @@ public class ModelElementDataService {
             String elementType) {
 
         Map<String, String> properties = Map.of();
-        List<String> elementTypeProperties = modelElementDefService.getPropertiesForElementType(elementType);
+        Set<String> elementTypeProperties = modelElementDefService.getPropertiesForElementType(elementType);
         for (String propertyType : elementTypeProperties) {
             properties =  MyUtilities.AddMapToMap(properties, Map.of(propertyType,"empty"));
         }

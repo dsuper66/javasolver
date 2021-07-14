@@ -69,9 +69,9 @@ public class InputFieldMapping {
 
                 System.out.println("Element:" + thisElementType
                         + " FieldName:" + thisFieldName + " order:" + orderForThisFieldNum);
-                Map<Integer,Integer> foundOrderNumFieldNumMap = elementTypeFieldMaps.get(thisElementType);
 
-                //Add or update map from orderNum to fieldNum
+                //Add or update map from orderNum to fieldNum (because element i.d. can have more than one fieldNum)
+                Map<Integer,Integer> foundOrderNumFieldNumMap = elementTypeFieldMaps.get(thisElementType);
                 if (foundOrderNumFieldNumMap == null) {
                     elementTypeFieldMaps.put(thisElementType,Map.of(orderForThisFieldNum,thisFieldNum));
                 }
@@ -109,7 +109,7 @@ public class InputFieldMapping {
                 new FieldPropertyMap(fieldName, propertyType));
     }
 
-    //For the Header row, return matching PROPERTY and the fieldNum
+    //For the Header row, return matching PROPERTY and associated fieldNum
     public HashMap<String,Integer> propertyTypeFieldMap (List<String> fieldNames) {
         //The return... propertyType : fieldNum
         HashMap<String,Integer> propertyTypeFieldMap = new HashMap<>();
@@ -127,7 +127,12 @@ public class InputFieldMapping {
             //Create a mapping from the elementType to an map of orderNum,fieldNum
             //https://stackoverflow.com/questions/63349403/how-to-efficiently-merge-two-lists-in-java
             for (FieldPropertyMap thisFieldPropertyMap : matchingFieldPropertyMaps) {
-                System.out.println("Property:" + thisFieldPropertyMap.propertyType + " FieldName:" + thisFieldName);
+                String thisPropertyType = thisFieldPropertyMap.propertyType;
+                System.out.println("Property:" + thisPropertyType
+                        + " FieldName:" + thisFieldName);
+
+                //Map the property type to the field number
+                propertyTypeFieldMap.put(thisPropertyType,thisFieldNum);
             }
         }
                 /*
@@ -137,5 +142,24 @@ public class InputFieldMapping {
                 .collect(Collectors.toList());*/
 
         return propertyTypeFieldMap;
+    }
+
+    //-------Element is a Property mapping-------
+
+    private class ElementPropertyMap {
+        String elementType;
+        String propertyType;
+
+        private ElementPropertyMap(
+                String elementType,
+                String propertyType){
+            this.elementType = elementType;
+            this.propertyType = propertyType;
+        }
+    }
+    private ArrayList<ElementPropertyMap> elementPropertyMaps = new ArrayList<>();
+    public void addElementPropertyMap(String elementType, String propertyType) {
+        this.elementPropertyMaps.add(
+                new ElementPropertyMap(elementType, propertyType));
     }
 }
