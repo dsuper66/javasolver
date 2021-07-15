@@ -144,8 +144,8 @@ public class InputFieldMapping {
         return propertyTypeFieldMap;
     }
 
-    //-------Element is a Property mapping-------
-
+    //-------Element is a Property-------
+    /*
     private class ElementPropertyMap {
         String elementType;
         String propertyType;
@@ -161,5 +161,5 @@ public class InputFieldMapping {
     public void addElementPropertyMap(String elementType, String propertyType) {
         this.elementPropertyMaps.add(
                 new ElementPropertyMap(elementType, propertyType));
-    }
+    }*/
 }

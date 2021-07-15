@@ -9,19 +9,34 @@ public class ReadCaseFile {
     static ModelElementDataService modelElementDataService = new ModelElementDataService();
 
     public static void readCase() throws IOException {
-        //Map a field name to an element type
-        inputFieldMapping.addFieldElementMap("pnodename","pnode",1);
-        inputFieldMapping.addFieldElementMap("key1","enode",1);
-        inputFieldMapping.addFieldElementMap("key2","enode",2);
-        inputFieldMapping.addFieldElementMap("key3","enode",3);
+        //Need to map pnode (market) to bus (network)
 
+        //DAILY
+        //here enode is mapped to pnode
+        //Map a field name to an element type
+        inputFieldMapping.addFieldElementMap("PNODENAME","pnode",1);
+        inputFieldMapping.addFieldElementMap("KEY1","enode",1);
+        inputFieldMapping.addFieldElementMap("KEY2","enode",2);
+        inputFieldMapping.addFieldElementMap("KEY3","enode",3);
         //Map a field name to a property type
-        inputFieldMapping.addFieldPropertyMap("factor","enodePnodeFactor");
-        inputFieldMapping.addFieldPropertyMap("pnodename","enodePnode");
+        inputFieldMapping.addFieldPropertyMap("FACTOR","enodePnodeFactor");
+        inputFieldMapping.addFieldPropertyMap("PNODENAME","enodePnode");
+
+        //MSSNET
+        //here the network enode is mapped to enode
+        inputFieldMapping.addFieldElementMap("ID_ENODE","nwEnode",1);
+        inputFieldMapping.addFieldElementMap("ID_ST","enode",1);
+        inputFieldMapping.addFieldElementMap("ID_KV","enode",2);
+        inputFieldMapping.addFieldElementMap("ID_EQUIPMENT","enode",3);
+
+        //TIME-BASED MSSNET
+        //here the network enode is mapped to bus
+        inputFieldMapping.addFieldElementMap("ID_ENODE","nwEnode",1);
+        inputFieldMapping.addFieldElementMap("ID_BUS","bus",1);
 
         //Map an element type to a property type
         //(allows for concatenated element i.d.)
-        inputFieldMapping.addElementPropertyMap("enode","pnodeEnode");
+        //inputFieldMapping.addElementPropertyMap("enode","pnodeEnode");
 
         String file =
                 "/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
