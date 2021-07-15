@@ -23,7 +23,7 @@ public class ModelElementDefService {
     static Boolean elementTypeHasProperty(String elementType, String propertyType) {
         Set<String> propertyTypes = elementTypeProperties.get(elementType);
         if (propertyTypes != null) {
-            return propertyTypes.contains(elementType);
+            return propertyTypes.contains(propertyType);
         }
         else {
             return false;

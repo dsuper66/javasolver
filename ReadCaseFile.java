@@ -79,10 +79,13 @@ public class ReadCaseFile {
 
                     //If any of the element types have this property then assign the value
                     for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
-                        if (modelElementDefService.elementTypeHasProperty(
-                                elementIdAndType.getValue(),propertyType)) {
+                        Boolean elementHasThisProperty =
+                                modelElementDefService.elementTypeHasProperty(
+                                        elementIdAndType.getValue(),propertyType);
+                        if (elementHasThisProperty) {
+
                             modelElementDataService.assignPropertyValue(
-                                    propertyType,elementIdAndType.getKey(),propertyValue);
+                                    elementIdAndType.getKey(),propertyType,propertyValue);
                         }
                     }
                 }
