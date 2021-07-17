@@ -9,14 +9,17 @@ public class InputFieldMapping {
     //-------Element mapping-------
 
     private class FieldElementMap {
+        String sectionName;
         String fieldName;
         String elementType;
         Integer order;
 
         private FieldElementMap(
+                String sectionName,
                 String fieldName,
                 String elementType,
                 Integer order){
+            this.sectionName = sectionName;
             this.fieldName = fieldName;
             this.elementType = elementType;
             this.order = order;
@@ -25,9 +28,9 @@ public class InputFieldMapping {
 
     private ArrayList<FieldElementMap> fieldElementMaps = new ArrayList<>();
 
-    public void addFieldElementMap(String fieldName, String elementType, Integer order) {
+    public void addFieldElementMap(String sectionName, String fieldName, String elementType, Integer order) {
         this.fieldElementMaps.add(
-                new FieldElementMap(fieldName, elementType, order));
+                new FieldElementMap(sectionName,fieldName, elementType, order));
     }
 
     //Get the element type for the field name
@@ -46,18 +49,22 @@ public class InputFieldMapping {
     }
 
     //For the Header row, return matching ELEMENTS and the orderNum,fieldNum that hold their component(s)
-    public HashMap<String,Map<Integer,Integer>> elementTypeFieldMap (List<String> fieldNames) {
+    public HashMap<String,Map<Integer,Integer>> getElementFieldMapForSectionFieldNames(
+            String sectionName, List<String> fieldNames) {
         //The return... elementType : [orderNum : fieldNum]
         HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
         //Go through all the fieldNames, add those that have a mapping
         Integer thisFieldNum = 0;
+        String thisSectionName = fieldNames.get(2);
         for (String thisFieldName : fieldNames) {
             thisFieldNum++;
-            //Get the mappings (if any) for this fieldname
+            //Get the mappings (if any) for this fieldname in this section
             List<FieldElementMap> matchingFieldElementMaps =
                     fieldElementMaps
                             .stream()
-                            .filter(fem -> fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase()))
+                            .filter(fem ->
+                                    fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase())
+                                    && fem.sectionName.toUpperCase().equals(thisSectionName))
                             .collect(Collectors.toList());
 
             //System.out.println("thisFieldName:" + thisFieldName);
@@ -90,11 +97,13 @@ public class InputFieldMapping {
     //-------Property mapping-------
 
     private class FieldPropertyMap {
+        String sectionName;
         String fieldName;
         String propertyType;
         Integer order;
 
         private FieldPropertyMap(
+                String sectionName,
                 String fieldName,
                 String propertyType){
             this.fieldName = fieldName;
@@ -104,24 +113,26 @@ public class InputFieldMapping {
 
     private ArrayList<FieldPropertyMap> fieldPropertyMaps = new ArrayList<>();
 
-    public void addFieldPropertyMap(String fieldName, String propertyType) {
+    public void addFieldPropertyMap(String sectionName, String fieldName, String elementType, String propertyType) {
         this.fieldPropertyMaps.add(
-                new FieldPropertyMap(fieldName, propertyType));
+                new FieldPropertyMap(sectionName, fieldName, propertyType));
     }
 
     //For the Header row, return matching PROPERTY and associated fieldNum
-    public HashMap<String,Integer> propertyTypeFieldMap (List<String> fieldNames) {
+    public HashMap<String,Integer> getPropertyFieldMapForSectionFieldNames(List<String> fieldNames) {
         //The return... propertyType : fieldNum
         HashMap<String,Integer> propertyTypeFieldMap = new HashMap<>();
 
         Integer thisFieldNum = 0;
+        String thisSectionName = fieldNames.get(2);
         for (String thisFieldName : fieldNames) {
             thisFieldNum++;
             //Get the PROPERTY mappings (if any) for this fieldname
             List<FieldPropertyMap> matchingFieldPropertyMaps =
                     fieldPropertyMaps
                             .stream()
-                            .filter(fem -> fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase()))
+                            .filter(fem -> fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase())
+                                    && fem.sectionName.toUpperCase().equals(thisSectionName.toUpperCase()))
                             .collect(Collectors.toList());
 
             //Create a mapping from the elementType to an map of orderNum,fieldNum

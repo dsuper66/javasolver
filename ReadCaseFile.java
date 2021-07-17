@@ -14,33 +14,68 @@ public class ReadCaseFile {
         //DAILY
         //here enode is mapped to pnode
         //Map a field name to an element type
-        inputFieldMapping.addFieldElementMap("PNODENAME","pnode",1);
-        inputFieldMapping.addFieldElementMap("KEY1","enode",1);
-        inputFieldMapping.addFieldElementMap("KEY2","enode",2);
-        inputFieldMapping.addFieldElementMap("KEY3","enode",3);
+        inputFieldMapping.addFieldElementMap("PNODE","PNODENAME","pnode",1);
+        inputFieldMapping.addFieldElementMap("PNODE","KEY1","enode",1);
+        inputFieldMapping.addFieldElementMap("PNODE","KEY2","enode",2);
+        inputFieldMapping.addFieldElementMap("PNODE","KEY3","enode",3);
         //Map a field name to a property type
-        inputFieldMapping.addFieldPropertyMap("FACTOR","enodePnodeFactor");
-        inputFieldMapping.addFieldPropertyMap("PNODENAME","enodePnode");
+        inputFieldMapping.addFieldPropertyMap(
+                "PNODE","FACTOR","ENODE","enodePnodeFactor");
+        inputFieldMapping.addFieldPropertyMap(
+                "PNODE","PNODENAME","ENODE","enodePnode");
 
         //MSSNET
         //here the network enode is mapped to enode
-        inputFieldMapping.addFieldElementMap("ID_ENODE","nwEnode",1);
-        inputFieldMapping.addFieldElementMap("ID_ST","enode",1);
-        inputFieldMapping.addFieldElementMap("ID_KV","enode",2);
-        inputFieldMapping.addFieldElementMap("ID_EQUIPMENT","enode",3);
+        inputFieldMapping.addFieldElementMap("NODE","ID_ENODE","nwEnode",1);
+        inputFieldMapping.addFieldElementMap("NODE","ID_ST","enode",1);
+        inputFieldMapping.addFieldElementMap("NODE","ID_KV","enode",2);
+        inputFieldMapping.addFieldElementMap("NODE","ID_EQUIPMENT","enode",3);
 
         //TIME-BASED MSSNET
         //here the network enode is mapped to bus
-        inputFieldMapping.addFieldElementMap("ID_ENODE","nwEnode",1);
-        inputFieldMapping.addFieldElementMap("ID_BUS","bus",1);
+        inputFieldMapping.addFieldElementMap(
+                "ENODEBUS","ID_ENODE","nwEnode",1);
+        inputFieldMapping.addFieldElementMap(
+                "ENODEBUS","ID_BUS","bus",1);
+
+        //PERIOD
+        //BIDSANDOFFERS,1.0,PNODENAME,TRADERID,INTERVAL,TRADETYPE,TRADERBLOCKALTKEY,TRADERBLOCKTRANCHE,
+        // TRADERBLOCKLIMIT,TRADERBLOCKPRICE,SIXSEC,RESERVEPERCENT,DISPATCHABLE
+        //Map a field name to an element type
+        inputFieldMapping.addFieldElementMap(
+                "BIDSANDOFFERS","PNODENAME","pnode",1);
+        inputFieldMapping.addFieldElementMap(
+                "BIDSANDOFFERS","TRADERBLOCKALTKEY","enOfferTranche",1);
+        inputFieldMapping.addFieldElementMap(
+                "BIDSANDOFFERS","TRADERBLOCKTRANCHE","enOfferTranche",2);
+
+        //Map a field name to a property type
+        inputFieldMapping.addFieldPropertyMap(
+                "BIDSANDOFFERS","TRADERBLOCKLIMIT",
+                "enOfferTranche","enodePnodeFactor");
+        inputFieldMapping.addFieldPropertyMap(
+                "BIDSANDOFFERS","TRADERBLOCKPRICE",
+                "enOfferTranche","enodePnodeFactor");
+        inputFieldMapping.addFieldPropertyMap(
+                "BIDSANDOFFERS","PNODENAME",
+                "enOfferTranche","tranchePnode");
+
+
+        //I,MSSDATA,PNODELOAD,1.0,PNODENAME,INTERVAL,LOADAREAID,ACTUALLOAD,SOURCEOFACTUAL,INSTRUCTEDSHED,
+        // CONFORMINGFACTOR,NONCONFORMINGLOAD,CONFORMINGFORECAST,ISNCL,ISBAD,ISOVERRIDE,INSTRUCTEDSHEDACTIVE,DISPATCHEDLOAD,DISPATCHEDGEN
+
+        //I,NETDATA,BRANCHBUS,1.0,ID_BRANCH,ID_FROMBUS,ID_TOBUS,SUSCEPTANCE,RESISTANCE,REMOVE
 
         //Map an element type to a property type
         //(allows for concatenated element i.d.)
         //inputFieldMapping.addElementPropertyMap("enode","pnodeEnode");
 
-        String file =
-                "/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        String caseFileDir = "/Users/davidbullen/java/MSS_51112021071200687_0X/";
+        String caseFilePrefix = "MSS_51112021071200687_0X";
+        String dailyFile = ".DAILY";
+        //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
+        BufferedReader bufferedReader =
+                new BufferedReader(new FileReader(caseFileDir + caseFilePrefix + dailyFile));
 
         String curLine;
         HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
@@ -51,14 +86,16 @@ public class ReadCaseFile {
 
                 System.out.println(curLine);
                 List<String> fieldNames = Arrays.asList(curLine.split(","));
-
+                String sectionName = fieldNames.get(2);
                 //Element mapping
-                elementTypeFieldMaps = inputFieldMapping.elementTypeFieldMap(fieldNames);
+                elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
+                        sectionName,fieldNames);
                 System.out.println(elementTypeFieldMaps);
                 //Property mapping
-                propertyTypeFieldMaps = inputFieldMapping.propertyTypeFieldMap(fieldNames);
+                propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(fieldNames);
                 System.out.println(propertyTypeFieldMaps);
             }
+
             //DATA: Create the elements and properties
             else if (curLine.startsWith("D")) {
                 List<String> fieldData = Arrays.asList(curLine.split(","));
