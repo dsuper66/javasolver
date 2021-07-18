@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ReadCaseFile {
@@ -78,15 +79,22 @@ public class ReadCaseFile {
 
         LocalDateTime caseInterval =
                 LocalDateTime.of(2021, 7, 06,10,0);
+        DateTimeFormatter dateFormatter
+                = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm", Locale.ENGLISH);
+        String caseIntervalInFile = caseInterval.format(dateFormatter).toUpperCase();
+        System.out.println(">>>>"+ caseIntervalInFile);
 
         for (String caseType : caseTypes){
+            String fileName = caseFileDir + caseId + caseType;
             BufferedReader bufferedReader =
-                    new BufferedReader(new FileReader(caseFileDir + caseId + caseType));
+                    new BufferedReader(new FileReader(fileName));
+            System.out.println("file:" + fileName);
 
             String curLine;
             HashMap<String, Map<Integer, Integer>> elementTypeFieldMaps = new HashMap<>();
             HashMap<String, Integer> propertyTypeFieldMaps = new HashMap<>();
             while ((curLine = bufferedReader.readLine()) != null) {
+
                 //HEADER: Get the headers and see which match elements and properties
                 if (curLine.startsWith("I")) {
 
@@ -96,14 +104,14 @@ public class ReadCaseFile {
                     //Element mapping
                     elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
                             sectionName, fieldNames);
-                    System.out.println(elementTypeFieldMaps);
+                    System.out.println("elementTypeFieldMaps:" + elementTypeFieldMaps);
                     //Property mapping
                     propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(fieldNames);
-                    System.out.println(propertyTypeFieldMaps);
+                    System.out.println("propertyTypeFieldMaps:" + propertyTypeFieldMaps);
                 }
 
                 //DATA: Create the elements and properties
-                else if (curLine.startsWith("D")) {
+                else if (curLine.startsWith("D") && curLine.contains(caseIntervalInFile)) {
                     List<String> fieldData = Arrays.asList(curLine.split(","));
 
                     //Elements
@@ -141,7 +149,6 @@ public class ReadCaseFile {
                                     modelElementDefService.elementTypeHasProperty(
                                             elementIdAndType.getValue(), propertyType);
                             if (elementHasThisProperty) {
-
                                 modelElementDataService.assignPropertyValue(
                                         elementIdAndType.getKey(), propertyType, propertyValue);
                             }
