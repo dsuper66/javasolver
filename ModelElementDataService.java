@@ -1,7 +1,7 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public class ModelElementDataService {
     private ModelElementDefService modelElementDefService = new ModelElementDefService();
@@ -23,7 +23,7 @@ public class ModelElementDataService {
             String elementType) {
 
         Map<String, String> properties = Map.of();
-        Set<String> elementTypeProperties = modelElementDefService.getPropertiesForElementType(elementType);
+        List<String> elementTypeProperties = modelElementDefService.getPropertiesForElementType(elementType);
         for (String propertyType : elementTypeProperties) {
             properties =  MyUtilities.AddMapToMap(properties, Map.of(propertyType,"empty"));
         }
@@ -46,8 +46,8 @@ public class ModelElementDataService {
                         .stream()
                         .filter(e -> e.elementId.equals(elementId))
                         .findFirst();
-        opt.ifPresent(modelElement ->
-            System.out.println(elementId + " properties:" + modelElement.properties));
+        //opt.ifPresent(modelElement ->
+        //    System.out.println(elementId + " properties:" + modelElement.properties));
         return opt;
     }
 

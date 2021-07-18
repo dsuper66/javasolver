@@ -22,9 +22,9 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"KEY3","enode",3);
         //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"FACTOR","ENODE","enodePnodeFactor");
+                sectionName,"FACTOR","enode","enodePnodeFactor");
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"PNODENAME","ENODE","enodePnode");
+                sectionName,"PNODENAME","enode","enodePnode");
 
         //MSSNET
         //here the network enode is mapped to enode
@@ -34,11 +34,17 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"ID_KV","enode",2);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_EQUIPMENT","enode",3);
 
+        inputFieldMapping.addFieldPropertyMap(
+                sectionName,"ID_ENODE","enode","nwEnodeEnode");
+
         //TIME-BASED MSSNET
         //here the network enode is mapped to bus
         sectionName = "ENODEBUS";
         inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_BUS","bus",1);
+
+        inputFieldMapping.addFieldPropertyMap(
+                sectionName,"ID_BUS","nwEnode","nwEnodeBus");
 
         //PERIOD
         //BIDSANDOFFERS,1.0,PNODENAME,TRADERID,INTERVAL,TRADETYPE,TRADERBLOCKALTKEY,TRADERBLOCKTRANCHE,
@@ -100,6 +106,8 @@ public class ReadCaseFile {
             String curLine;
             HashMap<String, Map<Integer, Integer>> elementTypeFieldMaps = new HashMap<>();
             HashMap<String, Integer> propertyTypeFieldMaps = new HashMap<>();
+
+            Boolean dataIsIntervalBased = false; //If interval based then filter data on interval
             while ((curLine = bufferedReader.readLine()) != null) {
 
                 //HEADER: Get the headers and see which match elements and properties
@@ -115,10 +123,13 @@ public class ReadCaseFile {
                     //Property mapping
                     propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(fieldNames);
                     System.out.println("propertyTypeFieldMaps:" + propertyTypeFieldMaps);
+                    //Interval based data may need to be filtered by interval
+                    dataIsIntervalBased = curLine.contains("INTERVAL");
+                    System.out.println("dataIsIntervalBased:" + dataIsIntervalBased);
                 }
 
                 //DATA: Create the elements and properties
-                else if (curLine.startsWith("D") && curLine.contains(caseIntervalInFile)) {
+                else if (curLine.startsWith("D") && (!dataIsIntervalBased || curLine.contains(caseIntervalInFile))) {
                     List<String> fieldData = Arrays.asList(curLine.split(","));
 
                     //Elements
@@ -152,8 +163,7 @@ public class ReadCaseFile {
 
                         //If any of the element types have this property then assign the value
                         for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
-                            Boolean elementHasThisProperty =
-                                    modelElementDefService.elementTypeHasProperty(
+                            Boolean elementHasThisProperty = modelElementDefService.elementTypeHasProperty(
                                             elementIdAndType.getValue(), propertyType);
                             if (elementHasThisProperty) {
                                 modelElementDataService.assignPropertyValue(
