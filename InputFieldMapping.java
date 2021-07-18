@@ -106,6 +106,7 @@ public class InputFieldMapping {
                 String sectionName,
                 String fieldName,
                 String propertyType){
+            this.sectionName = sectionName;
             this.fieldName = fieldName;
             this.propertyType = propertyType;
         }
@@ -131,8 +132,8 @@ public class InputFieldMapping {
             List<FieldPropertyMap> matchingFieldPropertyMaps =
                     fieldPropertyMaps
                             .stream()
-                            .filter(fem -> fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase())
-                                    && fem.sectionName.toUpperCase().equals(thisSectionName.toUpperCase()))
+                            .filter(fpm -> fpm.fieldName.toUpperCase().equals(thisFieldName.toUpperCase())
+                                    && fpm.sectionName.toUpperCase().equals(thisSectionName.toUpperCase()))
                             .collect(Collectors.toList());
 
             //Create a mapping from the elementType to an map of orderNum,fieldNum

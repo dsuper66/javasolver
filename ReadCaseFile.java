@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class ReadCaseFile {
@@ -52,14 +53,13 @@ public class ReadCaseFile {
         //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap(
                 "BIDSANDOFFERS","TRADERBLOCKLIMIT",
-                "enOfferTranche","enodePnodeFactor");
+                "enOfferTranche","trancheLimit");
         inputFieldMapping.addFieldPropertyMap(
                 "BIDSANDOFFERS","TRADERBLOCKPRICE",
-                "enOfferTranche","enodePnodeFactor");
+                "enOfferTranche","tranchePrice");
         inputFieldMapping.addFieldPropertyMap(
                 "BIDSANDOFFERS","PNODENAME",
                 "enOfferTranche","tranchePnode");
-
 
         //I,MSSDATA,PNODELOAD,1.0,PNODENAME,INTERVAL,LOADAREAID,ACTUALLOAD,SOURCEOFACTUAL,INSTRUCTEDSHED,
         // CONFORMINGFACTOR,NONCONFORMINGLOAD,CONFORMINGFORECAST,ISNCL,ISBAD,ISOVERRIDE,INSTRUCTEDSHEDACTIVE,DISPATCHEDLOAD,DISPATCHEDGEN
@@ -71,78 +71,85 @@ public class ReadCaseFile {
         //inputFieldMapping.addElementPropertyMap("enode","pnodeEnode");
 
         String caseFileDir = "/Users/davidbullen/java/MSS_51112021071200687_0X/";
-        String caseFilePrefix = "MSS_51112021071200687_0X";
-        String dailyFile = ".DAILY";
+        String caseId = "MSS_51112021071200687_0X";
+        Set<String> caseTypes = Set.of(".DAILY", ".PERIOD");
+        //MSS_51112021071200687_0X_06-JUL-2021_10_00_0.MSSNET
         //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
-        BufferedReader bufferedReader =
-                new BufferedReader(new FileReader(caseFileDir + caseFilePrefix + dailyFile));
 
-        String curLine;
-        HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
-        HashMap<String,Integer> propertyTypeFieldMaps = new HashMap<>();
-        while ((curLine = bufferedReader.readLine()) != null){
-            //HEADER: Get the headers and see which match elements and properties
-            if (curLine.startsWith("I")) {
+        LocalDateTime caseInterval =
+                LocalDateTime.of(2021, 7, 06,10,0);
 
-                System.out.println(curLine);
-                List<String> fieldNames = Arrays.asList(curLine.split(","));
-                String sectionName = fieldNames.get(2);
-                //Element mapping
-                elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
-                        sectionName,fieldNames);
-                System.out.println(elementTypeFieldMaps);
-                //Property mapping
-                propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(fieldNames);
-                System.out.println(propertyTypeFieldMaps);
-            }
+        for (String caseType : caseTypes){
+            BufferedReader bufferedReader =
+                    new BufferedReader(new FileReader(caseFileDir + caseId + caseType));
 
-            //DATA: Create the elements and properties
-            else if (curLine.startsWith("D")) {
-                List<String> fieldData = Arrays.asList(curLine.split(","));
+            String curLine;
+            HashMap<String, Map<Integer, Integer>> elementTypeFieldMaps = new HashMap<>();
+            HashMap<String, Integer> propertyTypeFieldMaps = new HashMap<>();
+            while ((curLine = bufferedReader.readLine()) != null) {
+                //HEADER: Get the headers and see which match elements and properties
+                if (curLine.startsWith("I")) {
 
-                //Elements
-                //The elementId is a concatenation of the fields for the elementType
-                //For each element type that has a mapping from the header processing
-                //create the elementId
-                HashMap<String,String> elementIdsAndTypeToAdd = new HashMap<>();
-                for (String elementType : elementTypeFieldMaps.keySet()) {
-                    Map<Integer,Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
-                    String elementId = "";
-                    //Create the elementId from one or more fields
-                    for (Integer orderNum : orderNumFieldNum.keySet()) {
-                        Integer fieldNum = orderNumFieldNum.get(orderNum);
-                        elementId += " " + fieldData.get(fieldNum - 1);
+                    System.out.println(curLine);
+                    List<String> fieldNames = Arrays.asList(curLine.split(","));
+                    String sectionName = fieldNames.get(2);
+                    //Element mapping
+                    elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
+                            sectionName, fieldNames);
+                    System.out.println(elementTypeFieldMaps);
+                    //Property mapping
+                    propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(fieldNames);
+                    System.out.println(propertyTypeFieldMaps);
+                }
+
+                //DATA: Create the elements and properties
+                else if (curLine.startsWith("D")) {
+                    List<String> fieldData = Arrays.asList(curLine.split(","));
+
+                    //Elements
+                    //The elementId is a concatenation of the fields for the elementType
+                    //For each element type that has a mapping from the header processing
+                    //create the elementId
+                    HashMap<String, String> elementIdsAndTypeToAdd = new HashMap<>();
+                    for (String elementType : elementTypeFieldMaps.keySet()) {
+                        Map<Integer, Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
+                        String elementId = "";
+                        //Create the elementId from one or more fields
+                        for (Integer orderNum : orderNumFieldNum.keySet()) {
+                            Integer fieldNum = orderNumFieldNum.get(orderNum);
+                            elementId += " " + fieldData.get(fieldNum - 1);
+                        }
+                        elementIdsAndTypeToAdd.put(elementId, elementType);
                     }
-                    elementIdsAndTypeToAdd.put(elementId,elementType);
-                }
-                //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
+                    //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
 
-                //Add the elements
-                for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
-                    modelElementDataService.addElement(
-                            elementIdAndType.getKey(),elementIdAndType.getValue());
-                }
-
-                //Get and assign the Properties
-                for (String propertyType : propertyTypeFieldMaps.keySet()) {
-                    Integer fieldNum = propertyTypeFieldMaps.get(propertyType);
-                    String propertyValue = fieldData.get(fieldNum - 1);
-                    //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
-
-                    //If any of the element types have this property then assign the value
+                    //Add the elements
                     for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
-                        Boolean elementHasThisProperty =
-                                modelElementDefService.elementTypeHasProperty(
-                                        elementIdAndType.getValue(),propertyType);
-                        if (elementHasThisProperty) {
+                        modelElementDataService.addElement(
+                                elementIdAndType.getKey(), elementIdAndType.getValue());
+                    }
 
-                            modelElementDataService.assignPropertyValue(
-                                    elementIdAndType.getKey(),propertyType,propertyValue);
+                    //Get and assign the Properties
+                    for (String propertyType : propertyTypeFieldMaps.keySet()) {
+                        Integer fieldNum = propertyTypeFieldMaps.get(propertyType);
+                        String propertyValue = fieldData.get(fieldNum - 1);
+                        //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
+
+                        //If any of the element types have this property then assign the value
+                        for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
+                            Boolean elementHasThisProperty =
+                                    modelElementDefService.elementTypeHasProperty(
+                                            elementIdAndType.getValue(), propertyType);
+                            if (elementHasThisProperty) {
+
+                                modelElementDataService.assignPropertyValue(
+                                        elementIdAndType.getKey(), propertyType, propertyValue);
+                            }
                         }
                     }
                 }
             }
+            bufferedReader.close();
         }
-        bufferedReader.close();
     }
 }

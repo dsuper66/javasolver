@@ -8,7 +8,8 @@ public class ModelElementDefService {
     static Map<String, Set<String>> elementTypeProperties =
             Map.of(
                     "branch", Set.of("fromBus","toBus"),
-                    "enode", Set.of("enodePnode","enodePnodeFactor")
+                    "enode", Set.of("enodePnode","enodePnodeFactor"),
+                    "enOfferTranche",Set.of("tranchePnode")
                     );
 
     static Set<String> getPropertiesForElementType(String elementType) {
