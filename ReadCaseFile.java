@@ -11,55 +11,52 @@ public class ReadCaseFile {
     static ModelElementDataService modelElementDataService = new ModelElementDataService();
 
     public static void readCase() throws IOException {
-        //Need to map pnode (market) to bus (network)
 
         //DAILY
         //here enode is mapped to pnode
         //Map a field name to an element type
-        inputFieldMapping.addFieldElementMap("PNODE","PNODENAME","pnode",1);
-        inputFieldMapping.addFieldElementMap("PNODE","KEY1","enode",1);
-        inputFieldMapping.addFieldElementMap("PNODE","KEY2","enode",2);
-        inputFieldMapping.addFieldElementMap("PNODE","KEY3","enode",3);
+        String sectionName = "PNODE";
+        inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY1","enode",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY2","enode",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY3","enode",3);
         //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap(
-                "PNODE","FACTOR","ENODE","enodePnodeFactor");
+                sectionName,"FACTOR","ENODE","enodePnodeFactor");
         inputFieldMapping.addFieldPropertyMap(
-                "PNODE","PNODENAME","ENODE","enodePnode");
+                sectionName,"PNODENAME","ENODE","enodePnode");
 
         //MSSNET
         //here the network enode is mapped to enode
-        inputFieldMapping.addFieldElementMap("NODE","ID_ENODE","nwEnode",1);
-        inputFieldMapping.addFieldElementMap("NODE","ID_ST","enode",1);
-        inputFieldMapping.addFieldElementMap("NODE","ID_KV","enode",2);
-        inputFieldMapping.addFieldElementMap("NODE","ID_EQUIPMENT","enode",3);
+        sectionName = "NODE";
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_ST","enode",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_KV","enode",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_EQUIPMENT","enode",3);
 
         //TIME-BASED MSSNET
         //here the network enode is mapped to bus
-        inputFieldMapping.addFieldElementMap(
-                "ENODEBUS","ID_ENODE","nwEnode",1);
-        inputFieldMapping.addFieldElementMap(
-                "ENODEBUS","ID_BUS","bus",1);
+        sectionName = "ENODEBUS";
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_BUS","bus",1);
 
         //PERIOD
         //BIDSANDOFFERS,1.0,PNODENAME,TRADERID,INTERVAL,TRADETYPE,TRADERBLOCKALTKEY,TRADERBLOCKTRANCHE,
         // TRADERBLOCKLIMIT,TRADERBLOCKPRICE,SIXSEC,RESERVEPERCENT,DISPATCHABLE
         //Map a field name to an element type
+        sectionName = "BIDSANDOFFERS";
         inputFieldMapping.addFieldElementMap(
-                "BIDSANDOFFERS","PNODENAME","pnode",1);
+                sectionName,"PNODENAME","pnode",1);
         inputFieldMapping.addFieldElementMap(
-                "BIDSANDOFFERS","TRADERBLOCKALTKEY","enOfferTranche",1);
+                sectionName,"TRADERBLOCKALTKEY","enOfferTranche",1);
         inputFieldMapping.addFieldElementMap(
-                "BIDSANDOFFERS","TRADERBLOCKTRANCHE","enOfferTranche",2);
-
+                sectionName,"TRADERBLOCKTRANCHE","enOfferTranche",2);
         //Map a field name to a property type
-        inputFieldMapping.addFieldPropertyMap(
-                "BIDSANDOFFERS","TRADERBLOCKLIMIT",
+        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKLIMIT",
                 "enOfferTranche","trancheLimit");
-        inputFieldMapping.addFieldPropertyMap(
-                "BIDSANDOFFERS","TRADERBLOCKPRICE",
+        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKPRICE",
                 "enOfferTranche","tranchePrice");
-        inputFieldMapping.addFieldPropertyMap(
-                "BIDSANDOFFERS","PNODENAME",
+        inputFieldMapping.addFieldPropertyMap(sectionName,"PNODENAME",
                 "enOfferTranche","tranchePnode");
 
         //I,MSSDATA,PNODELOAD,1.0,PNODENAME,INTERVAL,LOADAREAID,ACTUALLOAD,SOURCEOFACTUAL,INSTRUCTEDSHED,
@@ -71,16 +68,26 @@ public class ReadCaseFile {
         //(allows for concatenated element i.d.)
         //inputFieldMapping.addElementPropertyMap("enode","pnodeEnode");
 
-        String caseFileDir = "/Users/davidbullen/java/MSS_51112021071200687_0X/";
-        String caseId = "MSS_51112021071200687_0X";
-        Set<String> caseTypes = Set.of(".DAILY", ".PERIOD");
-        //MSS_51112021071200687_0X_06-JUL-2021_10_00_0.MSSNET
-        //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
-
+        //Interval
         LocalDateTime caseInterval =
                 LocalDateTime.of(2021, 7, 06,10,0);
+
+        //Case file names
+        //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
+        String caseFileDir = "/Users/davidbullen/java/MSS_51112021071200687_0X/";
+        String caseId = "MSS_51112021071200687_0X";
+
+        //MSS_51112021071200687_0X_06-JUL-2021_10_00_0.MSSNET
         DateTimeFormatter dateFormatter
-                = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm", Locale.ENGLISH);
+                = DateTimeFormatter.ofPattern("dd-MMM-yyyy_hh_mm", Locale.ENGLISH);
+        String timeBasedMSSNET = "_" + caseInterval.format(dateFormatter).toUpperCase() + "_0.MSSNET";
+
+        Set<String> caseTypes = Set.of(".DAILY", ".PERIOD",timeBasedMSSNET);
+
+
+        //Set the interval for filtering in the file
+        //06-JUL-2021 00:00
+        dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm", Locale.ENGLISH);
         String caseIntervalInFile = caseInterval.format(dateFormatter).toUpperCase();
         System.out.println(">>>>"+ caseIntervalInFile);
 
@@ -100,7 +107,7 @@ public class ReadCaseFile {
 
                     System.out.println(curLine);
                     List<String> fieldNames = Arrays.asList(curLine.split(","));
-                    String sectionName = fieldNames.get(2);
+                    sectionName = fieldNames.get(2);
                     //Element mapping
                     elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
                             sectionName, fieldNames);
