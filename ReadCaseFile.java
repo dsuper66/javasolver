@@ -26,7 +26,7 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"PNODENAME","enode","enodePnode");
 
-        //MSSNET
+        //STATIC MSSNET
         //here the network enode is mapped to enode
         sectionName = "NODE";
         inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
@@ -38,25 +38,38 @@ public class ReadCaseFile {
                 sectionName,"ID_ENODE","enode","nwEnodeEnode");
 
         //TIME-BASED MSSNET
-        //here the network enode is mapped to bus
+        //network enode to bus
+        //I,NETDATA,ENODEBUS,1.0,ID_ENODE,ID_BUS,ID_KV,ID_ST,ELECTRICAL_ISLAND,REFERENCE
         sectionName = "ENODEBUS";
         inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_BUS","bus",1);
-
+        //properties
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"ID_BUS","nwEnode","nwEnodeBus");
+
+        //branch to bus
+        //I,NETDATA,BRANCHBUS,1.0,ID_BRANCH,ID_FROMBUS,ID_TOBUS,SUSCEPTANCE,RESISTANCE,REMOVE
+        sectionName = "BRANCHBUS";
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_BRANCH","branch",1);
+        //properties
+        inputFieldMapping.addFieldPropertyMap(
+                sectionName,"ID_FROMBUS","branch","fromBus");
+        inputFieldMapping.addFieldPropertyMap(
+                sectionName,"ID_TOBUS","branch","toBus");
+        inputFieldMapping.addFieldPropertyMap(
+                sectionName,"SUSCEPTANCE","branch","susceptance");
+        inputFieldMapping.addFieldPropertyMap(
+                sectionName,"RESISTANCE","branch","resistance");
+
 
         //PERIOD
         //BIDSANDOFFERS,1.0,PNODENAME,TRADERID,INTERVAL,TRADETYPE,TRADERBLOCKALTKEY,TRADERBLOCKTRANCHE,
         // TRADERBLOCKLIMIT,TRADERBLOCKPRICE,SIXSEC,RESERVEPERCENT,DISPATCHABLE
         //Map a field name to an element type
         sectionName = "BIDSANDOFFERS";
-        inputFieldMapping.addFieldElementMap(
-                sectionName,"PNODENAME","pnode",1);
-        inputFieldMapping.addFieldElementMap(
-                sectionName,"TRADERBLOCKALTKEY","enOfferTranche",1);
-        inputFieldMapping.addFieldElementMap(
-                sectionName,"TRADERBLOCKTRANCHE","enOfferTranche",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","enOfferTranche",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","enOfferTranche",2);
         //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKLIMIT",
                 "enOfferTranche","trancheLimit");
@@ -67,8 +80,10 @@ public class ReadCaseFile {
 
         //I,MSSDATA,PNODELOAD,1.0,PNODENAME,INTERVAL,LOADAREAID,ACTUALLOAD,SOURCEOFACTUAL,INSTRUCTEDSHED,
         // CONFORMINGFACTOR,NONCONFORMINGLOAD,CONFORMINGFORECAST,ISNCL,ISBAD,ISOVERRIDE,INSTRUCTEDSHEDACTIVE,DISPATCHEDLOAD,DISPATCHEDGEN
-
-        //I,NETDATA,BRANCHBUS,1.0,ID_BRANCH,ID_FROMBUS,ID_TOBUS,SUSCEPTANCE,RESISTANCE,REMOVE
+        sectionName = "PNODELOAD";
+        inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
+        inputFieldMapping.addFieldPropertyMap(sectionName,"ACTUALLOAD",
+                "pnode","actualLoad");
 
         //Map an element type to a property type
         //(allows for concatenated element i.d.)
@@ -80,15 +95,18 @@ public class ReadCaseFile {
 
         //Case file names
         //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
+        ///Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.MSSNET
         String caseFileDir = "/Users/davidbullen/java/MSS_51112021071200687_0X/";
         String caseId = "MSS_51112021071200687_0X";
 
+        //Make the file name for time based MSSNET
         //MSS_51112021071200687_0X_06-JUL-2021_10_00_0.MSSNET
         DateTimeFormatter dateFormatter
                 = DateTimeFormatter.ofPattern("dd-MMM-yyyy_hh_mm", Locale.ENGLISH);
         String timeBasedMSSNET = "_" + caseInterval.format(dateFormatter).toUpperCase() + "_0.MSSNET";
 
-        Set<String> caseTypes = Set.of(".DAILY", ".PERIOD",timeBasedMSSNET);
+        //File types to read
+        List<String> caseTypes = List.of(".DAILY", ".PERIOD",".MSSNET",timeBasedMSSNET);
 
 
         //Set the interval for filtering in the file

@@ -7,8 +7,9 @@ public class ModelElementDefService {
     //e.g. elementTypeProperties['branch'] = ['fromBus', 'toBus', 'susceptance', 'resistance','flowMax'];
     static Map<String, List<String>> elementTypeProperties =
             Map.of(
-                    "branch", List.of("fromBus","toBus"),
+                    "branch", List.of("fromBus","toBus","susceptance","resistance"),
                     "enode", List.of("enodePnode","enodePnodeFactor"),
+                    "pnode", List.of("actualLoad"),
                     "enOfferTranche",List.of("tranchePnode","trancheLimit","tranchePrice"),
                     "nwEnode",List.of("nwEnodeEnode","nwEnodeBus")
                     );

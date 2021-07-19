@@ -36,7 +36,11 @@ public class ModelElementDataService {
     //https://www.baeldung.com/java-optional
     public void assignPropertyValue(String elementId, String propertyType, String value) {
         getElement(elementId).ifPresent(modelElement ->
-            System.out.println("elementId:" + elementId + " propertyType:" + propertyType + " propertyValue:" + value)
+                {
+                    if (modelElement.elementType.equals("branch")) {
+                        System.out.println("elementId:" + elementId + " propertyType:" + propertyType + " propertyValue:" + value);
+                    }
+                }
         );
     }
 
