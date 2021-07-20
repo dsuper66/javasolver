@@ -25,7 +25,7 @@ public class ModelElementDataService {
         Map<String, String> properties = Map.of();
         List<String> elementTypeProperties = modelElementDefService.getPropertiesForElementType(elementType);
         for (String propertyType : elementTypeProperties) {
-            properties =  MyUtilities.AddMapToMap(properties, Map.of(propertyType,"empty"));
+            properties =  MyUtilities.AddMapToMap(properties, Map.of(propertyType,""));
         }
 
         this.modelElements.add(
@@ -37,7 +37,7 @@ public class ModelElementDataService {
     public void assignPropertyValue(String elementId, String propertyType, String value) {
         getElement(elementId).ifPresent(modelElement ->
                 {
-                    if (modelElement.elementType.equals("branch")) {
+                    if (modelElement.elementType.equals("bus")) {
                         System.out.println("elementId:" + elementId + " propertyType:" + propertyType + " propertyValue:" + value);
                     }
                 }

@@ -6,8 +6,35 @@ import java.util.stream.Collectors;
 
 public class InputFieldMapping {
 
-    //-------Element mapping-------
+    //-------Section filter-------
+/*
+    private class SectionFilter {
+        String sectionName;
+        String fieldName;
+        String fieldValue;
+        Boolean include;
 
+        private SectionFilter(
+                String sectionName,
+                String fieldName,
+                String fieldValue,
+                Boolean include) {
+            this.sectionName = sectionName;
+            this.fieldName = fieldName;
+            this.fieldValue = fieldValue;
+            this.include = include;
+        }
+    }
+
+    private ArrayList<SectionFilter> sectionFilters = new ArrayList<>();
+
+    public void addSectionFilter(String sectionName, String fieldName, String fieldValue, Boolean include) {
+        this.sectionFilters.add(
+                new SectionFilter(sectionName,fieldName,fieldValue,include));
+    }*/
+
+
+    //-------Element mapping-------
     private class FieldElementMap {
         String sectionName;
         String fieldName;
@@ -25,7 +52,6 @@ public class InputFieldMapping {
             this.order = order;
         }
     }
-
     private ArrayList<FieldElementMap> fieldElementMaps = new ArrayList<>();
 
     public void addFieldElementMap(String sectionName, String fieldName, String elementType, Integer order) {
@@ -34,6 +60,7 @@ public class InputFieldMapping {
     }
 
     //Get the element type for the field name
+    /*
     private String elementTypeForFieldName(String fieldName) {
         List<FieldElementMap> matchingFeildElementMaps =
                 (List<FieldElementMap>) fieldElementMaps
@@ -46,16 +73,16 @@ public class InputFieldMapping {
         else {
             return "";
         }
-    }
+    }*/
 
     //For the Header row, return matching ELEMENTS and the orderNum,fieldNum that hold their component(s)
     public HashMap<String,Map<Integer,Integer>> getElementFieldMapForSectionFieldNames(
-            String sectionName, List<String> fieldNames) {
+            String thisSectionName, List<String> fieldNames) {
         //The return... elementType : [orderNum : fieldNum]
         HashMap<String,Map<Integer,Integer>> elementTypeFieldMaps = new HashMap<>();
         //Go through all the fieldNames, add those that have a mapping
         Integer thisFieldNum = 0;
-        String thisSectionName = fieldNames.get(2);
+        //String thisSectionName = fieldNames.get(2);
         for (String thisFieldName : fieldNames) {
             thisFieldNum++;
             //Get the mappings (if any) for this fieldname in this section
@@ -120,12 +147,13 @@ public class InputFieldMapping {
     }
 
     //For the Header row, return matching PROPERTY and associated fieldNum
-    public HashMap<String,Integer> getPropertyFieldMapForSectionFieldNames(List<String> fieldNames) {
+    public HashMap<String,Integer> getPropertyFieldMapForSectionFieldNames(
+            String thisSectionName, List<String> fieldNames) {
         //The return... propertyType : fieldNum
         HashMap<String,Integer> propertyTypeFieldMap = new HashMap<>();
 
         Integer thisFieldNum = 0;
-        String thisSectionName = fieldNames.get(2);
+        //String thisSectionName = fieldNames.get(2);
         for (String thisFieldName : fieldNames) {
             thisFieldNum++;
             //Get the PROPERTY mappings (if any) for this fieldname

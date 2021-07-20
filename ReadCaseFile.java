@@ -8,9 +8,9 @@ import java.util.*;
 public class ReadCaseFile {
     static InputFieldMapping inputFieldMapping = new InputFieldMapping();
     static ModelElementDefService modelElementDefService = new ModelElementDefService();
-    static ModelElementDataService modelElementDataService = new ModelElementDataService();
+    //static ModelElementDataService modelElementDataService = new ModelElementDataService();
 
-    public static void readCase() throws IOException {
+    public static void readCase(ModelElementDataService modelElementDataService) throws IOException {
 
         //DAILY
         //here enode is mapped to pnode
@@ -46,6 +46,8 @@ public class ReadCaseFile {
         //properties
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"ID_BUS","nwEnode","nwEnodeBus");
+        inputFieldMapping.addFieldPropertyMap(
+                sectionName,"ELECTRICAL_ISLAND","bus","electricalIsland");
 
         //branch to bus
         //I,NETDATA,BRANCHBUS,1.0,ID_BRANCH,ID_FROMBUS,ID_TOBUS,SUSCEPTANCE,RESISTANCE,REMOVE
@@ -68,15 +70,17 @@ public class ReadCaseFile {
         //Map a field name to an element type
         sectionName = "BIDSANDOFFERS";
         inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","enOfferTranche",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","enOfferTranche",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","offerTranche",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","offerTranche",2);
         //Map a field name to a property type
+        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADETYPE",
+                "offerTranche","tradeType");
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKLIMIT",
-                "enOfferTranche","trancheLimit");
+                "offerTranche","trancheLimit");
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKPRICE",
-                "enOfferTranche","tranchePrice");
+                "offerTranche","tranchePrice");
         inputFieldMapping.addFieldPropertyMap(sectionName,"PNODENAME",
-                "enOfferTranche","tranchePnode");
+                "offerTranche","tranchePnode");
 
         //I,MSSDATA,PNODELOAD,1.0,PNODENAME,INTERVAL,LOADAREAID,ACTUALLOAD,SOURCEOFACTUAL,INSTRUCTEDSHED,
         // CONFORMINGFACTOR,NONCONFORMINGLOAD,CONFORMINGFORECAST,ISNCL,ISBAD,ISOVERRIDE,INSTRUCTEDSHEDACTIVE,DISPATCHEDLOAD,DISPATCHEDGEN
@@ -109,12 +113,13 @@ public class ReadCaseFile {
         List<String> caseTypes = List.of(".DAILY", ".PERIOD",".MSSNET",timeBasedMSSNET);
 
 
-        //Set the interval for filtering in the file
+        //Set the interval for filtering in the file if it has an interval field
         //06-JUL-2021 00:00
         dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm", Locale.ENGLISH);
         String caseIntervalInFile = caseInterval.format(dateFormatter).toUpperCase();
         System.out.println(">>>>"+ caseIntervalInFile);
 
+        //Read the different case types
         for (String caseType : caseTypes){
             String fileName = caseFileDir + caseId + caseType;
             BufferedReader bufferedReader =
@@ -129,18 +134,23 @@ public class ReadCaseFile {
             while ((curLine = bufferedReader.readLine()) != null) {
 
                 //HEADER: Get the headers and see which match elements and properties
+                String thisSectionName = "";
                 if (curLine.startsWith("I")) {
 
                     System.out.println(curLine);
                     List<String> fieldNames = Arrays.asList(curLine.split(","));
-                    sectionName = fieldNames.get(2);
+
+                    thisSectionName = fieldNames.get(2);
                     //Element mapping
                     elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
-                            sectionName, fieldNames);
+                            thisSectionName, fieldNames);
                     System.out.println("elementTypeFieldMaps:" + elementTypeFieldMaps);
+
                     //Property mapping
-                    propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(fieldNames);
+                    propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(
+                            thisSectionName,fieldNames);
                     System.out.println("propertyTypeFieldMaps:" + propertyTypeFieldMaps);
+
                     //Interval based data may need to be filtered by interval
                     dataIsIntervalBased = curLine.contains("INTERVAL");
                     System.out.println("dataIsIntervalBased:" + dataIsIntervalBased);
@@ -155,6 +165,7 @@ public class ReadCaseFile {
                     //For each element type that has a mapping from the header processing
                     //create the elementId
                     HashMap<String, String> elementIdsAndTypeToAdd = new HashMap<>();
+
                     for (String elementType : elementTypeFieldMaps.keySet()) {
                         Map<Integer, Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
                         String elementId = "";
@@ -176,16 +187,17 @@ public class ReadCaseFile {
                     //Get and assign the Properties
                     for (String propertyType : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyType);
-                        String propertyValue = fieldData.get(fieldNum - 1);
+                        String fieldValue = fieldData.get(fieldNum - 1);
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If any of the element types have this property then assign the value
                         for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
                             Boolean elementHasThisProperty = modelElementDefService.elementTypeHasProperty(
                                             elementIdAndType.getValue(), propertyType);
+
                             if (elementHasThisProperty) {
                                 modelElementDataService.assignPropertyValue(
-                                        elementIdAndType.getKey(), propertyType, propertyValue);
+                                        elementIdAndType.getKey(), propertyType, fieldValue);
                             }
                         }
                     }

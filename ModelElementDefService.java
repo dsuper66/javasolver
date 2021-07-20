@@ -10,8 +10,12 @@ public class ModelElementDefService {
                     "branch", List.of("fromBus","toBus","susceptance","resistance"),
                     "enode", List.of("enodePnode","enodePnodeFactor"),
                     "pnode", List.of("actualLoad"),
-                    "enOfferTranche",List.of("tranchePnode","trancheLimit","tranchePrice"),
-                    "nwEnode",List.of("nwEnodeEnode","nwEnodeBus")
+                    "offerTranche",List.of("tranchePnode","tradeType","trancheLimit","tranchePrice"),
+                    "nwEnode",List.of("nwEnodeEnode","nwEnodeBus"),
+                    "bus",List.of("electricalIsland"),
+                    //derived
+                    "enOfferTranche",List.of("toBus","trancheFactor","trancheLimit","tranchePrice"),
+                    "enOfferBid",List.of("fromBus","trancheFactor","trancheLimit","tranchePrice")
                     );
 
     static List<String> getPropertiesForElementType(String elementType) {

@@ -5,17 +5,17 @@ import ilog.concert.IloRange;
 import ilog.cplex.IloCplex;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class SolveModel {
 
     public static void main(String[] args) throws IOException {
         System.out.println("Hello World!"); // Display the string.
 
-        ReadCaseFile readCaseFile = new ReadCaseFile();
-        ReadCaseFile.readCase();
-
         ModelElementDataService modelElementDataService = new ModelElementDataService();
+        //ReadCaseFile readCaseFile = new ReadCaseFile();
+        ReadCaseFile.readCase(modelElementDataService);
+
+        /*
         modelElementDataService.addElement(
                 "bus01",
                 "bus");
@@ -34,7 +34,8 @@ public class SolveModel {
                         "quantity","200")
         );
 
-        modelElementDataService.getElement("offer01");
+        modelElementDataService.getElement("offer01");*/
+
         // Create the modeler/solver object
         try (IloCplex cplex = new IloCplex()) {
 
