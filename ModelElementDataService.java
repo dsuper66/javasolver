@@ -11,7 +11,7 @@ public class ModelElementDataService {
     public void addElement(
             String elementId,
             String elementType,
-            Map<String, String> properties) {
+            Map<String, List<String>> properties) {
 
         this.modelElements.add(
                 new ModelElement(elementId,elementType,properties));
@@ -22,10 +22,11 @@ public class ModelElementDataService {
             String elementId,
             String elementType) {
 
-        Map<String, String> properties = Map.of();
+        Map<String, List<String>> properties = Map.of();
         List<String> elementTypeProperties = modelElementDefService.getPropertiesForElementType(elementType);
+        //Add an empty property list for each property
         for (String propertyType : elementTypeProperties) {
-            properties =  MyUtilities.AddMapToMap(properties, Map.of(propertyType,""));
+            properties.putIfAbsent(propertyType,List.of(""));
         }
 
         this.modelElements.add(

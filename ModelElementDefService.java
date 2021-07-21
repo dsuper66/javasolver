@@ -1,6 +1,8 @@
 import java.util.List;
 import java.util.Map;
 
+
+
 public class ModelElementDefService {
 
     //The properties of an element type
@@ -9,7 +11,7 @@ public class ModelElementDefService {
             Map.of(
                     "branch", List.of("fromBus","toBus","susceptance","resistance"),
                     "enode", List.of("enodePnode","enodePnodeFactor"),
-                    "pnode", List.of("actualLoad"),
+                    "pnode", List.of("actualLoad","enodes"),
                     "offerTranche",List.of("tranchePnode","tradeType","trancheLimit","tranchePrice"),
                     "nwEnode",List.of("nwEnodeEnode","nwEnodeBus"),
                     "bus",List.of("electricalIsland"),
