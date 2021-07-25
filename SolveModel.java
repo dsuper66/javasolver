@@ -11,9 +11,9 @@ public class SolveModel {
     public static void main(String[] args) throws IOException {
         System.out.println("Hello World!"); // Display the string.
 
-        ModelElementDataService modelElementDataService = new ModelElementDataService();
+        ModelDataService modelDataService = new ModelDataService();
         //ReadCaseFile readCaseFile = new ReadCaseFile();
-        ReadCaseFile.readCase(modelElementDataService);
+        ReadCaseFile.readCase(modelDataService);
 
         /*
         modelElementDataService.addElement(

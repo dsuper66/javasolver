@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class MathModelDefService {
+public class MathDefService {
 
     ArrayList<ConstraintComp> constraintComps = new ArrayList<>(
 

@@ -127,7 +127,6 @@ public class InputFieldMapping {
         String sectionName;
         String fieldName;
         String propertyType;
-        Integer order;
 
         private FieldPropertyMap(
                 String sectionName,
@@ -141,7 +140,7 @@ public class InputFieldMapping {
 
     private ArrayList<FieldPropertyMap> fieldPropertyMaps = new ArrayList<>();
 
-    public void addFieldPropertyMap(String sectionName, String fieldName, String elementType, String propertyType) {
+    public void addFieldPropertyMap(String sectionName, String fieldName, String propertyType) {
         this.fieldPropertyMaps.add(
                 new FieldPropertyMap(sectionName, fieldName, propertyType));
     }

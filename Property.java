@@ -1,6 +1,6 @@
 public class Property {
-    String propertyType = "";
-    String elementId1 = "";
-    String elementId2 = "";
-    String value = "";
+    String propertyType;
+    String[] elementIds;
+    String value;
 }
+

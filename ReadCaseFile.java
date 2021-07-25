@@ -7,10 +7,10 @@ import java.util.*;
 
 public class ReadCaseFile {
     static InputFieldMapping inputFieldMapping = new InputFieldMapping();
-    static ModelElementDefService modelElementDefService = new ModelElementDefService();
+    static ModelDefService modelDefService = new ModelDefService();
     //static ModelElementDataService modelElementDataService = new ModelElementDataService();
 
-    public static void readCase(ModelElementDataService modelElementDataService) throws IOException {
+    public static void readCase(ModelDataService modelDataService) throws IOException {
 
         //DAILY
         //here enode is mapped to pnode
@@ -22,9 +22,9 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"KEY3","enode",3);
         //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"FACTOR","enode","enodePnodeFactor");
+                sectionName,"FACTOR","enodePnodeFactor");
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"PNODENAME","enode","enodePnode");
+                sectionName,"PNODENAME","enodePnode");
 
         //STATIC MSSNET
         //here the network enode is mapped to enode
@@ -35,7 +35,7 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"ID_EQUIPMENT","enode",3);
 
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ID_ENODE","enode","nwEnodeEnode");
+                sectionName,"ID_ENODE","nwEnodeEnode");
 
         //TIME-BASED MSSNET
         //network enode to bus
@@ -45,9 +45,9 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"ID_BUS","bus",1);
         //properties
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ID_BUS","nwEnode","nwEnodeBus");
+                sectionName,"ID_BUS","nwEnodeBus");
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ELECTRICAL_ISLAND","bus","electricalIsland");
+                sectionName,"ELECTRICAL_ISLAND","electricalIsland");
 
         //branch to bus
         //I,NETDATA,BRANCHBUS,1.0,ID_BRANCH,ID_FROMBUS,ID_TOBUS,SUSCEPTANCE,RESISTANCE,REMOVE
@@ -55,13 +55,13 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"ID_BRANCH","branch",1);
         //properties
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ID_FROMBUS","branch","fromBus");
+                sectionName,"ID_FROMBUS","fromBus");
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ID_TOBUS","branch","toBus");
+                sectionName,"ID_TOBUS","toBus");
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"SUSCEPTANCE","branch","susceptance");
+                sectionName,"SUSCEPTANCE","susceptance");
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"RESISTANCE","branch","resistance");
+                sectionName,"RESISTANCE","resistance");
 
 
         //PERIOD
@@ -73,21 +73,16 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","offerTranche",1);
         inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","offerTranche",2);
         //Map a field name to a property type
-        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADETYPE",
-                "offerTranche","tradeType");
-        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKLIMIT",
-                "offerTranche","trancheLimit");
-        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKPRICE",
-                "offerTranche","tranchePrice");
-        inputFieldMapping.addFieldPropertyMap(sectionName,"PNODENAME",
-                "offerTranche","tranchePnode");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADETYPE", "tradeType");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKLIMIT", "trancheLimit");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKPRICE", "tranchePrice");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"PNODENAME", "tranchePnode");
 
         //I,MSSDATA,PNODELOAD,1.0,PNODENAME,INTERVAL,LOADAREAID,ACTUALLOAD,SOURCEOFACTUAL,INSTRUCTEDSHED,
         // CONFORMINGFACTOR,NONCONFORMINGLOAD,CONFORMINGFORECAST,ISNCL,ISBAD,ISOVERRIDE,INSTRUCTEDSHEDACTIVE,DISPATCHEDLOAD,DISPATCHEDGEN
         sectionName = "PNODELOAD";
         inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
-        inputFieldMapping.addFieldPropertyMap(sectionName,"ACTUALLOAD",
-                "pnode","actualLoad");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"ACTUALLOAD", "actualLoad");
 
         //Map an element type to a property type
         //(allows for concatenated element i.d.)
@@ -180,7 +175,7 @@ public class ReadCaseFile {
 
                     //Add the elements
                     for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
-                        modelElementDataService.addElement(
+                        modelDataService.addElement(
                                 elementIdAndType.getKey(), elementIdAndType.getValue());
                     }
 
@@ -192,11 +187,11 @@ public class ReadCaseFile {
 
                         //If any of the element types have this property then assign the value
                         for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
-                            Boolean elementHasThisProperty = modelElementDefService.elementTypeHasProperty(
+                            Boolean elementHasThisProperty = modelDefService.elementTypeHasProperty(
                                             elementIdAndType.getValue(), propertyType);
 
                             if (elementHasThisProperty) {
-                                modelElementDataService.assignPropertyValue(
+                                modelDataService.assignPropertyValue(
                                         elementIdAndType.getKey(), propertyType, fieldValue);
                             }
                         }

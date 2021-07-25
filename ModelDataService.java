@@ -1,11 +1,9 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-public class ModelElementDataService {
-    private ModelElementDefService modelElementDefService = new ModelElementDefService();
+public class ModelDataService {
+    private ModelDefService modelDefService = new ModelDefService();
     private ArrayList<ModelElement> modelElements = new ArrayList<>();
+    private ArrayList<Property> properties = new ArrayList<>();
 
     //Add element with properties
     public void addElement(
@@ -22,8 +20,8 @@ public class ModelElementDataService {
             String elementId,
             String elementType) {
 
-        Map<String, List<String>> properties = Map.of();
-        List<String> elementTypeProperties = modelElementDefService.getPropertiesForElementType(elementType);
+        HashMap<String, List<String>> properties = new HashMap<>();
+        List<String> elementTypeProperties = modelDefService.getPropertiesForElementType(elementType);
         //Add an empty property list for each property
         for (String propertyType : elementTypeProperties) {
             properties.putIfAbsent(propertyType,List.of(""));

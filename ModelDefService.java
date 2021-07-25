@@ -3,7 +3,7 @@ import java.util.Map;
 
 
 
-public class ModelElementDefService {
+public class ModelDefService {
 
     //The properties of an element type
     //e.g. elementTypeProperties['branch'] = ['fromBus', 'toBus', 'susceptance', 'resistance','flowMax'];
@@ -19,6 +19,29 @@ public class ModelElementDefService {
                     "enOfferTranche",List.of("toBus","trancheFactor","trancheLimit","tranchePrice"),
                     "enOfferBid",List.of("fromBus","trancheFactor","trancheLimit","tranchePrice")
                     );
+
+    static List<String> elementTypes =
+            List.of(
+                    "branch",
+                    "mktEnode",
+                    "pnode",
+                    "nwEnode",
+                    "bus",
+                    "enOfferTranche",
+                    "enBidTranche"
+            );
+
+    static Map<String, List<String>> propertyTypes =
+            Map.of(
+                    "fromBusId",List.of("branch"),
+                    "toBusId",List.of("branch"),
+                    "susceptance",List.of("branch"),
+                    "resistance",List.of("branch"),
+                    "mapPnodeMktEnode",List.of("pnode","mktEnode"),
+                    "mapMktEnodeNwEnode",List.of("mktEnode","nwEnode"),
+                    "mapNwEnodeBus",List.of("nwEnode","bus"),
+                    "factorPnodeBus",List.of("nwEnode","bus")
+            );
 
     static List<String> getPropertiesForElementType(String elementType) {
         if (elementTypeProperties.get(elementType) != null) {

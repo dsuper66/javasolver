@@ -1,6 +1,6 @@
 public class BuildDataModel {
 
-    public static void buildDataModel(ModelElementDataService modelElementDataService){
+    public static void buildDataModel(ModelDataService modelDataService){
         //Filter out unwanted data
 
         //Calculate factors
