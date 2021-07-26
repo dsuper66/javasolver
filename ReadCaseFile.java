@@ -153,13 +153,13 @@ public class ReadCaseFile {
 
                 //DATA: Create the elements and properties
                 else if (curLine.startsWith("D") && (!dataIsIntervalBased || curLine.contains(caseIntervalInFile))) {
-                    List<String> fieldData = Arrays.asList(curLine.split(","));
+                    List<String> thisRowData = Arrays.asList(curLine.split(","));
 
                     //Elements
                     //The elementId is a concatenation of the fields for the elementType
                     //For each element type that has a mapping from the header processing
                     //create the elementId
-                    HashMap<String, String> elementIdsAndTypeToAdd = new HashMap<>();
+                    HashMap<String, String> elementIdTypeMapFromThisRow = new HashMap<>();
 
                     for (String elementType : elementTypeFieldMaps.keySet()) {
                         Map<Integer, Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
@@ -167,34 +167,42 @@ public class ReadCaseFile {
                         //Create the elementId from one or more fields
                         for (Integer orderNum : orderNumFieldNum.keySet()) {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
-                            elementId += " " + fieldData.get(fieldNum - 1);
+                            elementId += " " + thisRowData.get(fieldNum - 1);
                         }
-                        elementIdsAndTypeToAdd.put(elementId, elementType);
+                        elementIdTypeMapFromThisRow.put(elementId, elementType);
                     }
                     //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
 
                     //Add the elements
-                    for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
+                    for (var elementIdAndType : elementIdTypeMapFromThisRow.entrySet()) {
                         modelDataService.addElement(
                                 elementIdAndType.getKey(), elementIdAndType.getValue());
                     }
 
                     //Get and assign the Properties
-                    for (String propertyType : propertyTypeFieldMaps.keySet()) {
-                        Integer fieldNum = propertyTypeFieldMaps.get(propertyType);
-                        String fieldValue = fieldData.get(fieldNum - 1);
+                    for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
+                        Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
+                        String fieldValue = thisRowData.get(fieldNum - 1);
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If any of the element types have this property then assign the value
-                        for (var elementIdAndType : elementIdsAndTypeToAdd.entrySet()) {
+                        for (var elementIdTypeMap : elementIdTypeMapFromThisRow.entrySet()) {
                             Boolean elementHasThisProperty = modelDefService.elementTypeHasProperty(
-                                            elementIdAndType.getValue(), propertyType);
+                                            elementIdTypeMap.getValue(), propertyTypeId);
 
                             if (elementHasThisProperty) {
-                                modelDataService.assignPropertyValue(
-                                        elementIdAndType.getKey(), propertyType, fieldValue);
+
+                                modelDataService.assignElementProperty(
+                                        elementIdTypeMap.getKey(), propertyTypeId, fieldValue);
                             }
                         }
+
+                        //If we have all elements that match the property type then assign the value
+                        modelDefService.getPropertyType(propertyTypeId).ifPresent(propertyTypeDef -> {
+                            for (String elementType : propertyTypeDef.elementTypes) {
+                                System.out.println("propertyType:" + propertyTypeId + " elementType:" + elementType);
+                            }
+                        });
                     }
                 }
             }

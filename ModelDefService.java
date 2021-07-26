@@ -1,6 +1,6 @@
 import java.util.List;
 import java.util.Map;
-
+import java.util.Optional;
 
 
 public class ModelDefService {
@@ -31,18 +31,29 @@ public class ModelDefService {
                     "enBidTranche"
             );
 
-    static Map<String, List<String>> propertyTypes =
-            Map.of(
-                    "fromBusId",List.of("branch"),
-                    "toBusId",List.of("branch"),
-                    "susceptance",List.of("branch"),
-                    "resistance",List.of("branch"),
-                    "mapPnodeMktEnode",List.of("pnode","mktEnode"),
-                    "mapMktEnodeNwEnode",List.of("mktEnode","nwEnode"),
-                    "mapNwEnodeBus",List.of("nwEnode","bus"),
-                    "factorPnodeBus",List.of("nwEnode","bus")
+    static List<PropertyType> propertyTypes =
+            List.of(
+                    new PropertyType("fromBus", List.of("branch"), "id"),
+                    new PropertyType("toBus", List.of("branch"), "id"),
+                    new PropertyType("susceptance", List.of("branch"), "double"),
+                    new PropertyType("resistance", List.of("branch"), "double"),
+                    new PropertyType("mapPnodeMktEnode", List.of("pnode", "mktEnode"), "map"),
+                    new PropertyType("mapMktEnodeNwEnode", List.of("mktEnode", "nwEnode"), "map"),
+                    new PropertyType("mapNwEnodeBus", List.of("nwEnode", "bus"), "map"),
+                    new PropertyType("pnodeEnodeFactor", List.of("pnode", "mktEnode"), "double"),
+                    new PropertyType("electricalIsland", List.of("bus"), "integer"),
+                    new PropertyType("bidPnode", List.of("enBidTranche"), "id"),
+                    new PropertyType("offerPnode", List.of("enOfferTranche"), "id")
             );
 
+    /*
+    ,
+    ,
+                    "offerToBusId",List.of("enOfferBid"),
+                    "offerTrancheFactor",List.of("enOfferBid"),
+                    "offerTrancheLimit",List.of("enOfferBid"),
+                    "offerTranchePrice",List.of("enOfferBid")
+     */
     static List<String> getPropertiesForElementType(String elementType) {
         if (elementTypeProperties.get(elementType) != null) {
             return elementTypeProperties.get(elementType);
@@ -52,6 +63,8 @@ public class ModelDefService {
         }
     }
 
+    //https://x-team.com/blog/using-optional-to-transform-your-java-code/
+
     static Boolean elementTypeHasProperty(String elementType, String propertyType) {
         List<String> propertyTypes = elementTypeProperties.get(elementType);
         if (propertyTypes != null) {
@@ -60,5 +73,20 @@ public class ModelDefService {
         else {
             return false;
         }
+    }
+
+    //https://x-team.com/blog/using-optional-to-transform-your-java-code/
+    //public List<String> getPropertyType(String propertyTypeId) {
+    //    List<String> optName = Optional.ofNullable(propertyTypes.get(propertyType)).orElse(List.of(""));
+    //    return optName;
+    //}
+
+    public Optional<PropertyType> getPropertyType(String propertyTypeId) {
+        Optional<PropertyType> opt =
+                propertyTypes
+                        .stream()
+                        .filter(e -> e.propertyTypeId.equals(propertyTypeId))
+                        .findFirst();
+        return opt;
     }
 }

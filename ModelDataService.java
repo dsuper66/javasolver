@@ -5,6 +5,7 @@ public class ModelDataService {
     private ArrayList<ModelElement> modelElements = new ArrayList<>();
     private ArrayList<Property> properties = new ArrayList<>();
 
+    //--------Elements-----------
     //Add element with properties
     public void addElement(
             String elementId,
@@ -33,11 +34,11 @@ public class ModelDataService {
 
     //Set the property of the element (if it exists)
     //https://www.baeldung.com/java-optional
-    public void assignPropertyValue(String elementId, String propertyType, String value) {
+    public void assignElementProperty(String elementId, String propertyType, String value) {
         getElement(elementId).ifPresent(modelElement ->
                 {
                     if (modelElement.elementType.equals("bus")) {
-                        System.out.println("elementId:" + elementId + " propertyType:" + propertyType + " propertyValue:" + value);
+                        //System.out.println("elementId:" + elementId + " propertyType:" + propertyType + " propertyValue:" + value);
                     }
                 }
         );
@@ -53,5 +54,9 @@ public class ModelDataService {
         //    System.out.println(elementId + " properties:" + modelElement.properties));
         return opt;
     }
+
+    //--------Properties-----------
+
+
 
 }
