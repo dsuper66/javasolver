@@ -17,14 +17,12 @@ public class ReadCaseFile {
         //Map a field name to an element type
         String sectionName = "PNODE";
         inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"KEY1","enode",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"KEY2","enode",2);
-        inputFieldMapping.addFieldElementMap(sectionName,"KEY3","enode",3);
-        //Map a field name to a property type
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY1","mktEnode",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY2","mktEnode",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY3","mktEnode",3);
+        //PROPERTY Map
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"FACTOR","enodePnodeFactor");
-        inputFieldMapping.addFieldPropertyMap(
-                sectionName,"PNODENAME","enodePnode");
+                sectionName,"FACTOR","factorPnodeEnode");
 
         //STATIC MSSNET
         //here the network enode is mapped to enode
@@ -136,12 +134,12 @@ public class ReadCaseFile {
                     List<String> fieldNames = Arrays.asList(curLine.split(","));
 
                     thisSectionName = fieldNames.get(2);
-                    //Element mapping
+                    //ELEMENT mapping
                     elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
                             thisSectionName, fieldNames);
                     System.out.println("elementTypeFieldMaps:" + elementTypeFieldMaps);
 
-                    //Property mapping
+                    //PROPERTY mapping
                     propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(
                             thisSectionName,fieldNames);
                     System.out.println("propertyTypeFieldMaps:" + propertyTypeFieldMaps);
@@ -155,11 +153,11 @@ public class ReadCaseFile {
                 else if (curLine.startsWith("D") && (!dataIsIntervalBased || curLine.contains(caseIntervalInFile))) {
                     List<String> thisRowData = Arrays.asList(curLine.split(","));
 
-                    //Elements
+                    //ELEMENT
                     //The elementId is a concatenation of the fields for the elementType
                     //For each element type that has a mapping from the header processing
                     //create the elementId
-                    HashMap<String, String> elementIdTypeMapFromThisRow = new HashMap<>();
+                    HashMap<String, String> elementTypeAndIdFromThisRow = new HashMap<>();
 
                     for (String elementType : elementTypeFieldMaps.keySet()) {
                         Map<Integer, Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
@@ -169,23 +167,26 @@ public class ReadCaseFile {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             elementId += " " + thisRowData.get(fieldNum - 1);
                         }
-                        elementIdTypeMapFromThisRow.put(elementId, elementType);
+                        //Note that these means only one type of each element per row
+                        elementTypeAndIdFromThisRow.put(elementType, elementId);
                     }
                     //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
 
                     //Add the elements
-                    for (var elementIdAndType : elementIdTypeMapFromThisRow.entrySet()) {
+                    for (var elementIdAndType : elementTypeAndIdFromThisRow.entrySet()) {
                         modelDataService.addElement(
                                 elementIdAndType.getKey(), elementIdAndType.getValue());
                     }
 
                     //Get and assign the Properties
+
                     for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
                         String fieldValue = thisRowData.get(fieldNum - 1);
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If any of the element types have this property then assign the value
+                        /*
                         for (var elementIdTypeMap : elementIdTypeMapFromThisRow.entrySet()) {
                             Boolean elementHasThisProperty = modelDefService.elementTypeHasProperty(
                                             elementIdTypeMap.getValue(), propertyTypeId);
@@ -195,12 +196,25 @@ public class ReadCaseFile {
                                 modelDataService.assignElementProperty(
                                         elementIdTypeMap.getKey(), propertyTypeId, fieldValue);
                             }
-                        }
+                        }*/
 
                         //If we have all elements that match the property type then assign the value
+                        //Get the property def for the property type that was found
                         modelDefService.getPropertyType(propertyTypeId).ifPresent(propertyTypeDef -> {
+                            ArrayList<String> elementIds = new ArrayList<>();
+                            Boolean foundAllElementTypes = true;
                             for (String elementType : propertyTypeDef.elementTypes) {
-                                System.out.println("propertyType:" + propertyTypeId + " elementType:" + elementType);
+                                //System.out.println("propertyType:" + propertyTypeId + " elementType:" + elementType);
+                                String elementId = elementTypeAndIdFromThisRow.get(elementType);
+                                if (elementId != null) {
+                                    elementIds.add(elementId);
+                                } else {
+                                    foundAllElementTypes = false;
+                                    break;
+                                }
+                            }
+                            if (foundAllElementTypes) {
+                                System.out.println(propertyTypeId + "(" + elementIds + ") = " + fieldValue);
                             }
                         });
                     }

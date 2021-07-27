@@ -56,7 +56,14 @@ public class ModelDataService {
     }
 
     //--------Properties-----------
+    public void addProperty(
+            String propertyType,
+            List<String> elementIds,
+            String value) {
 
+        this.properties.add(
+                new Property(propertyType,elementIds,value));
+    }
 
 
 }

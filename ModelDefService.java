@@ -40,7 +40,7 @@ public class ModelDefService {
                     new PropertyType("mapPnodeMktEnode", List.of("pnode", "mktEnode"), "map"),
                     new PropertyType("mapMktEnodeNwEnode", List.of("mktEnode", "nwEnode"), "map"),
                     new PropertyType("mapNwEnodeBus", List.of("nwEnode", "bus"), "map"),
-                    new PropertyType("pnodeEnodeFactor", List.of("pnode", "mktEnode"), "double"),
+                    new PropertyType("factorPnodeEnode", List.of("pnode", "mktEnode"), "double"),
                     new PropertyType("electricalIsland", List.of("bus"), "integer"),
                     new PropertyType("bidPnode", List.of("enBidTranche"), "id"),
                     new PropertyType("offerPnode", List.of("enOfferTranche"), "id")
