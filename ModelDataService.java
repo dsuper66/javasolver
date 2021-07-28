@@ -7,6 +7,7 @@ public class ModelDataService {
 
     //--------Elements-----------
     //Add element with properties
+    /*
     public void addElement(
             String elementId,
             String elementType,
@@ -14,22 +15,23 @@ public class ModelDataService {
 
         this.modelElements.add(
                 new ModelElement(elementId,elementType,properties));
-    }
+    }*/
 
     //Add element but we don't know the properties yet
     public void addElement(
             String elementId,
             String elementType) {
 
+        /*
         HashMap<String, List<String>> properties = new HashMap<>();
         List<String> elementTypeProperties = modelDefService.getPropertiesForElementType(elementType);
         //Add an empty property list for each property
         for (String propertyType : elementTypeProperties) {
             properties.putIfAbsent(propertyType,List.of(""));
-        }
+        }*/
 
         this.modelElements.add(
-                new ModelElement(elementId,elementType,properties));
+                new ModelElement(elementId,elementType));
     }
 
     //Set the property of the element (if it exists)

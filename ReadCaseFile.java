@@ -172,9 +172,9 @@ public class ReadCaseFile {
                     //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
 
                     //Add the elements
-                    for (var elementIdAndType : elementTypeAndIdFromThisRow.entrySet()) {
+                    for (var elementTypeAndId : elementTypeAndIdFromThisRow.entrySet()) {
                         modelDataService.addElement(
-                                elementIdAndType.getKey(), elementIdAndType.getValue());
+                                elementTypeAndId.getValue(), elementTypeAndId.getKey());
                     }
 
                     //Get and assign the Properties
@@ -215,7 +215,12 @@ public class ReadCaseFile {
                             }
                             if (foundAllElementTypes) {
                                 String thisSectionName = thisRowData.get(2);
-                                System.out.println(thisSectionName + ":" + propertyTypeId + "(" + elementIds + ") = " + fieldValue);
+                                if (thisSectionName.equals("PNODE")) {
+                                    System.out.println(thisSectionName + ":"
+                                            + propertyTypeId + "(" + elementIds + ") = " + fieldValue);
+                                }
+                                //Add the property
+                                modelDataService.addProperty(propertyTypeId,elementIds,fieldValue);
                             }
                         });
                     }

@@ -14,6 +14,7 @@ public class SolveModel {
         ModelDataService modelDataService = new ModelDataService();
         //ReadCaseFile readCaseFile = new ReadCaseFile();
         ReadCaseFile.readCase(modelDataService);
+        PreProcessing.calculateDerivedProperties(modelDataService);
 
         /*
         modelElementDataService.addElement(

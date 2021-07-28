@@ -33,6 +33,7 @@ public class ModelDefService {
 
     static List<PropertyType> propertyTypes =
             List.of(
+                    //Inputs
                     new PropertyType("fromBus", List.of("branch"), "id"),
                     new PropertyType("toBus", List.of("branch"), "id"),
                     new PropertyType("susceptance", List.of("branch"), "double"),
@@ -44,7 +45,10 @@ public class ModelDefService {
                     new PropertyType("tranchePnode", List.of("tranche"), "id"),
                     new PropertyType("tranchePrice", List.of("tranche"), "double"),
                     new PropertyType("trancheLimit", List.of("tranche"), "double"),
-                    new PropertyType("tradeType", List.of("tranche"), "string")
+                    new PropertyType("tradeType", List.of("tranche"), "string"),
+                    //Derived
+                    new PropertyType("factorPnodeBus", List.of("pnode","bus"), "double"),
+                    new PropertyType("factorTrancheBus", List.of("tranche","bus"), "double")
             );
 
     /*
