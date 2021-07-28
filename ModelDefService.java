@@ -37,13 +37,14 @@ public class ModelDefService {
                     new PropertyType("toBus", List.of("branch"), "id"),
                     new PropertyType("susceptance", List.of("branch"), "double"),
                     new PropertyType("resistance", List.of("branch"), "double"),
-                    new PropertyType("mapPnodeMktEnode", List.of("pnode", "mktEnode"), "map"),
-                    new PropertyType("mapMktEnodeNwEnode", List.of("mktEnode", "nwEnode"), "map"),
-                    new PropertyType("mapNwEnodeBus", List.of("nwEnode", "bus"), "map"),
+                    new PropertyType("nwEnodeForMktEnode", List.of("mktEnode"), "id"),
+                    new PropertyType("busForNwEnode", List.of("nwEnode"), "id"),
                     new PropertyType("factorPnodeEnode", List.of("pnode", "mktEnode"), "double"),
                     new PropertyType("electricalIsland", List.of("bus"), "integer"),
-                    new PropertyType("bidPnode", List.of("enBidTranche"), "id"),
-                    new PropertyType("offerPnode", List.of("enOfferTranche"), "id")
+                    new PropertyType("tranchePnode", List.of("tranche"), "id"),
+                    new PropertyType("tranchePrice", List.of("tranche"), "double"),
+                    new PropertyType("trancheLimit", List.of("tranche"), "double"),
+                    new PropertyType("tradeType", List.of("tranche"), "string")
             );
 
     /*

@@ -24,26 +24,25 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"FACTOR","factorPnodeEnode");
 
-        //STATIC MSSNET
+        //---STATIC MSSNET---
         //here the network enode is mapped to enode
         sectionName = "NODE";
         inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"ID_ST","enode",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"ID_KV","enode",2);
-        inputFieldMapping.addFieldElementMap(sectionName,"ID_EQUIPMENT","enode",3);
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_ST","mktEnode",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_KV","mktEnode",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_EQUIPMENT","mktEnode",3);
 
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ID_ENODE","nwEnodeEnode");
+                sectionName,"ID_ENODE","nwEnodeForMktEnode");
 
-        //TIME-BASED MSSNET
+        //----TIME-BASED MSSNET----
         //network enode to bus
         //I,NETDATA,ENODEBUS,1.0,ID_ENODE,ID_BUS,ID_KV,ID_ST,ELECTRICAL_ISLAND,REFERENCE
         sectionName = "ENODEBUS";
         inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_BUS","bus",1);
         //properties
-        inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ID_BUS","nwEnodeBus");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"ID_BUS","busForNwEnode");
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"ELECTRICAL_ISLAND","electricalIsland");
 
@@ -62,14 +61,14 @@ public class ReadCaseFile {
                 sectionName,"RESISTANCE","resistance");
 
 
-        //PERIOD
+        //----PERIOD----
         //BIDSANDOFFERS,1.0,PNODENAME,TRADERID,INTERVAL,TRADETYPE,TRADERBLOCKALTKEY,TRADERBLOCKTRANCHE,
         // TRADERBLOCKLIMIT,TRADERBLOCKPRICE,SIXSEC,RESERVEPERCENT,DISPATCHABLE
         //Map a field name to an element type
         sectionName = "BIDSANDOFFERS";
         inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","offerTranche",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","offerTranche",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","tranche",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","tranche",2);
         //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADETYPE", "tradeType");
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKLIMIT", "trancheLimit");
@@ -127,21 +126,21 @@ public class ReadCaseFile {
             while ((curLine = bufferedReader.readLine()) != null) {
 
                 //HEADER: Get the headers and see which match elements and properties
-                String thisSectionName = "";
+                //String thisSectionName = "";
                 if (curLine.startsWith("I")) {
 
                     System.out.println(curLine);
-                    List<String> fieldNames = Arrays.asList(curLine.split(","));
+                    List<String> thisRowfieldNames = Arrays.asList(curLine.split(","));
 
-                    thisSectionName = fieldNames.get(2);
+                    String thisSectionName = thisRowfieldNames.get(2);
                     //ELEMENT mapping
                     elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
-                            thisSectionName, fieldNames);
+                            thisSectionName, thisRowfieldNames);
                     System.out.println("elementTypeFieldMaps:" + elementTypeFieldMaps);
 
                     //PROPERTY mapping
                     propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(
-                            thisSectionName,fieldNames);
+                            thisSectionName,thisRowfieldNames);
                     System.out.println("propertyTypeFieldMaps:" + propertyTypeFieldMaps);
 
                     //Interval based data may need to be filtered by interval
@@ -200,6 +199,7 @@ public class ReadCaseFile {
 
                         //If we have all elements that match the property type then assign the value
                         //Get the property def for the property type that was found
+
                         modelDefService.getPropertyType(propertyTypeId).ifPresent(propertyTypeDef -> {
                             ArrayList<String> elementIds = new ArrayList<>();
                             Boolean foundAllElementTypes = true;
@@ -214,7 +214,8 @@ public class ReadCaseFile {
                                 }
                             }
                             if (foundAllElementTypes) {
-                                System.out.println(propertyTypeId + "(" + elementIds + ") = " + fieldValue);
+                                String thisSectionName = thisRowData.get(2);
+                                System.out.println(thisSectionName + ":" + propertyTypeId + "(" + elementIds + ") = " + fieldValue);
                             }
                         });
                     }
