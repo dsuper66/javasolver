@@ -8,24 +8,30 @@ public class PreProcessing {
 
     public static void calculateDerivedProperties(ModelDataService modelDataService) {
         System.out.println("pre-proc: calculateDerivedProperties");
-        HashMap<String, Double> sumPnodeFactors = new HashMap<>();
 
+        //Sum pnode factors for each pnode
+        HashMap<String, Double> sumPnodeFactors = new HashMap<>();
         List<ModelElement> pnodes = modelDataService.getElements("pnode");
         List<ElementProperty> pnodeEnodeFactors = modelDataService.getProperties("factorPnodeMktEnode");
-
         //https://stackoverflow.com/questions/33606014/collect-stream-into-a-hashmap-with-lambda-in-java-8
         pnodes
                 .stream()
                 .forEach(pn -> sumPnodeFactors.put(
                         pn.elementId,
-                        pnodeEnodeFactors
+                        pnodeEnodeFactors //get the factors for this pnode and sum them
                                 .stream()
-                                .filter(pef -> pef.elementIds.contains(pn.elementId))
+                                .filter(pef
+                                        -> pef.elementIds //elements are pnode,enode... match on the pnode index
+                                        .get(modelDefService.elementIndex("factorPnodeMktEnode","pnode"))
+                                        .equals(pn.elementId))
                                 .collect(Collectors.summingDouble(pef -> Double.parseDouble(pef.value))
                                 )
                         )
                 );
-
         System.out.println(sumPnodeFactors);
+
+        //enode weight is its factor / sumFactors
+        HashMap<String, Double> pnodeEnodeWeights = new HashMap<>();
+
     }
 }

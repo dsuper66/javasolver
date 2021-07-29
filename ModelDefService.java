@@ -47,8 +47,8 @@ public class ModelDefService {
                     new PropertyType("trancheLimit", List.of("tranche"), "double"),
                     new PropertyType("tradeType", List.of("tranche"), "string"),
                     //Derived
-                    new PropertyType("factorPnodeBus", List.of("pnode","bus"), "double"),
-                    new PropertyType("factorTrancheBus", List.of("tranche","bus"), "double")
+                    new PropertyType("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
+                    new PropertyType("weightPnodeBus", List.of("pnode","bus"), "double")
             );
 
     /*
@@ -80,17 +80,25 @@ public class ModelDefService {
         }
     }
 
+    //https://stackoverflow.com/questions/41485751/java-8-optional-ifpresent-return-object-orelsethrow-exception
+    //https://stackoverflow.com/questions/23773024/functional-style-of-java-8s-optional-ifpresent-and-if-not-present
+    public Integer elementIndex(String propertyType,String elementType) {
+        return getPropertyType(propertyType)
+                .map(pt -> pt.elementTypes.indexOf(elementType))
+                .orElse(-1);
+    }
+
     //https://x-team.com/blog/using-optional-to-transform-your-java-code/
     //public List<String> getPropertyType(String propertyTypeId) {
     //    List<String> optName = Optional.ofNullable(propertyTypes.get(propertyType)).orElse(List.of(""));
     //    return optName;
     //}
 
-    public Optional<PropertyType> getPropertyType(String propertyTypeId) {
+    public static Optional<PropertyType> getPropertyType(String propertyType) {
         Optional<PropertyType> opt =
                 propertyTypes
                         .stream()
-                        .filter(e -> e.propertyTypeId.equals(propertyTypeId))
+                        .filter(e -> e.propertyTypeId.equals(propertyType))
                         .findFirst();
         return opt;
     }
