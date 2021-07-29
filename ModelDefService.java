@@ -40,7 +40,7 @@ public class ModelDefService {
                     new PropertyType("resistance", List.of("branch"), "double"),
                     new PropertyType("nwEnodeForMktEnode", List.of("mktEnode"), "id"),
                     new PropertyType("busForNwEnode", List.of("nwEnode"), "id"),
-                    new PropertyType("factorPnodeEnode", List.of("pnode", "mktEnode"), "double"),
+                    new PropertyType("factorPnodeMktEnode", List.of("pnode", "mktEnode"), "double"),
                     new PropertyType("electricalIsland", List.of("bus"), "integer"),
                     new PropertyType("tranchePnode", List.of("tranche"), "id"),
                     new PropertyType("tranchePrice", List.of("tranche"), "double"),

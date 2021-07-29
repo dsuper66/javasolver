@@ -1,11 +1,11 @@
 import java.util.List;
 
-public class Property {
+public class ElementProperty {
     String propertyType;
     List<String> elementIds;
     String value;
 
-    public Property(
+    public ElementProperty(
             String propertyType,
             List<String> elementIds,
             String value) {

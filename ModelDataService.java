@@ -1,9 +1,10 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModelDataService {
     private ModelDefService modelDefService = new ModelDefService();
     private ArrayList<ModelElement> modelElements = new ArrayList<>();
-    private ArrayList<Property> properties = new ArrayList<>();
+    public ArrayList<ElementProperty> properties = new ArrayList<>();
 
     //--------Elements-----------
     //Add element with properties
@@ -57,6 +58,13 @@ public class ModelDataService {
         return opt;
     }
 
+    public List<ModelElement> getElements(String elementType) {
+        return modelElements
+                .stream()
+                .filter(me -> me.elementType.equals(elementType))
+                .collect(Collectors.toList());
+    }
+
     //--------Properties-----------
     public void addProperty(
             String propertyType,
@@ -64,7 +72,15 @@ public class ModelDataService {
             String value) {
 
         this.properties.add(
-                new Property(propertyType,elementIds,value));
+                new ElementProperty(propertyType,elementIds,value));
+    }
+
+    public List<ElementProperty> getProperties(String propertyType) {
+
+        return properties
+                .stream()
+                .filter(p -> p.propertyType.equals(propertyType))
+                .collect(Collectors.toList());
     }
 
 

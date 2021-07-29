@@ -22,7 +22,7 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"KEY3","mktEnode",3);
         //PROPERTY Map
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"FACTOR","factorPnodeEnode");
+                sectionName,"FACTOR","factorPnodeMktEnode");
 
         //---STATIC MSSNET---
         //here the network enode is mapped to enode
