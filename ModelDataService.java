@@ -83,5 +83,19 @@ public class ModelDataService {
                 .collect(Collectors.toList());
     }
 
+    public List<ElementProperty> getProperties(String propertyType, String elementType, String elementId) {
+        List<ElementProperty> properties = getProperties(propertyType);
+
+        return properties
+                .stream()
+                .filter(p
+                -> p.elementIds //elements are pnode,enode... match on the pnode index
+                .get(modelDefService.elementIndex(propertyType,elementType))
+                .equals(elementId))
+                .collect(Collectors.toList());
+
+    }
+
+
 
 }

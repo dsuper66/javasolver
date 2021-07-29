@@ -12,12 +12,18 @@ public class PreProcessing {
         //Sum pnode factors for each pnode
         HashMap<String, Double> sumPnodeFactors = new HashMap<>();
         List<ModelElement> pnodes = modelDataService.getElements("pnode");
-        List<ElementProperty> pnodeEnodeFactors = modelDataService.getProperties("factorPnodeMktEnode");
+        //List<ElementProperty> pnodeEnodeFactors = modelDataService.getProperties("factorPnodeMktEnode");
         //https://stackoverflow.com/questions/33606014/collect-stream-into-a-hashmap-with-lambda-in-java-8
         pnodes
                 .stream()
                 .forEach(pn -> sumPnodeFactors.put(
                         pn.elementId,
+                        modelDataService.getProperties(
+                                "factorPnodeMktEnode","pnode",pn.elementId)
+                        .stream()
+                        .collect(Collectors.summingDouble(p -> Double.parseDouble(p.value))))
+
+                        /*
                         pnodeEnodeFactors //get the factors for this pnode and sum them
                                 .stream()
                                 .filter(pef
@@ -26,7 +32,7 @@ public class PreProcessing {
                                         .equals(pn.elementId))
                                 .collect(Collectors.summingDouble(pef -> Double.parseDouble(pef.value))
                                 )
-                        )
+                        )*/
                 );
         System.out.println(sumPnodeFactors);
 
