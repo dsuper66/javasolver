@@ -31,24 +31,24 @@ public class ModelDefService {
                     "enBidTranche"
             );
 
-    static List<PropertyType> propertyTypes =
+    static List<PropertyTypeDef> propertyTypeDefDefs =
             List.of(
                     //Inputs
-                    new PropertyType("fromBus", List.of("branch"), "id"),
-                    new PropertyType("toBus", List.of("branch"), "id"),
-                    new PropertyType("susceptance", List.of("branch"), "double"),
-                    new PropertyType("resistance", List.of("branch"), "double"),
-                    new PropertyType("nwEnodeForMktEnode", List.of("mktEnode"), "id"),
-                    new PropertyType("busForNwEnode", List.of("nwEnode"), "id"),
-                    new PropertyType("factorPnodeMktEnode", List.of("pnode", "mktEnode"), "double"),
-                    new PropertyType("electricalIsland", List.of("bus"), "integer"),
-                    new PropertyType("tranchePnode", List.of("tranche"), "id"),
-                    new PropertyType("tranchePrice", List.of("tranche"), "double"),
-                    new PropertyType("trancheLimit", List.of("tranche"), "double"),
-                    new PropertyType("tradeType", List.of("tranche"), "string"),
+                    new PropertyTypeDef("fromBus", List.of("branch"), "id"),
+                    new PropertyTypeDef("toBus", List.of("branch"), "id"),
+                    new PropertyTypeDef("susceptance", List.of("branch"), "double"),
+                    new PropertyTypeDef("resistance", List.of("branch"), "double"),
+                    new PropertyTypeDef("nwEnodeForMktEnode", List.of("mktEnode"), "id"),
+                    new PropertyTypeDef("busForNwEnode", List.of("nwEnode"), "id"),
+                    new PropertyTypeDef("factorPnodeMktEnode", List.of("pnode", "mktEnode"), "double"),
+                    new PropertyTypeDef("electricalIsland", List.of("bus"), "integer"),
+                    new PropertyTypeDef("tranchePnode", List.of("tranche"), "id"),
+                    new PropertyTypeDef("tranchePrice", List.of("tranche"), "double"),
+                    new PropertyTypeDef("trancheLimit", List.of("tranche"), "double"),
+                    new PropertyTypeDef("tradeType", List.of("tranche"), "string"),
                     //Derived
-                    new PropertyType("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
-                    new PropertyType("weightPnodeBus", List.of("pnode","bus"), "double")
+                    new PropertyTypeDef("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
+                    new PropertyTypeDef("weightPnodeBus", List.of("pnode","bus"), "double")
             );
 
     /*
@@ -83,7 +83,7 @@ public class ModelDefService {
     //https://stackoverflow.com/questions/41485751/java-8-optional-ifpresent-return-object-orelsethrow-exception
     //https://stackoverflow.com/questions/23773024/functional-style-of-java-8s-optional-ifpresent-and-if-not-present
     public Integer elementIndex(String propertyType,String elementType) {
-        return getPropertyType(propertyType)
+        return propertyTypeDef(propertyType)
                 .map(pt -> pt.elementTypes.indexOf(elementType))
                 .orElse(-1);
     }
@@ -94,9 +94,9 @@ public class ModelDefService {
     //    return optName;
     //}
 
-    public static Optional<PropertyType> getPropertyType(String propertyType) {
-        Optional<PropertyType> opt =
-                propertyTypes
+    public Optional<PropertyTypeDef> propertyTypeDef(String propertyType) {
+        Optional<PropertyTypeDef> opt =
+                propertyTypeDefDefs
                         .stream()
                         .filter(e -> e.propertyTypeId.equals(propertyType))
                         .findFirst();

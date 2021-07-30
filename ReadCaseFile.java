@@ -200,7 +200,7 @@ public class ReadCaseFile {
                         //If we have all elements that match the property type then assign the value
                         //Get the property def for the property type that was found
 
-                        modelDefService.getPropertyType(propertyTypeId).ifPresent(propertyTypeDef -> {
+                        modelDefService.propertyTypeDef(propertyTypeId).ifPresent(propertyTypeDef -> {
                             ArrayList<String> elementIds = new ArrayList<>();
                             Boolean foundAllElementTypes = true;
                             for (String elementType : propertyTypeDef.elementTypes) {
@@ -220,7 +220,7 @@ public class ReadCaseFile {
                                             + propertyTypeId + "(" + elementIds + ") = " + fieldValue);
                                 }
                                 //Add the property
-                                modelDataService.addProperty(propertyTypeId,elementIds,fieldValue);
+                                modelDataService.addProperty(propertyTypeId, elementIds, fieldValue);
                             }
                         });
                     }

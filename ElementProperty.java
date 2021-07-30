@@ -1,17 +1,20 @@
 import java.util.List;
 
 public class ElementProperty {
-    String propertyType;
+    String propertyTypeId;
     List<String> elementIds;
-    String value;
+    String stringValue;
+    Double doubleValue;
 
     public ElementProperty(
-            String propertyType,
+            String propertyTypeId,
             List<String> elementIds,
-            String value) {
-        this.propertyType = propertyType;
+            String stringValue,
+            Double doubleValue) {
+        this.propertyTypeId = propertyTypeId;
         this.elementIds = elementIds;
-        this.value = value;
+        this.stringValue = stringValue;
+        this.doubleValue = doubleValue;
     }
 }
 

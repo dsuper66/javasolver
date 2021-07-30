@@ -67,35 +67,61 @@ public class ModelDataService {
 
     //--------Properties-----------
     public void addProperty(
-            String propertyType,
+            String propertyTypeId,
             List<String> elementIds,
             String value) {
-
-        this.properties.add(
-                new ElementProperty(propertyType,elementIds,value));
+        modelDefService.propertyTypeDef(propertyTypeId).ifPresent(propertyTypeDef -> {
+                    if (propertyTypeDef.valueType.equals("string")) {
+                        this.properties.add(
+                                new ElementProperty(propertyTypeId, elementIds,value, 0.0));
+                    }
+                    else {
+                        addProperty(propertyTypeId,elementIds,Double.parseDouble(value));
+                    }
+                }
+        );
     }
 
-    public List<ElementProperty> getProperties(String propertyType) {
+    public void addProperty(
+            String propertyTypeId,
+            List<String> elementIds,
+            Double value) {
+        this.properties.add(
+                new ElementProperty(propertyTypeId, elementIds,"", value));
+    }
 
+    public List<ElementProperty> getProperties(String propertyTypeId) {
         return properties
                 .stream()
-                .filter(p -> p.propertyType.equals(propertyType))
+                .filter(p -> p.propertyTypeId.equals(propertyTypeId))
                 .collect(Collectors.toList());
     }
 
-    public List<ElementProperty> getProperties(String propertyType, String elementType, String elementId) {
-        List<ElementProperty> properties = getProperties(propertyType);
+    public List<ElementProperty> getProperties(String propertyTypeId, String elementType, String elementId) {
+        List<ElementProperty> properties = getProperties(propertyTypeId);
 
         return properties
                 .stream()
                 .filter(p
                 -> p.elementIds //elements are pnode,enode... match on the pnode index
-                .get(modelDefService.elementIndex(propertyType,elementType))
+                .get(modelDefService.elementIndex(propertyTypeId,elementType))
                 .equals(elementId))
                 .collect(Collectors.toList());
-
     }
 
+    public String getElementId(ElementProperty elementProperty, String elementType) {
+        return elementProperty.elementIds
+                .get(modelDefService.elementIndex(elementProperty.propertyTypeId,elementType));
+    }
 
+    public Double getDoubleValue(String propertyTypeId,List<String> elementIds) {
+        Optional<ElementProperty> opt =
+                properties
+                        .stream()
+                        .filter(p -> p.propertyTypeId.equals(propertyTypeId))
+                        .findFirst();
+        return opt.map(p -> p.doubleValue)
+                .orElse(0.0);
+    }
 
 }
