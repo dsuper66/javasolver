@@ -45,9 +45,11 @@ public class PreProcessing {
                         .forEach(property -> //for each enode in the property
                         {
                             String enodeId = modelDataService.getElementId(property,"mktEnode");
-                            Double weight = modelDataService.getDoubleValue(
-                                    "factorPnodeMktEnode",List.of(pn.elementId,enodeId))
-                                    /sumPnodeFactors.get(pn.elementId);
+                            Double sumFactors = sumPnodeFactors.get(pn.elementId);
+                            Double weight = (sumFactors == 0.0) ? 0.0 : //don't div by zero
+                                    modelDataService.getDoubleValue("factorPnodeMktEnode",
+                                            List.of(pn.elementId,enodeId))
+                                    /sumFactors;
 
                             modelDataService.addProperty(
                                         "weightPnodeMktEnode",
