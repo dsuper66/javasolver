@@ -71,13 +71,16 @@ public class ModelDataService {
             List<String> elementIds,
             String value) {
         modelDefService.propertyTypeDef(propertyTypeId).ifPresent(propertyTypeDef -> {
-                    if (propertyTypeDef.valueType.equals("string")) {
+                    if (propertyTypeDef.valueType.equals("double")) {
+                        addProperty(propertyTypeId,elementIds,Double.parseDouble(value));
+                    }
+                    else {
                         this.properties.add(
                                 new ElementProperty(propertyTypeId, elementIds,value, 0.0));
                     }
-                    else {
-                        addProperty(propertyTypeId,elementIds,Double.parseDouble(value));
-                    }
+            if (propertyTypeId.equals("nwEnodeForMktEnode") || propertyTypeId.equals("factorPnodeMktEnode")) {
+                System.out.println("adding:" + elementIds + " value:" + value);
+            }
                 }
         );
     }
@@ -103,7 +106,7 @@ public class ModelDataService {
         return properties
                 .stream()
                 .filter(p
-                -> p.elementIds //elements are pnode,enode... match on the pnode index
+                -> p.elementIds
                 .get(modelDefService.elementIndex(propertyTypeId,elementType))
                 .equals(elementId))
                 .collect(Collectors.toList());
@@ -114,14 +117,73 @@ public class ModelDataService {
                 .get(modelDefService.elementIndex(elementProperty.propertyTypeId,elementType));
     }
 
+    public String getStringValue(String propertyTypeId,List<String> elementIds) {
+        if (propertyTypeId.equals("nwEnodeForMktEnode")) {
+            System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
+        }
+        Optional<ElementProperty> opt = getProperty(propertyTypeId, elementIds);
+        return opt.map(p -> p.stringValue)
+                .orElse("");
+    }
+
+    //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
     public Double getDoubleValue(String propertyTypeId,List<String> elementIds) {
-        Optional<ElementProperty> opt =
-                properties
-                        .stream()
-                        .filter(p -> p.propertyTypeId.equals(propertyTypeId))
-                        .findFirst();
+        if (propertyTypeId.equals("factorPnodeMktEnode")) {
+            System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
+        }
+        Optional<ElementProperty> opt = getProperty(propertyTypeId,elementIds);
         return opt.map(p -> p.doubleValue)
                 .orElse(0.0);
+        /*
+        List<ElementProperty> propertiesThisType = getProperties(propertyTypeId);
+        Optional<ElementProperty> opt =
+                propertiesThisType
+                        .stream()
+                        .filter(p -> {
+                            Boolean matched = true;
+                            Integer index = 0;
+                            for (String elementId : p.elementIds) {
+                                if (!elementIds.get(index).equals(elementId)) {
+                                    matched = false;
+                                    break;
+                                }
+                                index++;
+                            }
+                            return matched;
+                        })
+                        .findFirst();
+        return opt.map(p -> p.doubleValue)
+                .orElse(0.0);*/
     }
+
+
+    //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
+    public Optional<ElementProperty> getProperty(String propertyTypeId,List<String> elementIds) {
+        List<ElementProperty> propertiesThisType = getProperties(propertyTypeId);
+        Optional<ElementProperty> opt =
+                propertiesThisType
+                        .stream()
+                        .filter(p -> p.elementIds.equals(elementIds))
+                        /*
+                        Boolean matched = true;
+                        Integer index = 0;
+                        for (String elementId : elementIds) {
+                            if (propertyTypeId.equals("nwEnodeForMktEnode")) {
+                                System.out.println("checking:" + p.propertyTypeId + " el:" + elementId);
+                            }
+                            if (!elementIds.get(index).equals(elementId)) {
+                                matched = false;
+                                break;
+                            }
+                            index++;
+                        }
+                        return matched;*/
+                        .findFirst();
+
+        System.out.println(opt.map(o -> "found:" + o));
+        return opt;
+
+    }
+
 
 }

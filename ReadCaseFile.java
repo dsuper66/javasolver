@@ -164,7 +164,8 @@ public class ReadCaseFile {
                         //Create the elementId from one or more fields
                         for (Integer orderNum : orderNumFieldNum.keySet()) {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
-                            elementId += " " + thisRowData.get(fieldNum - 1);
+                            String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
+                            elementId += " " + trimmedData; //thisRowData.get(fieldNum - 1);
                         }
                         //Note that these means only one type of each element per row
                         elementTypeAndIdFromThisRow.put(elementType, elementId);
@@ -181,7 +182,7 @@ public class ReadCaseFile {
 
                     for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
-                        String fieldValue = thisRowData.get(fieldNum - 1);
+                        String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If any of the element types have this property then assign the value
@@ -215,12 +216,12 @@ public class ReadCaseFile {
                             }
                             if (foundAllElementTypes) {
                                 String thisSectionName = thisRowData.get(2);
-                                if (thisSectionName.equals("PNODE")) {
-                                    System.out.println(thisSectionName + ":"
+                                /*if (thisSectionName.equals("NODE")) {
+                                    System.out.println(thisSectionName + " read:"
                                             + propertyTypeId + "(" + elementIds + ") = " + fieldValue);
-                                }
+                                }*/
                                 //Add the property
-                                modelDataService.addProperty(propertyTypeId, elementIds, fieldValue);
+                                modelDataService.addProperty(propertyTypeId, elementIds, trimmedData);
                             }
                         });
                     }

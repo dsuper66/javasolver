@@ -42,19 +42,31 @@ public class PreProcessing {
                 .forEach(pn -> modelDataService.getProperties( //get the pnode properties
                         "factorPnodeMktEnode", "pnode", pn.elementId)
                         .stream()
-                        .forEach(property -> //for each enode in the property
+                        .forEach(property -> //for each enode factor property
                         {
-                            String enodeId = modelDataService.getElementId(property,"mktEnode");
+                            String mktEnodeId = modelDataService.getElementId(property, "mktEnode");
                             Double sumFactors = sumPnodeFactors.get(pn.elementId);
-                            Double weight = (sumFactors == 0.0) ? 0.0 : //don't div by zero
-                                    modelDataService.getDoubleValue("factorPnodeMktEnode",
-                                            List.of(pn.elementId,enodeId))
-                                    /sumFactors;
+                            Double enodeFactor = //property.doubleValue;
+                            //uncomment the following to test getDoubleValue
+                            modelDataService.getDoubleValue("factorPnodeMktEnode",List.of(pn.elementId, mktEnodeId));
+
+                            Double weight =
+                                    (sumFactors == 0.0) ? 0.0 : //don't div by zero
+                                            enodeFactor / sumFactors;
 
                             modelDataService.addProperty(
-                                        "weightPnodeMktEnode",
-                                        List.of(pn.elementId,enodeId),
-                                        weight);
+                                    "weightPnodeMktEnode",
+                                    List.of(pn.elementId, mktEnodeId),
+                                    weight);
+
+                            String nwEnodeId = modelDataService.getStringValue(
+                                    "nwEnodeForMktEnode",List.of(mktEnodeId));
+                            String busId = modelDataService.getStringValue(
+                                    "busForNwEnode",List.of(nwEnodeId));
+                            System.out.println(
+                                    enodeFactor + "," + pn.elementId + "," + mktEnodeId
+                                            + ",nwEnode(" + nwEnodeId + "),"
+                                            + "bus(" + busId + ")," + weight);
                         })
                 );
 
