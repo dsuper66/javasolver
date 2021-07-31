@@ -63,6 +63,7 @@ public class PreProcessing {
                                     "nwEnodeForMktEnode",List.of(mktEnodeId));
                             String busId = modelDataService.getStringValue(
                                     "busForNwEnode",List.of(nwEnodeId));
+
                             System.out.println(
                                     enodeFactor + "," + pn.elementId + "," + mktEnodeId
                                             + ",nwEnode(" + nwEnodeId + "),"

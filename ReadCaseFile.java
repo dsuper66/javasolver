@@ -165,10 +165,10 @@ public class ReadCaseFile {
                         for (Integer orderNum : orderNumFieldNum.keySet()) {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
-                            elementId += " " + trimmedData; //thisRowData.get(fieldNum - 1);
+                            elementId += trimmedData + " "; //thisRowData.get(fieldNum - 1);
                         }
                         //Note that these means only one type of each element per row
-                        elementTypeAndIdFromThisRow.put(elementType, elementId);
+                        elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
                     }
                     //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
 

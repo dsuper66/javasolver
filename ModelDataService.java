@@ -78,7 +78,7 @@ public class ModelDataService {
                         this.properties.add(
                                 new ElementProperty(propertyTypeId, elementIds,value, 0.0));
                     }
-            if (propertyTypeId.equals("nwEnodeForMktEnode") || propertyTypeId.equals("factorPnodeMktEnode")) {
+            if (propertyTypeId.equals("nwEnodeForMktEnode") || propertyTypeId.equals("busForNwEnode")) {
                 System.out.println("adding:" + elementIds + " value:" + value);
             }
                 }
@@ -118,9 +118,10 @@ public class ModelDataService {
     }
 
     public String getStringValue(String propertyTypeId,List<String> elementIds) {
-        if (propertyTypeId.equals("nwEnodeForMktEnode")) {
+        /*
+        if (propertyTypeId.equals("busForNwEnode")) {
             System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
-        }
+        }*/
         Optional<ElementProperty> opt = getProperty(propertyTypeId, elementIds);
         return opt.map(p -> p.stringValue)
                 .orElse("");
@@ -128,9 +129,10 @@ public class ModelDataService {
 
     //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
     public Double getDoubleValue(String propertyTypeId,List<String> elementIds) {
+        /*
         if (propertyTypeId.equals("factorPnodeMktEnode")) {
             System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
-        }
+        }*/
         Optional<ElementProperty> opt = getProperty(propertyTypeId,elementIds);
         return opt.map(p -> p.doubleValue)
                 .orElse(0.0);
@@ -180,7 +182,7 @@ public class ModelDataService {
                         return matched;*/
                         .findFirst();
 
-        System.out.println(opt.map(o -> "found:" + o));
+        //System.out.println(opt.map(o -> "found:" + o));
         return opt;
 
     }
