@@ -102,7 +102,7 @@ public class ReadCaseFile {
         String timeBasedMSSNET = "_" + caseInterval.format(dateFormatter).toUpperCase() + "_0.MSSNET";
 
         //File types to read
-        List<String> caseTypes = List.of(".DAILY", ".PERIOD",".MSSNET",timeBasedMSSNET);
+        List<String> casefileTypes = List.of(".DAILY", ".PERIOD",".MSSNET",timeBasedMSSNET);
 
 
         //Set the interval for filtering in the file if it has an interval field
@@ -112,7 +112,7 @@ public class ReadCaseFile {
         System.out.println(">>>>"+ caseIntervalInFile);
 
         //Read the different case types
-        for (String caseType : caseTypes){
+        for (String caseType : casefileTypes){
             String fileName = caseFileDir + caseId + caseType;
             BufferedReader bufferedReader =
                     new BufferedReader(new FileReader(fileName));

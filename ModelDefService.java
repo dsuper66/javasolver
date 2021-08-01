@@ -47,7 +47,7 @@ public class ModelDefService {
                     new PropertyTypeDef("trancheLimit", List.of("tranche"), "double"),
                     new PropertyTypeDef("tradeType", List.of("tranche"), "string"),
                     //Derived
-                    new PropertyTypeDef("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
+                    //new PropertyTypeDef("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
                     new PropertyTypeDef("weightPnodeBus", List.of("pnode","bus"), "double")
             );
 

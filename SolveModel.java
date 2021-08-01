@@ -16,6 +16,8 @@ public class SolveModel {
         ReadCaseFile.readCase(modelDataService);
         PreProcessing.calculateDerivedProperties(modelDataService);
 
+        ConstraintPrep.readConstraints();
+
         /*
         modelElementDataService.addElement(
                 "bus01",

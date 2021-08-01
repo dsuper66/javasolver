@@ -9,6 +9,8 @@ public class PreProcessing {
     public static void calculateDerivedProperties(ModelDataService modelDataService) {
         System.out.println("pre-proc: calculateDerivedProperties");
 
+        //Pnode to bus weights
+
         //Sum the factors for each pnode
         HashMap<String, Double> sumPnodeFactors = new HashMap<>();
         List<ModelElement> pnodes = modelDataService.getElements("pnode");
@@ -54,20 +56,20 @@ public class PreProcessing {
                                     (sumFactors == 0.0) ? 0.0 : //don't div by zero
                                             enodeFactor / sumFactors;
 
-                            modelDataService.addProperty(
-                                    "weightPnodeMktEnode",
-                                    List.of(pn.elementId, mktEnodeId),
-                                    weight);
-
                             String nwEnodeId = modelDataService.getStringValue(
                                     "nwEnodeForMktEnode",List.of(mktEnodeId));
                             String busId = modelDataService.getStringValue(
                                     "busForNwEnode",List.of(nwEnodeId));
 
-                            System.out.println(
+                            modelDataService.addProperty(
+                                    "weightPnodeBus",
+                                    List.of(pn.elementId, busId),
+                                    weight);
+
+                            /*System.out.println(
                                     enodeFactor + "," + pn.elementId + "," + mktEnodeId
                                             + ",nwEnode(" + nwEnodeId + "),"
-                                            + "bus(" + busId + ")," + weight);
+                                            + "bus(" + busId + ")," + weight);*/
                         })
                 );
 

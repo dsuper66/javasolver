@@ -1,10 +1,9 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class MathDefService {
 
-    ArrayList<ConstraintComp> constraintComps = new ArrayList<>(
-
-
+    List<ConstraintComp> constraintComps = new ArrayList<>(
 
     );
 
