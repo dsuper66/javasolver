@@ -8,6 +8,7 @@ public class ConstraintComp {
     String factorValue;
     String factorProperty;
 
+    /*
     public ConstraintComp(
             String constraintType,
             String elementType,
@@ -23,5 +24,5 @@ public class ConstraintComp {
         this.factorParentProperty = factorParentProperty;
         this.factorValue = factorValue;
         this.factorProperty = factorProperty;
-    }
+    }*/
 }
