@@ -175,7 +175,7 @@ public class ReadCaseFile {
                     //Add the elements
                     for (var elementTypeAndId : elementTypeAndIdFromThisRow.entrySet()) {
                         modelDataService.addElement(
-                                elementTypeAndId.getValue(), elementTypeAndId.getKey());
+                                elementTypeAndId.getKey(),elementTypeAndId.getValue());
                     }
 
                     //Get and assign the Properties

@@ -48,7 +48,8 @@ public class ModelDefService {
                     new PropertyTypeDef("tradeType", List.of("tranche"), "string"),
                     //Derived
                     //new PropertyTypeDef("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
-                    new PropertyTypeDef("weightPnodeBus", List.of("pnode","bus"), "double")
+                    new PropertyTypeDef("weightPnodeBus", List.of("pnode","bus"), "double"),
+                    new PropertyTypeDef("weightTrancheBus", List.of("tranche","bus"), "double")
             );
 
     /*

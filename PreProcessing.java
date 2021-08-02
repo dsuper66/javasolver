@@ -6,11 +6,18 @@ import java.util.stream.Collectors;
 
 public class PreProcessing {
 
-    static ModelDefService modelDefService = new ModelDefService();
+    //static ModelDefService modelDefService = new ModelDefService();
 
     public static void calculateDerivedProperties(ModelDataService modelDataService) {
         System.out.println("pre-proc: calculateDerivedProperties");
 
+        Long startTime = System.currentTimeMillis();
+        calcPnodeBusWeights(modelDataService);
+        System.out.println("time taken calcPnodeBusWeights:" + (System.currentTimeMillis() - startTime)/1000.0);
+
+    }
+
+    private static void calcPnodeBusWeights(ModelDataService modelDataService) {
         //Pnode to bus weights
 
         //Sum the factors for each pnode
@@ -23,7 +30,7 @@ public class PreProcessing {
                 .stream()
                 .forEach(pn -> sumPnodeFactors.put(
                         pn.elementId,
-                        modelDataService.getProperties( //get the factor properties
+                        modelDataService.getProperties( //get the factor properties and sum
                                 "factorPnodeMktEnode", "pnode", pn.elementId)
                                 .stream()
                                 .collect(Collectors.summingDouble(p -> p.doubleValue)))
@@ -39,40 +46,31 @@ public class PreProcessing {
                                 )
                         )*/
                 );
-        System.out.println(sumPnodeFactors);
-        System.out.println(LocalDateTime.now() + " done sum factors");
+        //System.out.println(sumPnodeFactors);
 
-        System.out.println(LocalDateTime.now() + " start calc weights");
         //enode weight is its factor / sumFactors
-
-
-        //AtomicLong startTime1 = new AtomicLong(System.nanoTime());
-        //AtomicLong endTime1 = new AtomicLong(System.nanoTime());
         AtomicLong time1 = new AtomicLong();
         AtomicLong time2 = new AtomicLong();
         AtomicLong time3 = new AtomicLong();
 
         pnodes
                 .stream()
-                .forEach(pn -> modelDataService.getProperties( //get the pnode properties
+                //get the properties factorPnodeMktEnode(pnode,mktEnode) where the pnode matches this pnode
+                .forEach(pn -> modelDataService.getProperties(
                         "factorPnodeMktEnode", "pnode", pn.elementId)
                         .stream()
-                        .forEach(property -> //for each enode factor property
+                        .forEach(property -> //for each enode factor for this pnode
                         {
-
                             Long startTime = System.currentTimeMillis();
-
                             String mktEnodeId = modelDataService.getElementId(property, "mktEnode");
-
                             time1.addAndGet(System.currentTimeMillis());
                             time1.addAndGet(-startTime);
 
-
                             Double sumFactors = sumPnodeFactors.get(pn.elementId);
                             Double enodeFactor = property.doubleValue;
-                                    //uncomment the following to test getDoubleValue
-                                    //modelDataService.getDoubleValue("factorPnodeMktEnode",
-                                    //        List.of(pn.elementId, mktEnodeId));
+                            //uncomment the following to test getDoubleValue
+                            //modelDataService.getDoubleValue("factorPnodeMktEnode",
+                            //        List.of(pn.elementId, mktEnodeId));
 
                             Double weight =
                                     (sumFactors == 0.0) ? 0.0 : //don't div by zero
@@ -104,6 +102,5 @@ public class PreProcessing {
         System.out.println(">>>" + (time1.doubleValue()/1000.0));
         System.out.println(">>>" + (time2.doubleValue()/1000.0));
         System.out.println(">>>" + (time3.doubleValue()/1000.0));
-        System.out.println(LocalDateTime.now() + " done calc weights");
     }
 }

@@ -1,9 +1,15 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ModelDataService {
     private ModelDefService modelDefService = new ModelDefService();
-    private ArrayList<ModelElement> modelElements = new ArrayList<>();
+
+    private ArrayList<ModelElement> modelElementsArray = new ArrayList<>();
+    public HashMap<String,ModelElement> modelElementsMap = new HashMap<>();
+
     public ArrayList<ElementProperty> propertiesArray = new ArrayList<>();
     public HashMap<String,ElementProperty> propertiesMap = new HashMap<>();
 
@@ -19,10 +25,13 @@ public class ModelDataService {
                 new ModelElement(elementId,elementType,properties));
     }*/
 
-    //Add element but we don't know the properties yet
+    //Add element
+    public String makeElementKey(String elementTypeId,String elementId) {
+        return elementTypeId + ":" + elementId;
+    }
     public void addElement(
-            String elementId,
-            String elementType) {
+            String elementType,
+            String elementId) {
 
         /*
         HashMap<String, List<String>> properties = new HashMap<>();
@@ -32,8 +41,12 @@ public class ModelDataService {
             properties.putIfAbsent(propertyType,List.of(""));
         }*/
 
-        this.modelElements.add(
-                new ModelElement(elementId,elementType));
+        modelElementsMap.computeIfAbsent(makeElementKey(elementType,elementId),k -> {
+            ModelElement newModelElement = new ModelElement(elementId,elementType);
+            this.modelElementsArray.add(newModelElement);
+            return newModelElement;
+        });
+
     }
 
     //Set the property of the element (if it exists)
@@ -50,7 +63,7 @@ public class ModelDataService {
 
     public Optional<ModelElement> getElement(String elementId) {
         Optional<ModelElement> opt =
-                modelElements
+                modelElementsArray
                         .stream()
                         .filter(e -> e.elementId.equals(elementId))
                         .findFirst();
@@ -60,7 +73,7 @@ public class ModelDataService {
     }
 
     public List<ModelElement> getElements(String elementType) {
-        return modelElements
+        return modelElementsArray
                 .stream()
                 .filter(me -> me.elementType.equals(elementType))
                 .collect(Collectors.toList());
@@ -110,6 +123,7 @@ public class ModelDataService {
         );
     }
 
+    //Get all properties of a certain type
     public List<ElementProperty> getProperties(String propertyTypeId) {
         return propertiesArray
                 .stream()
@@ -117,15 +131,18 @@ public class ModelDataService {
                 .collect(Collectors.toList());
     }
 
+    //Get all properties of this type where the specified element type matches the provided i.d.
+    //e.g. get all factorPnodeMktEnode(pnode,mktEnode) where pnodeId matches
     public List<ElementProperty> getProperties(String propertyTypeId, String elementType, String elementId) {
         List<ElementProperty> properties = getProperties(propertyTypeId);
 
         return properties
                 .stream()
-                .filter(p
-                -> p.elementIds
-                .get(modelDefService.elementIndex(propertyTypeId,elementType))
-                .equals(elementId))
+                .filter(property
+                        -> property.elementIds
+                        //use the index for the elementType
+                        .get(modelDefService.elementIndex(propertyTypeId, elementType))
+                        .equals(elementId))
                 .collect(Collectors.toList());
     }
 
