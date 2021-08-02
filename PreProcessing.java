@@ -76,17 +76,13 @@ public class PreProcessing {
                                     (sumFactors == 0.0) ? 0.0 : //don't div by zero
                                             enodeFactor / sumFactors;
 
-                            startTime = System.currentTimeMillis();
+                            //Get the nwEnodeId for the mktEnode
                             String nwEnodeId = modelDataService.getStringValue(
                                     "nwEnodeForMktEnode", List.of(mktEnodeId));
-                            time2.addAndGet(System.currentTimeMillis());
-                            time2.addAndGet(-startTime);
 
-                            startTime = System.currentTimeMillis();
+                            //Get the busId for the nwEnodeId
                             String busId = modelDataService.getStringValue(
                                     "busForNwEnode", List.of(nwEnodeId));
-                            time3.addAndGet(System.currentTimeMillis());
-                            time3.addAndGet(-startTime);
 
                             modelDataService.addProperty(
                                     "weightPnodeBus",

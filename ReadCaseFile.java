@@ -45,7 +45,6 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldPropertyMap(sectionName,"ID_BUS","busForNwEnode");
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"ELECTRICAL_ISLAND","electricalIsland");
-
         //branch to bus
         //I,NETDATA,BRANCHBUS,1.0,ID_BRANCH,ID_FROMBUS,ID_TOBUS,SUSCEPTANCE,RESISTANCE,REMOVE
         sectionName = "BRANCHBUS";
@@ -60,17 +59,15 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"RESISTANCE","resistance");
 
-
         //----PERIOD----
         //BIDSANDOFFERS,1.0,PNODENAME,TRADERID,INTERVAL,TRADETYPE,TRADERBLOCKALTKEY,TRADERBLOCKTRANCHE,
         // TRADERBLOCKLIMIT,TRADERBLOCKPRICE,SIXSEC,RESERVEPERCENT,DISPATCHABLE
-        //Map a field name to an element type
         sectionName = "BIDSANDOFFERS";
         inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
         inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","tranche",1);
         inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","tranche",2);
         //Map a field name to a property type
-        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADETYPE", "tradeType");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADETYPE", "trancheType");
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKLIMIT", "trancheLimit");
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKPRICE", "tranchePrice");
         inputFieldMapping.addFieldPropertyMap(sectionName,"PNODENAME", "tranchePnode");

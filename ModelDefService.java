@@ -34,18 +34,18 @@ public class ModelDefService {
     static List<PropertyTypeDef> propertyTypeDefDefs =
             List.of(
                     //Inputs
-                    new PropertyTypeDef("fromBus", List.of("branch"), "id"),
-                    new PropertyTypeDef("toBus", List.of("branch"), "id"),
+                    new PropertyTypeDef("fromBus", List.of("branch"), "busId"),
+                    new PropertyTypeDef("toBus", List.of("branch"), "busId"),
                     new PropertyTypeDef("susceptance", List.of("branch"), "double"),
                     new PropertyTypeDef("resistance", List.of("branch"), "double"),
-                    new PropertyTypeDef("nwEnodeForMktEnode", List.of("mktEnode"), "id"),
-                    new PropertyTypeDef("busForNwEnode", List.of("nwEnode"), "id"),
+                    new PropertyTypeDef("nwEnodeForMktEnode", List.of("mktEnode"), "nwEnodeId"),
+                    new PropertyTypeDef("busForNwEnode", List.of("nwEnode"), "busId"),
                     new PropertyTypeDef("factorPnodeMktEnode", List.of("pnode", "mktEnode"), "double"),
                     new PropertyTypeDef("electricalIsland", List.of("bus"), "integer"),
-                    new PropertyTypeDef("tranchePnode", List.of("tranche"), "id"),
+                    new PropertyTypeDef("tranchePnode", List.of("tranche"), "pnodeId"),
                     new PropertyTypeDef("tranchePrice", List.of("tranche"), "double"),
                     new PropertyTypeDef("trancheLimit", List.of("tranche"), "double"),
-                    new PropertyTypeDef("tradeType", List.of("tranche"), "string"),
+                    new PropertyTypeDef("trancheType", List.of("tranche"), "string"),
                     //Derived
                     //new PropertyTypeDef("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
                     new PropertyTypeDef("weightPnodeBus", List.of("pnode","bus"), "double"),
