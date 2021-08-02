@@ -4,7 +4,8 @@ import java.util.stream.Collectors;
 public class ModelDataService {
     private ModelDefService modelDefService = new ModelDefService();
     private ArrayList<ModelElement> modelElements = new ArrayList<>();
-    public ArrayList<ElementProperty> properties = new ArrayList<>();
+    public ArrayList<ElementProperty> propertiesArray = new ArrayList<>();
+    public HashMap<String,ElementProperty> propertiesMap = new HashMap<>();
 
     //--------Elements-----------
     //Add element with properties
@@ -66,35 +67,51 @@ public class ModelDataService {
     }
 
     //--------Properties-----------
-    public void addProperty(
-            String propertyTypeId,
-            List<String> elementIds,
-            String value) {
-        modelDefService.propertyTypeDef(propertyTypeId).ifPresent(propertyTypeDef -> {
-                    if (propertyTypeDef.valueType.equals("double")) {
-                        addProperty(propertyTypeId,elementIds,Double.parseDouble(value));
-                    }
-                    else {
-                        this.properties.add(
-                                new ElementProperty(propertyTypeId, elementIds,value, 0.0));
-                    }
-            if (propertyTypeId.equals("nwEnodeForMktEnode") || propertyTypeId.equals("busForNwEnode")) {
-                System.out.println("adding:" + elementIds + " value:" + value);
-            }
-                }
-        );
+    public String makePropertyKey(String propertyTypeId,List<String> elementIds) {
+        return propertyTypeId + ":[" + String.join(",", elementIds) +"]";
     }
 
+    //Double
     public void addProperty(
             String propertyTypeId,
             List<String> elementIds,
             Double value) {
-        this.properties.add(
-                new ElementProperty(propertyTypeId, elementIds,"", value));
+        ElementProperty newProperty =
+                new ElementProperty(propertyTypeId, elementIds, "", value);
+        propertiesArray.add(newProperty);
+        propertiesMap.put(makePropertyKey(propertyTypeId,elementIds), newProperty);
+
+    }
+    //String... create as string or double depending on valueType
+    public void addProperty(
+            String propertyTypeId,
+            List<String> elementIds,
+            String value) {
+
+        modelDefService.propertyTypeDef(propertyTypeId).ifPresent(propertyTypeDef -> {
+                    //Double value
+                    if (propertyTypeDef.valueType.equals("double")) {
+                        addProperty(propertyTypeId,elementIds,Double.parseDouble(value));
+                    }
+                    //String value
+                    else {
+                        ElementProperty newProperty =
+                                new ElementProperty(propertyTypeId, elementIds, value, 0.0);
+                        propertiesArray.add(newProperty);
+                        propertiesMap.put(makePropertyKey(propertyTypeId,elementIds), newProperty);
+                    }
+
+                    //Debug
+                    if (propertyTypeId.equals("nwEnodeForMktEnode") || propertyTypeId.equals("busForNwEnode")) {
+                        System.out.println("adding:" + elementIds + " value:" + value
+                                + " key:" + makePropertyKey(propertyTypeId,elementIds));
+                    }
+                }
+        );
     }
 
     public List<ElementProperty> getProperties(String propertyTypeId) {
-        return properties
+        return propertiesArray
                 .stream()
                 .filter(p -> p.propertyTypeId.equals(propertyTypeId))
                 .collect(Collectors.toList());
@@ -122,9 +139,15 @@ public class ModelDataService {
         if (propertyTypeId.equals("busForNwEnode")) {
             System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
         }*/
-        Optional<ElementProperty> opt = getProperty(propertyTypeId, elementIds);
+        /*Optional<ElementProperty> opt = getProperty(propertyTypeId, elementIds);
+        return opt.map(p -> p.stringValue)
+                .orElse("");*/
+        Optional<ElementProperty> opt = Optional.ofNullable(
+                propertiesMap.get(makePropertyKey(propertyTypeId, elementIds)));
         return opt.map(p -> p.stringValue)
                 .orElse("");
+
+
     }
 
     //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
