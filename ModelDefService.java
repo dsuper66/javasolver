@@ -1,12 +1,27 @@
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
 public class ModelDefService {
 
+    public enum ElementType {
+        branch,
+        pnode,
+        mktEnode,
+        nwEnode,
+        bus,
+        tranche
+    }
+
+    public enum PropertyType {
+        trancheType,
+        factorPnodeMktEnode
+    }
+
+
     //The properties of an element type
     //e.g. elementTypeProperties['branch'] = ['fromBus', 'toBus', 'susceptance', 'resistance','flowMax'];
+    /*
     static Map<String, List<String>> elementTypeProperties =
             Map.of(
                     "branch", List.of("fromBus","toBus","susceptance","resistance"),
@@ -29,7 +44,7 @@ public class ModelDefService {
                     "bus",
                     "enOfferTranche",
                     "enBidTranche"
-            );
+            );*/
 
     static List<PropertyTypeDef> propertyTypeDefDefs =
             List.of(
@@ -61,6 +76,7 @@ public class ModelDefService {
                     "offerTrancheLimit",List.of("enOfferBid"),
                     "offerTranchePrice",List.of("enOfferBid")
      */
+    /*
     static List<String> getPropertiesForElementType(String elementType) {
         if (elementTypeProperties.get(elementType) != null) {
             return elementTypeProperties.get(elementType);
@@ -68,10 +84,11 @@ public class ModelDefService {
         else {
             return List.of("");
         }
-    }
+    }*/
 
     //https://x-team.com/blog/using-optional-to-transform-your-java-code/
 
+    /*
     static Boolean elementTypeHasProperty(String elementType, String propertyType) {
         List<String> propertyTypes = elementTypeProperties.get(elementType);
         if (propertyTypes != null) {
@@ -80,7 +97,7 @@ public class ModelDefService {
         else {
             return false;
         }
-    }
+    }*/
 
     //https://stackoverflow.com/questions/41485751/java-8-optional-ifpresent-return-object-orelsethrow-exception
     //https://stackoverflow.com/questions/23773024/functional-style-of-java-8s-optional-ifpresent-and-if-not-present

@@ -1,6 +1,7 @@
 
 
 public class ModelElement {
+
     String elementId;
     String elementType;
     //Map<String, List<String>> properties;

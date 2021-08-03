@@ -15,6 +15,22 @@ public class PreProcessing {
         calcPnodeBusWeights(modelDataService);
         System.out.println("time taken calcPnodeBusWeights:" + (System.currentTimeMillis() - startTime)/1000.0);
 
+        setupBidsAndOffers(modelDataService);
+
+
+    }
+
+    private static void setupBidsAndOffers(ModelDataService modelDataService) {
+        //Add enOffer elements as tranche where trancheType = "ENOF"
+        for (String elId : modelDataService.getElementIds(
+                ModelDefService.ElementType.tranche, ModelDefService.PropertyType.trancheType,"ENOF"
+                )){
+            System.out.println(">>>" );
+        }
+
+
+        //Turn the load forecast into bids
+
     }
 
     private static void calcPnodeBusWeights(ModelDataService modelDataService) {
@@ -23,7 +39,7 @@ public class PreProcessing {
         //Sum the factors for each pnode
         System.out.println(LocalDateTime.now() + " start sum factors");
         HashMap<String, Double> sumPnodeFactors = new HashMap<>();
-        List<ModelElement> pnodes = modelDataService.getElements("pnode");
+        List<ModelElement> pnodes = modelDataService.getElements(ModelDefService.ElementType.pnode);
         //List<ElementProperty> pnodeEnodeFactors = modelDataService.getProperties("factorPnodeMktEnode");
         //https://stackoverflow.com/questions/33606014/collect-stream-into-a-hashmap-with-lambda-in-java-8
         pnodes
@@ -31,20 +47,11 @@ public class PreProcessing {
                 .forEach(pn -> sumPnodeFactors.put(
                         pn.elementId,
                         modelDataService.getProperties( //get the factor properties and sum
-                                "factorPnodeMktEnode", "pnode", pn.elementId)
+                                ModelDefService.PropertyType.factorPnodeMktEnode,
+                                ModelDefService.ElementType.pnode,
+                                pn.elementId)
                                 .stream()
                                 .collect(Collectors.summingDouble(p -> p.doubleValue)))
-
-                        /*
-                        pnodeEnodeFactors //get the factors for this pnode and sum them
-                                .stream()
-                                .filter(pef
-                                        -> pef.elementIds //elements are pnode,enode... match on the pnode index
-                                        .get(modelDefService.elementIndex("factorPnodeMktEnode","pnode"))
-                                        .equals(pn.elementId))
-                                .collect(Collectors.summingDouble(pef -> Double.parseDouble(pef.value))
-                                )
-                        )*/
                 );
         //System.out.println(sumPnodeFactors);
 
@@ -57,7 +64,9 @@ public class PreProcessing {
                 .stream()
                 //get the properties factorPnodeMktEnode(pnode,mktEnode) where the pnode matches this pnode
                 .forEach(pn -> modelDataService.getProperties(
-                        "factorPnodeMktEnode", "pnode", pn.elementId)
+                        ModelDefService.PropertyType.factorPnodeMktEnode,
+                        ModelDefService.ElementType.pnode,
+                        pn.elementId)
                         .stream()
                         .forEach(property -> //for each enode factor for this pnode
                         {

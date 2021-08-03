@@ -40,7 +40,7 @@ public class ModelDataService {
         for (String propertyType : elementTypeProperties) {
             properties.putIfAbsent(propertyType,List.of(""));
         }*/
-
+        //Add to map and array
         modelElementsMap.computeIfAbsent(makeElementKey(elementType,elementId),k -> {
             ModelElement newModelElement = new ModelElement(elementId,elementType);
             this.modelElementsArray.add(newModelElement);
@@ -51,6 +51,7 @@ public class ModelDataService {
 
     //Set the property of the element (if it exists)
     //https://www.baeldung.com/java-optional
+    /*
     public void assignElementProperty(String elementId, String propertyType, String value) {
         getElement(elementId).ifPresent(modelElement ->
                 {
@@ -59,8 +60,8 @@ public class ModelDataService {
                     }
                 }
         );
-    }
-
+    }*/
+/*
     public Optional<ModelElement> getElement(String elementId) {
         Optional<ModelElement> opt =
                 modelElementsArray
@@ -70,13 +71,17 @@ public class ModelDataService {
         //opt.ifPresent(modelElement ->
         //    System.out.println(elementId + " properties:" + modelElement.properties));
         return opt;
-    }
+    }*/
 
-    public List<ModelElement> getElements(String elementType) {
+    public List<ModelElement> getElements(ModelDefService.ElementType elementType) {
         return modelElementsArray
                 .stream()
-                .filter(me -> me.elementType.equals(elementType))
+                .filter(me -> me.elementType.equals(elementType.name()))
                 .collect(Collectors.toList());
+    }
+
+    public ModelElement getElement(ModelDefService.ElementType elementType, String elementId) {
+
     }
 
     //--------Properties-----------
@@ -131,21 +136,48 @@ public class ModelDataService {
                 .collect(Collectors.toList());
     }
 
-    //Get all properties of this type where the specified element type matches the provided i.d.
-    //e.g. get all factorPnodeMktEnode(pnode,mktEnode) where pnodeId matches
-    public List<ElementProperty> getProperties(String propertyTypeId, String elementType, String elementId) {
-        List<ElementProperty> properties = getProperties(propertyTypeId);
+    //Get all elements where this property value matches
+    //e.g. get all tranche elements where trancheType property = "ENOF"
+    public List<String> getElementIds(
+            ModelDefService.ElementType elementType,
+            ModelDefService.PropertyType propertyType,
+            String value){
+        List<ElementProperty> properties =
+                getProperties(propertyType.name())
+                .stream()
+                .filter(property
+                        -> property.stringValue.equals(value))
+                .collect(Collectors.toList());
 
+        final Integer elementIndex = modelDefService.elementIndex(propertyType.name(), elementType.name());
+        return properties
+                .stream()
+                .map(p -> p.elementIds.get(elementIndex))
+                .collect(Collectors.toList());
+    }
+
+    //Get all properties of this type where the *specified* element type matches the provided i.d.
+    //e.g. probably only used for all factorPnodeMktEnode(pnode,mktEnode) where pnodeId matches
+    //this is a bit slow because we don't have the key (could add map to array to make this faster)
+    public List<ElementProperty> getProperties(
+            ModelDefService.PropertyType propertyType,
+            ModelDefService.ElementType elementType,
+            String elementId) {
+        List<ElementProperty> properties = getProperties(propertyType.name());
+
+        final Integer elementIndex = modelDefService.elementIndex(propertyType.name(), elementType.name());
         return properties
                 .stream()
                 .filter(property
                         -> property.elementIds
                         //use the index for the elementType
-                        .get(modelDefService.elementIndex(propertyTypeId, elementType))
+                        .get(elementIndex)
                         .equals(elementId))
                 .collect(Collectors.toList());
     }
 
+    //For this property, get the id of the indexing element of the specified type
+    //e.g. again, probably only used to get the MktEnode i.d. from the FactorPnodeMktEnode property
     public String getElementId(ElementProperty elementProperty, String elementType) {
         return elementProperty.elementIds
                 .get(modelDefService.elementIndex(elementProperty.propertyTypeId,elementType));
