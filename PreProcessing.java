@@ -25,7 +25,8 @@ public class PreProcessing {
         //This is effectively just a set of elements that is a subset of the tranche elements
         //the properties are unchanged because the i.d. is the same
         for (String elementId : modelDataService.getElementIds(
-                ModelDefService.ElementType.tranche, ModelDefService.PropertyType.trancheType,"ENOF"
+                ModelDefService.ElementType.tranche,
+                ModelDefService.PropertyType.trancheType,"ENOF"
                 )){
             modelDataService.addElement(ModelDefService.ElementType.enOfferTranche,elementId);
 
@@ -34,7 +35,6 @@ public class PreProcessing {
             Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice,List.of(elementId));
             System.out.println(">>>" + pnode + " " + limit + " $" + price);
         }
-
 
         //Turn the load forecast into bids
 

@@ -135,10 +135,10 @@ public class ModelDataService {
     }
 
     //Get all properties of a certain type
-    public List<ElementProperty> getProperties(String propertyTypeId) {
+    public List<ElementProperty> getProperties(ModelDefService.PropertyType propertyType) {
         return propertiesArray
                 .stream()
-                .filter(p -> p.propertyTypeId.equals(propertyTypeId))
+                .filter(p -> p.propertyTypeId.equals(propertyType.name()))
                 .collect(Collectors.toList());
     }
 
@@ -149,7 +149,7 @@ public class ModelDataService {
             ModelDefService.PropertyType propertyType,
             String value){
         List<ElementProperty> properties =
-                getProperties(propertyType.name())
+                getProperties(propertyType)
                 .stream()
                 .filter(property
                         -> property.stringValue.equals(value))
@@ -169,7 +169,7 @@ public class ModelDataService {
             ModelDefService.PropertyType propertyType,
             ModelDefService.ElementType elementType,
             String elementId) {
-        List<ElementProperty> properties = getProperties(propertyType.name());
+        List<ElementProperty> properties = getProperties(propertyType);
 
         final Integer elementIndex = modelDefService.elementIndex(propertyType.name(), elementType.name());
         return properties
@@ -240,7 +240,7 @@ public class ModelDataService {
     //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
     //This is the old slow way, now uses map
     public Optional<ElementProperty> getProperty(ModelDefService.PropertyType propertyType, List<String> elementIds) {
-        List<ElementProperty> propertiesThisType = getProperties(propertyType.name());
+        List<ElementProperty> propertiesThisType = getProperties(propertyType);
         Optional<ElementProperty> opt =
                 propertiesThisType
                         .stream()
