@@ -29,6 +29,15 @@ public class ModelDataService {
     public String makeElementKey(String elementTypeId,String elementId) {
         return elementTypeId + ":" + elementId;
     }
+
+    //Adding from pre-processing
+    public void addElement(
+            ModelDefService.ElementType elementType,
+            String elementId){
+        addElement(elementType.name(),elementId);
+    }
+
+    //Adding from the read
     public void addElement(
             String elementType,
             String elementId) {

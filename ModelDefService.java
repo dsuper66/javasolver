@@ -10,7 +10,8 @@ public class ModelDefService {
         mktEnode,
         nwEnode,
         bus,
-        tranche
+        tranche,
+        enOfferTranche
     }
 
     public enum PropertyType {

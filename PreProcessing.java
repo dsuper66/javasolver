@@ -21,14 +21,17 @@ public class PreProcessing {
     }
 
     private static void setupBidsAndOffers(ModelDataService modelDataService) {
-        //Add enOffer elements as tranche where trancheType = "ENOF"
-        for (String elId : modelDataService.getElementIds(
+        //Add enOfferTranche elements as tranche where trancheType = "ENOF"
+        //This is effectively just a set of elements that is a subset of the tranche elements
+        //the properties are unchanged because the i.d. is the same
+        for (String elementId : modelDataService.getElementIds(
                 ModelDefService.ElementType.tranche, ModelDefService.PropertyType.trancheType,"ENOF"
                 )){
+            modelDataService.addElement(ModelDefService.ElementType.enOfferTranche,elementId);
 
-            String pnode = modelDataService.getStringValue(ModelDefService.PropertyType.tranchePnode,List.of(elId));
-            Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit,List.of(elId));
-            Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice,List.of(elId));
+            String pnode = modelDataService.getStringValue(ModelDefService.PropertyType.tranchePnode,List.of(elementId));
+            Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit,List.of(elementId));
+            Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice,List.of(elementId));
             System.out.println(">>>" + pnode + " " + limit + " $" + price);
         }
 
