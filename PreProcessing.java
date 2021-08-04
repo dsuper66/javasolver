@@ -33,10 +33,22 @@ public class PreProcessing {
             String pnode = modelDataService.getStringValue(ModelDefService.PropertyType.tranchePnode,List.of(elementId));
             Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit,List.of(elementId));
             Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice,List.of(elementId));
-            System.out.println(">>>" + pnode + " " + limit + " $" + price);
+            //System.out.println(">>>" + pnode + " " + limit + " $" + price);
         }
 
         //Turn the load forecast into bids
+        for (ElementProperty property : modelDataService.getProperties(
+                ModelDefService.PropertyType.pnodeLoad)){
+            System.out.println(">>>" + property.elementIds.get(0) + " " + property.doubleValue);
+
+            modelDataService.addProperty(
+                    ModelDefService.PropertyType.trancheLimit,property.elementIds,property.doubleValue);
+            Double bidPrice = 20000.0;
+            modelDataService.addProperty(
+                    ModelDefService.PropertyType.tranchePrice,property.elementIds,bidPrice);
+            //bus and busWeight
+
+        }
 
     }
 

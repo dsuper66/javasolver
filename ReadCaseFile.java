@@ -76,7 +76,7 @@ public class ReadCaseFile {
         // CONFORMINGFACTOR,NONCONFORMINGLOAD,CONFORMINGFORECAST,ISNCL,ISBAD,ISOVERRIDE,INSTRUCTEDSHEDACTIVE,DISPATCHEDLOAD,DISPATCHEDGEN
         sectionName = "PNODELOAD";
         inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
-        inputFieldMapping.addFieldPropertyMap(sectionName,"ACTUALLOAD", "actualLoad");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"ACTUALLOAD", "pnodeLoad");
 
         //Map an element type to a property type
         //(allows for concatenated element i.d.)

@@ -95,6 +95,14 @@ public class ModelDataService {
         return propertyTypeId + ":[" + String.join(",", elementIds) +"]";
     }
 
+    //Double using property type
+    public void addProperty(
+            ModelDefService.PropertyType propertyType,
+            List<String> elementIds,
+            Double value) {
+        addProperty(propertyType.name(),elementIds,value);
+    }
+
     //Double
     public void addProperty(
             String propertyTypeId,
@@ -104,7 +112,6 @@ public class ModelDataService {
                 new ElementProperty(propertyTypeId, elementIds, "", value);
         propertiesArray.add(newProperty);
         propertiesMap.put(makePropertyKey(propertyTypeId,elementIds), newProperty);
-
     }
     //String... create as string or double depending on valueType
     public void addProperty(

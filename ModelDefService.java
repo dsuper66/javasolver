@@ -21,7 +21,8 @@ public class ModelDefService {
         nwEnodeForMktEnode,
         busForNwEnode,
         trancheLimit,
-        tranchePrice
+        tranchePrice,
+        pnodeLoad
     }
 
 
@@ -67,6 +68,7 @@ public class ModelDefService {
                     new PropertyTypeDef("tranchePrice", List.of("tranche"), "double"),
                     new PropertyTypeDef("trancheLimit", List.of("tranche"), "double"),
                     new PropertyTypeDef("trancheType", List.of("tranche"), "string"),
+                    new PropertyTypeDef("pnodeLoad", List.of("pnode"), "double"),
                     //Derived
                     //new PropertyTypeDef("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
                     new PropertyTypeDef("weightPnodeBus", List.of("pnode","bus"), "double"),
