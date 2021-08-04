@@ -80,9 +80,6 @@ public class ModelDataService {
                 .collect(Collectors.toList());
     }
 
-    public ModelElement getElement(ModelDefService.ElementType elementType, String elementId) {
-
-    }
 
     //--------Properties-----------
     public String makePropertyKey(String propertyTypeId,List<String> elementIds) {
@@ -183,7 +180,7 @@ public class ModelDataService {
                 .get(modelDefService.elementIndex(elementProperty.propertyTypeId,elementType));
     }
 
-    public String getStringValue(String propertyTypeId,List<String> elementIds) {
+    public String getStringValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
         /*
         if (propertyTypeId.equals("busForNwEnode")) {
             System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
@@ -192,7 +189,7 @@ public class ModelDataService {
         return opt.map(p -> p.stringValue)
                 .orElse("");*/
         Optional<ElementProperty> opt = Optional.ofNullable(
-                propertiesMap.get(makePropertyKey(propertyTypeId, elementIds)));
+                propertiesMap.get(makePropertyKey(propertyType.name(), elementIds)));
         return opt.map(p -> p.stringValue)
                 .orElse("");
 
@@ -200,12 +197,12 @@ public class ModelDataService {
     }
 
     //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
-    public Double getDoubleValue(String propertyTypeId,List<String> elementIds) {
+    public Double getDoubleValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
         /*
         if (propertyTypeId.equals("factorPnodeMktEnode")) {
             System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
         }*/
-        Optional<ElementProperty> opt = getProperty(propertyTypeId,elementIds);
+        Optional<ElementProperty> opt = getProperty(propertyType,elementIds);
         return opt.map(p -> p.doubleValue)
                 .orElse(0.0);
         /*
@@ -232,8 +229,9 @@ public class ModelDataService {
 
 
     //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
-    public Optional<ElementProperty> getProperty(String propertyTypeId,List<String> elementIds) {
-        List<ElementProperty> propertiesThisType = getProperties(propertyTypeId);
+    //This is the old slow way, now uses map
+    public Optional<ElementProperty> getProperty(ModelDefService.PropertyType propertyType, List<String> elementIds) {
+        List<ElementProperty> propertiesThisType = getProperties(propertyType.name());
         Optional<ElementProperty> opt =
                 propertiesThisType
                         .stream()

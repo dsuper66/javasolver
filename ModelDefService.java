@@ -15,7 +15,12 @@ public class ModelDefService {
 
     public enum PropertyType {
         trancheType,
-        factorPnodeMktEnode
+        tranchePnode,
+        factorPnodeMktEnode,
+        nwEnodeForMktEnode,
+        busForNwEnode,
+        trancheLimit,
+        tranchePrice
     }
 
 

@@ -25,7 +25,11 @@ public class PreProcessing {
         for (String elId : modelDataService.getElementIds(
                 ModelDefService.ElementType.tranche, ModelDefService.PropertyType.trancheType,"ENOF"
                 )){
-            System.out.println(">>>" );
+
+            String pnode = modelDataService.getStringValue(ModelDefService.PropertyType.tranchePnode,List.of(elId));
+            Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit,List.of(elId));
+            Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice,List.of(elId));
+            System.out.println(">>>" + pnode + " " + limit + " $" + price);
         }
 
 
@@ -87,11 +91,11 @@ public class PreProcessing {
 
                             //Get the nwEnodeId for the mktEnode
                             String nwEnodeId = modelDataService.getStringValue(
-                                    "nwEnodeForMktEnode", List.of(mktEnodeId));
+                                    ModelDefService.PropertyType.nwEnodeForMktEnode, List.of(mktEnodeId));
 
                             //Get the busId for the nwEnodeId
                             String busId = modelDataService.getStringValue(
-                                    "busForNwEnode", List.of(nwEnodeId));
+                                    ModelDefService.PropertyType.busForNwEnode, List.of(nwEnodeId));
 
                             modelDataService.addProperty(
                                     "weightPnodeBus",
