@@ -25,10 +25,10 @@ public class PropertyTypeDef {
     }*/
 
     public PropertyTypeDef(
-            String propertyTypeId,
+            ModelDefService.PropertyType propertyType,
             List<String> elementTypes,
             String valueType) {
-        this.propertyTypeId = propertyTypeId;
+        this.propertyTypeId = propertyType.name();
         this.elementTypes = elementTypes;
         this.valueType = valueType;
     }

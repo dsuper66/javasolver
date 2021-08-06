@@ -11,10 +11,13 @@ public class ModelDefService {
         nwEnode,
         bus,
         tranche,
-        enOfferTranche
+        enOfferTranche,
+        bidTranche
     }
 
     public enum PropertyType {
+        fromBus,
+        toBus,
         trancheType,
         tranchePnode,
         factorPnodeMktEnode,
@@ -22,7 +25,12 @@ public class ModelDefService {
         busForNwEnode,
         trancheLimit,
         tranchePrice,
-        pnodeLoad
+        pnodeLoad,
+        weightTrancheBus,
+        susceptance,
+        resistance,
+        electricalIsland,
+        weightPnodeBus
     }
 
 
@@ -56,24 +64,23 @@ public class ModelDefService {
     static List<PropertyTypeDef> propertyTypeDefDefs =
             List.of(
                     //Inputs
-                    new PropertyTypeDef("fromBus", List.of("branch"), "busId"),
-                    new PropertyTypeDef("toBus", List.of("branch"), "busId"),
-                    new PropertyTypeDef("susceptance", List.of("branch"), "double"),
-                    new PropertyTypeDef("resistance", List.of("branch"), "double"),
-                    new PropertyTypeDef("nwEnodeForMktEnode", List.of("mktEnode"), "nwEnodeId"),
-                    new PropertyTypeDef("busForNwEnode", List.of("nwEnode"), "busId"),
-                    new PropertyTypeDef("factorPnodeMktEnode", List.of("pnode", "mktEnode"), "double"),
-                    new PropertyTypeDef("electricalIsland", List.of("bus"), "integer"),
-                    new PropertyTypeDef("tranchePnode", List.of("tranche"), "pnodeId"),
-                    new PropertyTypeDef("tranchePrice", List.of("tranche"), "double"),
-                    new PropertyTypeDef("trancheLimit", List.of("tranche"), "double"),
-                    new PropertyTypeDef("trancheType", List.of("tranche"), "string"),
-                    new PropertyTypeDef("pnodeLoad", List.of("pnode"), "double"),
+                    new PropertyTypeDef(PropertyType.fromBus, List.of("branch"), "busId"),
+                    new PropertyTypeDef(PropertyType.toBus, List.of("branch"), "busId"),
+                    new PropertyTypeDef(PropertyType.susceptance, List.of("branch"), "double"),
+                    new PropertyTypeDef(PropertyType.resistance, List.of("branch"), "double"),
+                    new PropertyTypeDef(PropertyType.nwEnodeForMktEnode, List.of("mktEnode"), "nwEnodeId"),
+                    new PropertyTypeDef(PropertyType.busForNwEnode, List.of("nwEnode"), "busId"),
+                    new PropertyTypeDef(PropertyType.factorPnodeMktEnode, List.of("pnode", "mktEnode"), "double"),
+                    new PropertyTypeDef(PropertyType.electricalIsland, List.of("bus"), "integer"),
+                    new PropertyTypeDef(PropertyType.tranchePnode, List.of("tranche"), "pnodeId"),
+                    new PropertyTypeDef(PropertyType.tranchePrice, List.of("tranche"), "double"),
+                    new PropertyTypeDef(PropertyType.trancheLimit, List.of("tranche"), "double"),
+                    new PropertyTypeDef(PropertyType.trancheType, List.of("tranche"), "string"),
+                    new PropertyTypeDef(PropertyType.pnodeLoad, List.of("pnode"), "double"),
                     //Derived
                     //new PropertyTypeDef("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
-                    new PropertyTypeDef("weightPnodeBus", List.of("pnode","bus"), "double"),
-                    new PropertyTypeDef("weightTrancheBus", List.of("tranche","bus"), "double"),
-                    new PropertyTypeDef("trancheBus", List.of("tranche"), "busId")
+                    new PropertyTypeDef(PropertyType.weightPnodeBus, List.of("pnode","bus"), "double"),
+                    new PropertyTypeDef(PropertyType.weightTrancheBus, List.of("tranche","bus"), "double")
             );
 
     /*

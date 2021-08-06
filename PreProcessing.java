@@ -21,32 +21,47 @@ public class PreProcessing {
     }
 
     private static void setupBidsAndOffers(ModelDataService modelDataService) {
-        //Add enOfferTranche elements as tranche where trancheType = "ENOF"
+        //enOfferTranche elements as tranche where trancheType = "ENOF"
         //This is effectively just a set of elements that is a subset of the tranche elements
         //the properties are unchanged because the i.d. is the same
-        for (String elementId : modelDataService.getElementIds(
+        for (String enOfferTrancheId : modelDataService.getElementIds(
                 ModelDefService.ElementType.tranche,
                 ModelDefService.PropertyType.trancheType,"ENOF"
                 )){
-            modelDataService.addElement(ModelDefService.ElementType.enOfferTranche,elementId);
+            modelDataService.addElement(ModelDefService.ElementType.enOfferTranche,enOfferTrancheId);
 
-            String pnode = modelDataService.getStringValue(ModelDefService.PropertyType.tranchePnode,List.of(elementId));
-            Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit,List.of(elementId));
-            Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice,List.of(elementId));
+            //weightTrancheBus... if the tranche has non-zero weight then it clears at the bus
+            String pnodeId = modelDataService.getStringValue(
+                    ModelDefService.PropertyType.tranchePnode,List.of(enOfferTrancheId));
+            String weightPnodeBus = modelDataService.getStringValue(
+                    ModelDefService.PropertyType.weightPnodeBus,List.of(pnodeId));
+            modelDataService.addProperty(
+                    ModelDefService.PropertyType.weightTrancheBus,List.of(enOfferTrancheId),weightPnodeBus);
+
+            //debug... price and limit
+            Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit,List.of(enOfferTrancheId));
+            Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice,List.of(enOfferTrancheId));
+
             //System.out.println(">>>" + pnode + " " + limit + " $" + price);
         }
 
-        //Turn the load forecast into bids
-        for (ElementProperty property : modelDataService.getProperties(
-                ModelDefService.PropertyType.pnodeLoad)){
+        //Energy bids from load
+        for (ElementProperty property : modelDataService.getProperties(ModelDefService.PropertyType.pnodeLoad)){
+
             System.out.println(">>>" + property.elementIds.get(0) + " " + property.doubleValue);
 
+            //use the pnode id for the bid tranche id
+            String bidTrancheId = property.elementIds.get(0);
+            modelDataService.addElement(ModelDefService.ElementType.enOfferTranche,bidTrancheId);
+
+            //Create bid tranche properties from the pnode load (linking id is the pnode)
             modelDataService.addProperty(
-                    ModelDefService.PropertyType.trancheLimit,property.elementIds,property.doubleValue);
+                    ModelDefService.PropertyType.trancheLimit,List.of(bidTrancheId),property.doubleValue);
             Double bidPrice = 20000.0;
             modelDataService.addProperty(
-                    ModelDefService.PropertyType.tranchePrice,property.elementIds,bidPrice);
+                    ModelDefService.PropertyType.tranchePrice,List.of(bidTrancheId),bidPrice);
             //bus and busWeight
+
 
         }
 
@@ -113,7 +128,7 @@ public class PreProcessing {
                                     ModelDefService.PropertyType.busForNwEnode, List.of(nwEnodeId));
 
                             modelDataService.addProperty(
-                                    "weightPnodeBus",
+                                    ModelDefService.PropertyType.weightPnodeBus,
                                     List.of(pn.elementId, busId),
                                     weight);
 

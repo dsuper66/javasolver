@@ -102,7 +102,13 @@ public class ModelDataService {
             Double value) {
         addProperty(propertyType.name(),elementIds,value);
     }
-
+    //String using property type
+    public void addProperty(
+            ModelDefService.PropertyType propertyType,
+            List<String> elementIds,
+            String value) {
+        addProperty(propertyType.name(),elementIds,value);
+    }
     //Double
     public void addProperty(
             String propertyTypeId,
