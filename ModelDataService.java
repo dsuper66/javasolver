@@ -176,7 +176,7 @@ public class ModelDataService {
     }
 
     //Get all properties of this type where the *specified* element type matches the provided i.d.
-    //e.g. probably only used for all factorPnodeMktEnode(pnode,mktEnode) where pnodeId matches
+    //e.g. all factorPnodeMktEnode(pnode,mktEnode) where pnodeId matches
     //this is a bit slow because we don't have the key (could add map to array to make this faster)
     public List<ElementProperty> getProperties(
             ModelDefService.PropertyType propertyType,
