@@ -17,6 +17,9 @@ public class PreProcessing {
 
         setupBidsAndOffers(modelDataService);
 
+        //Filter out zero factors and dead buses and branches that don't have two live buses
+
+        //Assign mktBranch limit to branch
 
     }
 

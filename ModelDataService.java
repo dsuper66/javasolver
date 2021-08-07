@@ -83,9 +83,12 @@ public class ModelDataService {
     }*/
 
     public List<ModelElement> getElements(ModelDefService.ElementType elementType) {
+        return getElements(elementType.name());
+    }
+    public List<ModelElement> getElements(String elementTypeId) {
         return modelElementsArray
                 .stream()
-                .filter(me -> me.elementType.equals(elementType.name()))
+                .filter(me -> me.elementType.equals(elementTypeId))
                 .collect(Collectors.toList());
     }
 
@@ -149,9 +152,12 @@ public class ModelDataService {
 
     //Get all properties of a certain type
     public List<ElementProperty> getProperties(ModelDefService.PropertyType propertyType) {
+        return getProperties(propertyType.name());
+    }
+    public List<ElementProperty> getProperties(String propertyTypeId) {
         return propertiesArray
                 .stream()
-                .filter(p -> p.propertyTypeId.equals(propertyType.name()))
+                .filter(p -> p.propertyTypeId.equals(propertyTypeId))
                 .collect(Collectors.toList());
     }
 
@@ -219,14 +225,26 @@ public class ModelDataService {
     }
 
     //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
+    public Double getDoubleValue(String propertyTypeId, List<String> elementIds) {
+        Optional<ElementProperty> opt = Optional.ofNullable(
+                propertiesMap.get(makePropertyKey(propertyTypeId, elementIds)));
+        return opt.map(p -> p.doubleValue)
+                .orElse(0.0);
+        /*
+        Optional<ElementProperty> opt = getProperty(propertyTypeId,elementIds);
+        return opt.map(p -> p.doubleValue)
+                .orElse(0.0);*/
+    }
     public Double getDoubleValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
+        return getDoubleValue(propertyType.name(),elementIds);
         /*
         if (propertyTypeId.equals("factorPnodeMktEnode")) {
             System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
         }*/
+        /*
         Optional<ElementProperty> opt = getProperty(propertyType,elementIds);
         return opt.map(p -> p.doubleValue)
-                .orElse(0.0);
+                .orElse(0.0); */
         /*
         List<ElementProperty> propertiesThisType = getProperties(propertyTypeId);
         Optional<ElementProperty> opt =

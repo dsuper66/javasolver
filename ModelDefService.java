@@ -30,7 +30,8 @@ public class ModelDefService {
         susceptance,
         resistance,
         electricalIsland,
-        weightPnodeBus
+        weightPnodeBus,
+        mktBrLimit
     }
 
 
@@ -77,6 +78,7 @@ public class ModelDefService {
                     new PropertyTypeDef(PropertyType.trancheLimit, List.of("tranche"), "double"),
                     new PropertyTypeDef(PropertyType.trancheType, List.of("tranche"), "string"),
                     new PropertyTypeDef(PropertyType.pnodeLoad, List.of("pnode"), "double"),
+                    new PropertyTypeDef(PropertyType.mktBrLimit, List.of("mktBranch"), "double"),
                     //Derived
                     //new PropertyTypeDef("weightPnodeMktEnode", List.of("pnode","mktEnode"), "double"),
                     new PropertyTypeDef(PropertyType.weightPnodeBus, List.of("pnode","bus"), "double"),

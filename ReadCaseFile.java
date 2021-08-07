@@ -31,7 +31,6 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"ID_ST","mktEnode",1);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_KV","mktEnode",2);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_EQUIPMENT","mktEnode",3);
-
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"ID_ENODE","nwEnodeForMktEnode");
 
@@ -68,19 +67,24 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","tranche",2);
         //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADETYPE", "trancheType");
-        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKLIMIT", "trancheLimit");
-        inputFieldMapping.addFieldPropertyMap(sectionName,"TRADERBLOCKPRICE", "tranchePrice");
-        inputFieldMapping.addFieldPropertyMap(sectionName,"PNODENAME", "tranchePnode");
-
+        inputFieldMapping.addFieldPropertyMap(sectionName, "TRADERBLOCKLIMIT", "trancheLimit");
+        inputFieldMapping.addFieldPropertyMap(sectionName, "TRADERBLOCKPRICE", "tranchePrice");
+        inputFieldMapping.addFieldPropertyMap(sectionName, "PNODENAME", "tranchePnode");
+        //pnode load
         //I,MSSDATA,PNODELOAD,1.0,PNODENAME,INTERVAL,LOADAREAID,ACTUALLOAD,SOURCEOFACTUAL,INSTRUCTEDSHED,
         // CONFORMINGFACTOR,NONCONFORMINGLOAD,CONFORMINGFORECAST,ISNCL,ISBAD,ISOVERRIDE,INSTRUCTEDSHEDACTIVE,DISPATCHEDLOAD,DISPATCHEDGEN
         sectionName = "PNODELOAD";
         inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
         inputFieldMapping.addFieldPropertyMap(sectionName,"ACTUALLOAD", "pnodeLoad");
 
-        //Map an element type to a property type
-        //(allows for concatenated element i.d.)
-        //inputFieldMapping.addElementPropertyMap("enode","pnodeEnode");
+        //----MSSMOD----
+        //I,MSSDATA,BRANCHLIMIT,1.0,INTERVAL,KEY1,KEY2,KEY3,KEY4,
+        // BASECASEMWLIMITFOR,BASECASEMWLIMITFOROVRDN,BASECASEMWLIMITREV,BASECASEMWLIMITREVOVRDN,FIXEDLOSS
+        sectionName = "BRANCHLIMIT";
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY1","mktBranch",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY2","mktBranch",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY3","mktBranch",3);
+        inputFieldMapping.addFieldPropertyMap(sectionName,"BASECASEMWLIMITFOR", "mktBrLimit");
 
         //Interval
         LocalDateTime caseInterval =
@@ -99,8 +103,7 @@ public class ReadCaseFile {
         String timeBasedMSSNET = "_" + caseInterval.format(dateFormatter).toUpperCase() + "_0.MSSNET";
 
         //File types to read
-        List<String> casefileTypes = List.of(".DAILY", ".PERIOD",".MSSNET",timeBasedMSSNET);
-
+        List<String> casefileTypes = List.of(".DAILY", ".PERIOD",".MSSNET",timeBasedMSSNET,".MSSMOD");
 
         //Set the interval for filtering in the file if it has an interval field
         //06-JUL-2021 00:00
