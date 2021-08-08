@@ -208,8 +208,8 @@ public class ModelDataService {
                 .get(modelDefService.elementIndex(elementProperty.propertyTypeId,elementType));
     }
 
-    public String getStringValue(String propertyType, String elementId) {
-        return getStringValue(propertyType.name(), List.of(elementId));
+    public String getStringValue(String propertyTypeId, String elementId) {
+        return getStringValue(propertyTypeId, List.of(elementId));
     }
 
     public String getStringValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
@@ -234,10 +234,6 @@ public class ModelDataService {
                 propertiesMap.get(makePropertyKey(propertyTypeId, elementIds)));
         return opt.map(p -> p.doubleValue)
                 .orElse(0.0);
-        /*
-        Optional<ElementProperty> opt = getProperty(propertyTypeId,elementIds);
-        return opt.map(p -> p.doubleValue)
-                .orElse(0.0);*/
     }
     public Double getDoubleValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
         return getDoubleValue(propertyType.name(),elementIds);
@@ -270,7 +266,12 @@ public class ModelDataService {
         return opt.map(p -> p.doubleValue)
                 .orElse(0.0);*/
     }
-
+    public Double getDoubleValueElseOne(String propertyTypeId, String elementId) {
+        Optional<ElementProperty> opt = Optional.ofNullable(
+              propertiesMap.get(makePropertyKey(propertyTypeId, List.of(elementId))));
+        return opt.map(p -> p.doubleValue)
+              .orElse(1.0);
+    }
 
     //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
     //This is the old slow way, now uses map
