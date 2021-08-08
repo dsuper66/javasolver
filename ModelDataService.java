@@ -208,20 +208,24 @@ public class ModelDataService {
                 .get(modelDefService.elementIndex(elementProperty.propertyTypeId,elementType));
     }
 
+    public String getStringValue(String propertyType, String elementId) {
+        return getStringValue(propertyType.name(), List.of(elementId));
+    }
+
     public String getStringValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
+        return getStringValue(propertyType.name(),elementIds);
         /*
-        if (propertyTypeId.equals("busForNwEnode")) {
-            System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
-        }*/
-        /*Optional<ElementProperty> opt = getProperty(propertyTypeId, elementIds);
-        return opt.map(p -> p.stringValue)
-                .orElse("");*/
         Optional<ElementProperty> opt = Optional.ofNullable(
                 propertiesMap.get(makePropertyKey(propertyType.name(), elementIds)));
         return opt.map(p -> p.stringValue)
+                .orElse("");*/
+    }
+
+    public String getStringValue(String propertyTypeId, List<String> elementIds) {
+        Optional<ElementProperty> opt = Optional.ofNullable(
+                propertiesMap.get(makePropertyKey(propertyTypeId, elementIds)));
+        return opt.map(p -> p.stringValue)
                 .orElse("");
-
-
     }
 
     //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)

@@ -5,7 +5,7 @@ public class ConstraintComp {
     String propertyMap;
     String varType;
     String factorParentProperty;
-    String factorValue;
+    Double factorValue;
     String factorProperty;
 
     /*
