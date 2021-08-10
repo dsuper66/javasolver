@@ -119,10 +119,15 @@ public class ConstraintBuilder {
                                           modelDataService.getStringValue(
                                                 constraintComp.propertyMap, childMatchingType.elementId).equals
                                                 (parentElement.elementId)
+                                          || //or map via non-zero factor, e.g., weightTrancheBus(t,b) > 0
+                                          modelDataService.getDoubleValue(
+                                                constraintComp.propertyMap,
+                                                List.of(childMatchingType.elementId,parentElement.elementId))
+                                                > 0
                                           ||
                                           //or child matches propertyMap from parent
                                           //e.g. power flow... propertyMap is fromBus,
-                                          // child is bus matching child branch
+                                          // child elements are buses matching parent branch
                                           modelDataService.getStringValue(
                                                 constraintComp.propertyMap, parentElement.elementId).equals
                                                 (childMatchingType.elementId)
@@ -170,7 +175,6 @@ public class ConstraintBuilder {
 
                                     constraintString[0] = constraintString[0]
                                                           + String.format("+ $1.2f * %s\n", varFactor, variableId);
-
                                  });
                         });//done components
 
@@ -247,8 +251,18 @@ public class ConstraintBuilder {
 
 
    //Get the row of var factor values for the constraint
+   //https://stackoverflow.com/questions/45793226/cannot-make-filter-foreach-collect-in-one-stream
    public List<Double> getVarFactorRow(Constraint c) {
       //If there is a varFactor for this constraint+var then add it otherwise add zero
+      return variables
+            .stream()
+            .map(v ->
+               varFactorInputs
+                     .stream()
+                     .filter(vf -> vf.varId.equals(v.varId) && vf.constraintId.equals(c.constraintId))
+                     .findFirst().map(vf -> vf.value)
+                     .orElse(0.0))
+            .collect(Collectors.toList());
       /*
       variables.map(v = >
       varFactorInputs.find(vF = >
@@ -259,15 +273,6 @@ public class ConstraintBuilder {
       }
     )*/
 
-      return variables
-            .stream()
-            .map(v ->
-               varFactorInputs
-                     .stream()
-                     .filter(vf -> vf.varId.equals(v.varId) && vf.constraintId.equals(c.constraintId))
-                     .findFirst().map(vf -> vf.value)
-                     .orElse(0.0))
-            .collect(Collectors.toList());
    }
 
    class Results {

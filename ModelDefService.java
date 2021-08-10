@@ -31,7 +31,8 @@ public class ModelDefService {
         resistance,
         electricalIsland,
         weightPnodeBus,
-        mktBrLimit
+        mktBrLimit,
+        displayName
     }
 
 
