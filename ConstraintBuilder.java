@@ -144,14 +144,23 @@ public class ConstraintBuilder {
                                     //or the parent property from the factorParentProperty of the child
                                     //(if no factor found then these default to 1.0)
 
-                                    //Tranche can map to more than one bus, via factor
                                     varFactor = varFactor
-                                                * modelDataService.getDoubleValueElseOne(
-                                          constraintComp.factorProperty, childElement.elementId)
-                                                * modelDataService.getDoubleValueElseOne(
-                                          constraintComp.factorParentProperty, parentElement.elementId)
-                                                * modelDataService.getDoubleValueElseOne(
-                                          constraintComp.factorProperty, parentElement.elementId);
+                                                //factorProperty of the child
+                                                // e.g., dirBranch direction applies to dirBranch
+                                                * modelDataService.getDoubleValueElseOne
+                                          (constraintComp.factorProperty, childElement.elementId)
+                                                //factorProperty of the parent applied to child
+                                                // e.g., bus child of powerflow has susceptance of parent
+                                                * modelDataService.getDoubleValueElseOne
+                                          (constraintComp.factorParentProperty, parentElement.elementId)
+                                                //factorProperty of the child applied to child
+                                                * modelDataService.getDoubleValueElseOne
+                                          (constraintComp.factorProperty, parentElement.elementId)
+                                    //and tranche can map to more than one bus, via factor
+                                                * modelDataService.getDoubleValueElseOne
+                                          (constraintComp.factorProperty,
+                                                List.of(childElement.elementId,parentElement.elementId));
+
                                     /*             * getPropertyAsDoubleElseDefault(
                                     //      childElement,
                                     //      constraintComp.factorProperty, 1.0

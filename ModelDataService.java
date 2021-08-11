@@ -268,8 +268,11 @@ public class ModelDataService {
                 .orElse(0.0);*/
     }
     public Double getDoubleValueElseOne(String propertyTypeId, String elementId) {
+        return getDoubleValueElseOne(propertyTypeId, List.of(elementId));
+    }
+    public Double getDoubleValueElseOne(String propertyTypeId, List<String> elementIds) {
         Optional<ElementProperty> opt = Optional.ofNullable(
-              propertiesMap.get(makePropertyKey(propertyTypeId, List.of(elementId))));
+              propertiesMap.get(makePropertyKey(propertyTypeId, elementIds)));
         return opt.map(p -> p.doubleValue)
               .orElse(1.0);
     }
