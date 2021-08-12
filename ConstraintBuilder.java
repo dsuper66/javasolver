@@ -1,13 +1,19 @@
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ConstraintBuilder {
 
-   public static List<ConstraintComp> constraintComps;
-   public static List<ConstraintDef> constraintDefs;
+   public static List<ConstraintComp> constraintComps = new ArrayList<>();
+   public static List<ConstraintDef> constraintDefs = new ArrayList<>();
 
    public static List<Constraint> constraints;
    public static Constraint objectiveFn = new Constraint(
@@ -17,6 +23,35 @@ public class ConstraintBuilder {
    //which are then related to c and v by row and col
    public static List<VarFactor> varFactorInputs;
    public static List<List<Double>> varFactorRows;
+
+   public static void readConstraints(){
+      String dir = "/Users/davidbullen/java/";
+      String defFile = "constraint-defs.json";
+      String compFile = "constraint-comps.json";
+      //https://attacomsian.com/blog/jackson-read-json-file
+      ObjectMapper mapper = new ObjectMapper();
+      try {
+         //https://stackoverflow.com/questions/29965764/how-to-parse-json-file-with-gson
+         Gson gson = new Gson();
+
+         JsonReader reader = new JsonReader(new FileReader(dir + defFile));
+         //final List<ConstraintDef> constraintDefs = Arrays.asList(gson.fromJson(reader, ConstraintDef[].class));
+         constraintDefs = Arrays.asList(gson.fromJson(reader, ConstraintDef[].class));
+         for (ConstraintDef cd : constraintDefs) {
+            System.out.println("constraint def:" + cd.constraintType);
+         }
+
+         reader = new JsonReader(new FileReader(dir + compFile));
+         //final List<ConstraintComp> constraintComps = Arrays.asList(gson.fromJson(reader, ConstraintComp[].class));
+         constraintComps = Arrays.asList(gson.fromJson(reader, ConstraintComp[].class));
+         for (ConstraintComp cc : constraintComps) {
+            System.out.println("constraint comp:" + cc.constraintType);
+         }
+
+      } catch (Exception ex) {
+         ex.printStackTrace();
+      }
+   }
 
    public static void resetMathModel() {
       constraints = new ArrayList<>();
@@ -153,9 +188,9 @@ public class ConstraintBuilder {
                                                 // e.g., bus child of powerflow has susceptance of parent
                                                 * modelDataService.getDoubleValueElseOne
                                           (constraintComp.factorParentProperty, parentElement.elementId)
-                                                //factorProperty of the child applied to child
-                                                * modelDataService.getDoubleValueElseOne
-                                          (constraintComp.factorProperty, parentElement.elementId)
+                                                //factorProperty of the child applied to child ??
+                                                //* modelDataService.getDoubleValueElseOne
+                                          //(constraintComp.factorProperty, parentElement.elementId)
                                     //and tranche can map to more than one bus, via factor
                                                 * modelDataService.getDoubleValueElseOne
                                           (constraintComp.factorProperty,

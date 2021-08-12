@@ -6,9 +6,9 @@ import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
 
-public class ConstraintPrep {
+public class ReadConstraints {
 
-    public static void readConstraints(){
+    public static void readConstraints(ConstraintBuilder constraintBuilder){
         String dir = "/Users/davidbullen/java/";
         String defFile = "constraint-defs.json";
         String compFile = "constraint-comps.json";
@@ -37,6 +37,7 @@ public class ConstraintPrep {
 
             JsonReader reader = new JsonReader(new FileReader(dir + defFile));
             final List<ConstraintDef> constraintDefs = Arrays.asList(gson.fromJson(reader, ConstraintDef[].class));
+
 
             for (ConstraintDef cd : constraintDefs) {
                 System.out.println("constraint def:" + cd.constraintType);

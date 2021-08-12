@@ -15,8 +15,9 @@ public class SolveModel {
         //ReadCaseFile readCaseFile = new ReadCaseFile();
         ReadCaseFile.readCase(modelDataService);
         PreProcessing.calculateDerivedProperties(modelDataService);
-
-        ConstraintPrep.readConstraints();
+        ConstraintBuilder.readConstraints();
+        ConstraintBuilder.processConstraintDefs(modelDataService);
+        //ReadConstraints.readConstraints(constraintBuilder);
 
         /*
         modelElementDataService.addElement(
