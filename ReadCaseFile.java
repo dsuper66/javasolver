@@ -170,10 +170,14 @@ public class ReadCaseFile {
                         for (Integer orderNum : orderNumFieldNum.keySet()) {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
-                            elementId += trimmedData + " "; //thisRowData.get(fieldNum - 1);
+                            //If multiple then "-" between
+                            elementId += ((elementId.length() > 0) ? "-" : "") + trimmedData; //thisRowData.get(fieldNum - 1);
                         }
+                        //replaces spaces with underscore
+                        elementId = elementId.replaceAll("\\s{1,}", "_").trim();
                         //Note that these means only one type of each element per row
-                        elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
+                        //elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
+                        elementTypeAndIdFromThisRow.put(elementType, elementId);
                     }
                     //System.out.println("elementTypes:" + elementIdAndTypeToAdd);
 
@@ -187,7 +191,10 @@ public class ReadCaseFile {
 
                     for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
-                        String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
+                        //replace spaces with underscore
+                        String trimmedData =
+                              thisRowData.get(fieldNum - 1).stripLeading().stripTrailing()
+                                    .replaceAll("\\s{1,}", "_").trim();
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If any of the element types have this property then assign the value
