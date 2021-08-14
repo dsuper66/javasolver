@@ -173,8 +173,8 @@ public class ReadCaseFile {
                             //If multiple then "-" between
                             elementId += ((elementId.length() > 0) ? "-" : "") + trimmedData; //thisRowData.get(fieldNum - 1);
                         }
-                        //replaces spaces with underscore
-                        elementId = elementId.replaceAll("\\s{1,}", "_").trim();
+                        //replace spaces within (don't use underscores because there are already some)
+                        elementId = elementId.replaceAll("\\s{1,}", "^").trim();
                         //Note that these means only one type of each element per row
                         //elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
                         elementTypeAndIdFromThisRow.put(elementType, elementId);

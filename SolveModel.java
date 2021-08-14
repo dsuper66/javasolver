@@ -84,11 +84,18 @@ public class SolveModel {
     static void populateByRow(IloMPModeler model,
                               IloNumVar[][] var,
                               IloRange[][] rng) throws IloException {
+        /*
         double[]    lb      = {0.0, 0.0, 0.0};
         double[]    ub      = {40.0, Double.MAX_VALUE, Double.MAX_VALUE};
         String[]    varname = {"x1", "x2", "x3"};
         IloNumVar[] x       = model.numVarArray(3, lb, ub, varname);
-        var[0] = x;
+        var[0] = x; //the array of vars that were added, so results can be extracted*/
+
+        var[0] = new IloNumVar[3];
+        var[0][0] = model.numVar(0.0,40.0,"x1");
+        var[0][1] = model.numVar(0.0,Double.MAX_VALUE,"x2");
+        var[0][2] = model.numVar(0.0,Double.MAX_VALUE,"x3");
+        IloNumVar[] x = var[0];
 
         double[] objvals = {1.0, 2.0, 3.0};
         model.addMaximize(model.scalProd(x, objvals));
