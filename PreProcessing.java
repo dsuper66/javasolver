@@ -70,9 +70,10 @@ public class PreProcessing {
 
          System.out.println(">>>" + pnodeLoadProperty.elementIds.get(0) + " " + pnodeLoadProperty.doubleValue);
 
+         //Create the bidTranche element
          //use the pnode id for the bid tranche id
          String pnodeId = pnodeLoadProperty.elementIds.get(0);
-         modelDataService.addElement(ModelDefService.ElementType.enOfferTranche, pnodeId);
+         modelDataService.addElement(ModelDefService.ElementType.bidTranche, pnodeId);
 
          //Create bid tranche properties from the pnode load
          modelDataService.addProperty(
@@ -169,8 +170,9 @@ public class PreProcessing {
                            + "bus(" + busId + ")," + weight);
                   })
             );
-      System.out.println(">>>" + (time1.doubleValue() / 1000.0));
-      System.out.println(">>>" + (time2.doubleValue() / 1000.0));
-      System.out.println(">>>" + (time3.doubleValue() / 1000.0));
+      //Timing
+      //System.out.println(">>>" + (time1.doubleValue() / 1000.0));
+      //System.out.println(">>>" + (time2.doubleValue() / 1000.0));
+      //System.out.println(">>>" + (time3.doubleValue() / 1000.0));
    }
 }

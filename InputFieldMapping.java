@@ -101,8 +101,8 @@ public class InputFieldMapping {
                 String thisElementType = thisFieldElementMap.elementType;
                 Integer orderForThisFieldNum = thisFieldElementMap.order;
 
-                System.out.println("Element:" + thisElementType
-                        + " FieldName:" + thisFieldName + " order:" + orderForThisFieldNum);
+                //System.out.println("Element:" + thisElementType
+                //        + " FieldName:" + thisFieldName + " order:" + orderForThisFieldNum);
 
                 //Add or update map from orderNum to fieldNum (because element i.d. can have more than one fieldNum)
                 Map<Integer,Integer> foundOrderNumFieldNumMap = elementTypeFieldMaps.get(thisElementType);
@@ -112,7 +112,7 @@ public class InputFieldMapping {
                 else {
                     HashMap<Integer,Integer> updatedMap = new HashMap(foundOrderNumFieldNumMap);
                     updatedMap.put(orderForThisFieldNum,thisFieldNum);
-                    System.out.println("hashmap: " + updatedMap);
+                    //System.out.println("hashmap: " + updatedMap);
                     elementTypeFieldMaps.put(thisElementType,updatedMap);
                 }
 
@@ -167,8 +167,8 @@ public class InputFieldMapping {
             //https://stackoverflow.com/questions/63349403/how-to-efficiently-merge-two-lists-in-java
             for (FieldPropertyMap thisFieldPropertyMap : matchingFieldPropertyMaps) {
                 String thisPropertyType = thisFieldPropertyMap.propertyType;
-                System.out.println("Property:" + thisPropertyType
-                        + " FieldName:" + thisFieldName);
+                //System.out.println("Property:" + thisPropertyType
+                //        + " FieldName:" + thisFieldName);
 
                 //Map the property type to the field number
                 propertyTypeFieldMap.put(thisPropertyType,thisFieldNum);

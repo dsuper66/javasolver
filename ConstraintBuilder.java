@@ -1,6 +1,5 @@
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -15,21 +14,21 @@ public class ConstraintBuilder {
    public static List<ConstraintComp> constraintComps = new ArrayList<>();
    public static List<ConstraintDef> constraintDefs = new ArrayList<>();
 
-   public static List<Constraint> constraints;
+   public static List<Constraint> constraints = new ArrayList<>();
    public static Constraint objectiveFn = new Constraint(
          "", "", "", "", 0.0, "");
-   public static List<Variable> variables;
+   public static List<Variable> variables = new ArrayList<>();
    //Var factor inputs are used to create varFactor rows
    //which are then related to c and v by row and col
-   public static List<VarFactor> varFactorInputs;
-   public static List<List<Double>> varFactorRows;
+   public static List<VarFactor> varFactorInputs = new ArrayList<>();
+   public static List<List<Double>> varFactorRows = new ArrayList<>();
 
    public static void readConstraints(){
       String dir = "/Users/davidbullen/java/";
       String defFile = "constraint-defs.json";
       String compFile = "constraint-comps.json";
       //https://attacomsian.com/blog/jackson-read-json-file
-      ObjectMapper mapper = new ObjectMapper();
+      //ObjectMapper mapper = new ObjectMapper();
       try {
          //https://stackoverflow.com/questions/29965764/how-to-parse-json-file-with-gson
          Gson gson = new Gson();
@@ -67,6 +66,7 @@ public class ConstraintBuilder {
    }
 
    public static void processConstraintDefs(ModelDataService modelDataService) {
+      final String[] msg = {""};
       //Constraint Defs
       for (ConstraintDef constraintDef : constraintDefs) {
          //Get the parent elements that match the ConstraintDef elementType
@@ -85,7 +85,7 @@ public class ConstraintBuilder {
                   //RHS from parent
                   //check if RHS is a property of the parent element, e.g., brLimit for branch
                   if (constraintDef.rhsProperty != "") {
-                     Double rhsValueFromProperty =
+                      rhsValue =
                            modelDataService.getDoubleValue(
                                  constraintDef.rhsProperty, List.of(parentElement.elementId));
                     /*
@@ -118,7 +118,7 @@ public class ConstraintBuilder {
 
                   //--Var Factor from parent--
                   //Check if parent element has var in the constraint components
-                  if (constraintDef.varType != "") {
+                  if (!constraintDef.varType.equals("") ) {
                      //Add the variable
                      String variableId = createVariable(parentElement.elementId, constraintDef.varType);
                      //Add its factor
@@ -127,7 +127,8 @@ public class ConstraintBuilder {
                      setVarFactor(variableId, constraintId, varFactor);
 
                      //constraintString += s " ${if (varFactor > 0) " + " else " "}$varFactor * $variableId\n"
-                     constraintString[0] = constraintString[0] + String.format("+ $1.2f * %s\n", varFactor, variableId);
+                     constraintString[0] = constraintString[0]
+                                           + String.format("+ %1.2f * %s\n", varFactor, variableId);
                   }
 
                   //--Components--
@@ -179,6 +180,7 @@ public class ConstraintBuilder {
                                     //or the parent property from the factorParentProperty of the child
                                     //(if no factor found then these default to 1.0)
 
+                                    System.out.println(">>>" + constraintComp.factorProperty);
                                     varFactor = varFactor
                                                 //factorProperty of the child
                                                 // e.g., dirBranch direction applies to dirBranch
@@ -218,7 +220,7 @@ public class ConstraintBuilder {
                                     //"}$varFactor * $variableId \n";
 
                                     constraintString[0] = constraintString[0]
-                                                          + String.format("+ $1.2f * %s\n", varFactor, variableId);
+                                                          + String.format("+ %1.2f * %s\n", varFactor, variableId);
                                  });
                         });//done components
 
@@ -234,11 +236,11 @@ public class ConstraintBuilder {
                         rhsValue,
                         constraintString[0]);
 
-                  //msg += s "$constraintString\n\n" //msgForThisConstraint
+                  msg[0] = msg[0] + constraintString[0] + "\n"; //msgForThisConstraint
 
                });
       }
-
+      System.out.println(">>>Constraints:\n" + msg[0]);
    }
 
    public static void addConstraint(

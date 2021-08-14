@@ -143,10 +143,12 @@ public class ModelDataService {
                     }
 
                     //Debug
-                    if (propertyTypeId.equals("nwEnodeForMktEnode") || propertyTypeId.equals("busForNwEnode")) {
-                        System.out.println("adding:" + elementIds + " value:" + value
-                                + " key:" + makePropertyKey(propertyTypeId,elementIds));
-                    }
+                    //if (propertyTypeId.equals("nwEnodeForMktEnode") || propertyTypeId.equals("busForNwEnode")) {
+                        System.out.println("adding:"
+                                           + " key:" + makePropertyKey(propertyTypeId,elementIds) + elementIds
+                                           + " value:" + value
+                                );
+                    //}
                 }
         );
     }

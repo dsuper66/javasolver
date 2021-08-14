@@ -86,14 +86,15 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"KEY3","mktBranch",3);
         inputFieldMapping.addFieldPropertyMap(sectionName,"BASECASEMWLIMITFOR", "mktBrLimit");
 
-        //Interval
+        //Interval 10:00
         LocalDateTime caseInterval =
                 LocalDateTime.of(2021, 7, 06,10,0);
 
         //Case file names
         //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
         ///Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.MSSNET
-        String caseFileDir = "/Users/davidbullen/java/MSS_51112021071200687_0X/";
+        //String caseFileDir = "/Users/davidbullen/java/MSS_51112021071200687_0X/";
+        String caseFileDir = "/Users/davidbullen/java/small-model/";
         String caseId = "MSS_51112021071200687_0X";
 
         //Make the file name for time based MSSNET
@@ -116,7 +117,7 @@ public class ReadCaseFile {
             String fileName = caseFileDir + caseId + caseType;
             BufferedReader bufferedReader =
                     new BufferedReader(new FileReader(fileName));
-            System.out.println("file:" + fileName);
+            System.out.println("------ file:" + fileName + " -------");
 
             String curLine;
             HashMap<String, Map<Integer, Integer>> elementTypeFieldMaps = new HashMap<>();
@@ -129,23 +130,27 @@ public class ReadCaseFile {
                 //String thisSectionName = "";
                 if (curLine.startsWith("I")) {
 
-                    System.out.println(curLine);
+                    //System.out.println(curLine);
                     List<String> thisRowfieldNames = Arrays.asList(curLine.split(","));
 
                     String thisSectionName = thisRowfieldNames.get(2);
                     //ELEMENT mapping
                     elementTypeFieldMaps = inputFieldMapping.getElementFieldMapForSectionFieldNames(
                             thisSectionName, thisRowfieldNames);
-                    System.out.println("elementTypeFieldMaps:" + elementTypeFieldMaps);
+                    if (elementTypeFieldMaps.size() > 0) {
+                        System.out.println("elementTypeFieldMaps:" + elementTypeFieldMaps + " sectionName:" + thisSectionName);
+                    }
 
                     //PROPERTY mapping
                     propertyTypeFieldMaps = inputFieldMapping.getPropertyFieldMapForSectionFieldNames(
                             thisSectionName,thisRowfieldNames);
-                    System.out.println("propertyTypeFieldMaps:" + propertyTypeFieldMaps);
+                    if (elementTypeFieldMaps.size() > 0) {
+                        System.out.println("propertyTypeFieldMaps:" + propertyTypeFieldMaps);
+                    }
 
                     //Interval based data may need to be filtered by interval
                     dataIsIntervalBased = curLine.contains("INTERVAL");
-                    System.out.println("dataIsIntervalBased:" + dataIsIntervalBased);
+                    //System.out.println("dataIsIntervalBased:" + dataIsIntervalBased);
                 }
 
                 //DATA: Create the elements and properties
