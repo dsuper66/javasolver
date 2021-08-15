@@ -1,5 +1,4 @@
 import ilog.concert.*;
-import ilog.cplex.IloCplex;
 
 import java.io.IOException;
 
@@ -14,29 +13,8 @@ public class SolveModel {
         PreProcessing.calculateDerivedProperties(modelDataService);
         ConstraintBuilder.readConstraints();
         ConstraintBuilder.processConstraintDefs(modelDataService);
-        //ReadConstraints.readConstraints(constraintBuilder);
-
-        /*
-        modelElementDataService.addElement(
-                "bus01",
-                "bus");
-        modelElementDataService.addElement(
-                "bid01",
-                "bid",
-                Map.of("fromBus","bus01",
-                        "price","100",
-                        "quantity","10")
-        );
-        modelElementDataService.addElement(
-                "offer01",
-                "offer",
-                Map.of("toBus","bus01",
-                        "price","70",
-                        "quantity","200")
-        );
-
-        modelElementDataService.getElement("offer01");*/
-
+        CplexSolve.doCplexSolve();
+/*
         // Create the modeler/solver object
         try (IloCplex cplex = new IloCplex()) {
 
@@ -75,8 +53,9 @@ public class SolveModel {
         }
         catch (IloException e) {
             System.err.println("Concert exception '" + e + "' caught");
-        }
+        }*/
     }
+
 
     static void populateByRow(IloMPModeler model,
                               IloNumVar[][] var,
