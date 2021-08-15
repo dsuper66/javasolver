@@ -92,8 +92,6 @@ public class SolveModel {
         var[0] = x; //the array of vars that were added, so results can be extracted*/
 
         int varCount = 3;
-        int constraintCount = 3;
-
         //https://www.ibm.com/docs/en/icos/12.10.0?topic=cm-numvar-method-1
         //Variables
         List<IloNumVar> cplexVariables = Arrays.asList(new IloNumVar[varCount]);
@@ -119,15 +117,18 @@ public class SolveModel {
 
         //https://www.ibm.com/docs/en/icos/12.8.0.0?topic=technology-adding-constraints-iloconstraint-ilorange
         //https://kunlei.github.io/cplex/cplex-java-constraints/
-        //Constraints
         //https://stackoverflow.com/questions/2279030/type-list-vs-type-arraylist-in-java
-        List<List<Double>> varFactorsAllConstraints = new ArrayList(constraintCount);
 
+        //Constraints
+        int constraintCount = 2;
+        List<List<Double>> varFactorsAllConstraints = new ArrayList(constraintCount);
         List<Double>varFactorsThisConstraint = Arrays.asList(new Double[varCount]);
         List<String> constraintNames = Arrays.asList(new String[constraintCount]);
+        List<Double>constraintRhs = Arrays.asList(new Double[constraintCount]);
 
         int constraintIndex = 0;
         constraintNames.set(constraintIndex,"c1");
+        constraintRhs.set(constraintIndex,20.0);
         varFactorsThisConstraint.set(0,-1.0);
         varFactorsThisConstraint.set(1,1.0);
         varFactorsThisConstraint.set(2,1.0);
@@ -135,10 +136,13 @@ public class SolveModel {
 
         constraintIndex = 1;
         constraintNames.set(constraintIndex,"c2");
+        constraintRhs.set(constraintIndex,30.0);
         varFactorsThisConstraint.set(0,1.0);
         varFactorsThisConstraint.set(1,-3.0);
         varFactorsThisConstraint.set(2,1.0);
         varFactorsAllConstraints.set(constraintIndex,varFactorsThisConstraint);
+
+        List<IloRange> cplexConstraints = Arrays.asList(new IloRange[constraintCount]);
 
         rng[0] = new IloRange[2];
         rng[0][0] = model.addLe(model.sum(
