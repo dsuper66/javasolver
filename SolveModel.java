@@ -2,9 +2,6 @@ import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class SolveModel {
 
@@ -94,15 +91,15 @@ public class SolveModel {
         int varCount = 3;
         //https://www.ibm.com/docs/en/icos/12.10.0?topic=cm-numvar-method-1
         //Variables
-        List<IloNumVar> cplexVariables = Arrays.asList(new IloNumVar[varCount]);
-        cplexVariables.set(0,model.numVar(0.0,40.0,"x1"));
-        cplexVariables.set(1,model.numVar(0.0,Double.MAX_VALUE,"x2"));
-        cplexVariables.set(2,model.numVar(0.0,Double.MAX_VALUE,"x3"));
+        IloNumVar[] cplexVariables = new IloNumVar[varCount];
+        cplexVariables[0] = model.numVar(0.0,40.0,"x1");
+        cplexVariables[1] = model.numVar(0.0,Double.MAX_VALUE,"x2");
+        cplexVariables[2] = model.numVar(0.0,Double.MAX_VALUE,"x3");
 
         var[0] = new IloNumVar[3];
-        var[0][0] = cplexVariables.get(0); //model.numVar(0.0,40.0,"x1");
-        var[0][1] = cplexVariables.get(1); //model.numVar(0.0,Double.MAX_VALUE,"x2");
-        var[0][2] = cplexVariables.get(2); //model.numVar(0.0,Double.MAX_VALUE,"x3");
+        var[0][0] = cplexVariables[0]; //model.numVar(0.0,40.0,"x1");
+        var[0][1] = cplexVariables[1]; //model.numVar(0.0,Double.MAX_VALUE,"x2");
+        var[0][2] = cplexVariables[2]; //model.numVar(0.0,Double.MAX_VALUE,"x3");
         IloNumVar[] x = var[0];
 
         //https://www.ibm.com/docs/api/v1/content/SSSA5P_12.8.0/ilog.odms.cplex.help/refdotnetcplex/html/T_ILOG_Concert_ILinearNumExpr.htm
@@ -118,32 +115,48 @@ public class SolveModel {
         //https://www.ibm.com/docs/en/icos/12.8.0.0?topic=technology-adding-constraints-iloconstraint-ilorange
         //https://kunlei.github.io/cplex/cplex-java-constraints/
         //https://stackoverflow.com/questions/2279030/type-list-vs-type-arraylist-in-java
+        //https://stackoverflow.com/questions/5207162/define-a-fixed-size-list-in-java
 
         //Constraints
         int constraintCount = 2;
-        List<List<Double>> varFactorsAllConstraints = new ArrayList(constraintCount);
-        List<Double>varFactorsThisConstraint = Arrays.asList(new Double[varCount]);
-        List<String> constraintNames = Arrays.asList(new String[constraintCount]);
-        List<Double>constraintRhs = Arrays.asList(new Double[constraintCount]);
+        Double[][] varFactorsAllConstraints = new Double[constraintCount][varCount];
+        String[] constraintNames = new String[constraintCount];
+        Double[] constraintRhs = new Double[constraintCount];
 
         int constraintIndex = 0;
-        constraintNames.set(constraintIndex,"c1");
-        constraintRhs.set(constraintIndex,20.0);
-        varFactorsThisConstraint.set(0,-1.0);
-        varFactorsThisConstraint.set(1,1.0);
-        varFactorsThisConstraint.set(2,1.0);
-        varFactorsAllConstraints.set(constraintIndex,varFactorsThisConstraint);
+        Double[] varFactorsThisConstraint = new Double[varCount];
+        constraintNames[constraintIndex] = "c1";
+        constraintRhs[constraintIndex] = 20.0;
+        varFactorsThisConstraint[0] = -1.0;
+        varFactorsThisConstraint[1] = 1.0;
+        varFactorsThisConstraint[2] = 1.0;
+        varFactorsAllConstraints[constraintIndex] = varFactorsThisConstraint;
 
         constraintIndex = 1;
-        constraintNames.set(constraintIndex,"c2");
-        constraintRhs.set(constraintIndex,30.0);
-        varFactorsThisConstraint.set(0,1.0);
-        varFactorsThisConstraint.set(1,-3.0);
-        varFactorsThisConstraint.set(2,1.0);
-        varFactorsAllConstraints.set(constraintIndex,varFactorsThisConstraint);
+        varFactorsThisConstraint = new Double[varCount];
+        constraintNames[constraintIndex] = "c2";
+        constraintRhs[constraintIndex] = 30.0;
+        varFactorsThisConstraint[0] = 1.0;
+        varFactorsThisConstraint[1] = -3.0;
+        varFactorsThisConstraint[2] = 1.0;
+        varFactorsAllConstraints[constraintIndex] = varFactorsThisConstraint;
 
-        List<IloRange> cplexConstraints = Arrays.asList(new IloRange[constraintCount]);
+        IloRange[] cplexConstraints = new IloRange[constraintCount];
 
+        for (constraintIndex = 0; constraintIndex < constraintCount; constraintIndex++) {
+            IloLinearNumExpr lhs = model.linearNumExpr();
+            Double[] varFactors = varFactorsAllConstraints[constraintIndex];
+
+            for (int varIndex = 0; varIndex < varCount; varIndex++) {
+                lhs.addTerm(varFactors[varIndex], cplexVariables[varIndex]);
+            }
+            IloRange cplexConstraint
+                  = model.addLe(lhs,constraintRhs[constraintIndex],constraintNames[constraintIndex]);
+            cplexConstraints[constraintIndex] = cplexConstraint;
+        }
+
+        rng[0] = cplexConstraints;
+        /*
         rng[0] = new IloRange[2];
         rng[0][0] = model.addLe(model.sum(
               model.prod(-1.0, x[0]),
@@ -153,6 +166,7 @@ public class SolveModel {
               model.prod( 1.0, x[0]),
                 model.prod(-3.0, x[1]),
                 model.prod( 1.0, x[2])), 30.0, "c2");
+         */
     }
 
 }
