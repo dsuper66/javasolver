@@ -1,10 +1,10 @@
-import ilog.concert.IloException;
-import ilog.concert.IloMPModeler;
-import ilog.concert.IloNumVar;
-import ilog.concert.IloRange;
+import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SolveModel {
 
@@ -91,20 +91,62 @@ public class SolveModel {
         IloNumVar[] x       = model.numVarArray(3, lb, ub, varname);
         var[0] = x; //the array of vars that were added, so results can be extracted*/
 
+        int varCount = 3;
+        int constraintCount = 3;
+
+        //https://www.ibm.com/docs/en/icos/12.10.0?topic=cm-numvar-method-1
+        //Variables
+        List<IloNumVar> cplexVariables = Arrays.asList(new IloNumVar[varCount]);
+        cplexVariables.set(0,model.numVar(0.0,40.0,"x1"));
+        cplexVariables.set(1,model.numVar(0.0,Double.MAX_VALUE,"x2"));
+        cplexVariables.set(2,model.numVar(0.0,Double.MAX_VALUE,"x3"));
+
         var[0] = new IloNumVar[3];
-        var[0][0] = model.numVar(0.0,40.0,"x1");
-        var[0][1] = model.numVar(0.0,Double.MAX_VALUE,"x2");
-        var[0][2] = model.numVar(0.0,Double.MAX_VALUE,"x3");
+        var[0][0] = cplexVariables.get(0); //model.numVar(0.0,40.0,"x1");
+        var[0][1] = cplexVariables.get(1); //model.numVar(0.0,Double.MAX_VALUE,"x2");
+        var[0][2] = cplexVariables.get(2); //model.numVar(0.0,Double.MAX_VALUE,"x3");
         IloNumVar[] x = var[0];
 
-        double[] objvals = {1.0, 2.0, 3.0};
-        model.addMaximize(model.scalProd(x, objvals));
+        //https://www.ibm.com/docs/api/v1/content/SSSA5P_12.8.0/ilog.odms.cplex.help/refdotnetcplex/html/T_ILOG_Concert_ILinearNumExpr.htm
+        //Objective
+        IloLinearNumExpr objective = model.linearNumExpr();
+        objective.addTerm(1.0,var[0][0]);
+        objective.addTerm(2.0,var[0][1]);
+        objective.addTerm(3.0,var[0][2]);
+        //double[] objvals = {1.0, 2.0, 3.0};
+        //model.addMaximize(model.scalProd(x, objvals));
+        model.addMaximize(objective);
+
+        //https://www.ibm.com/docs/en/icos/12.8.0.0?topic=technology-adding-constraints-iloconstraint-ilorange
+        //https://kunlei.github.io/cplex/cplex-java-constraints/
+        //Constraints
+        //https://stackoverflow.com/questions/2279030/type-list-vs-type-arraylist-in-java
+        List<List<Double>> varFactorsAllConstraints = new ArrayList(constraintCount);
+
+        List<Double>varFactorsThisConstraint = Arrays.asList(new Double[varCount]);
+        List<String> constraintNames = Arrays.asList(new String[constraintCount]);
+
+        int constraintIndex = 0;
+        constraintNames.set(constraintIndex,"c1");
+        varFactorsThisConstraint.set(0,-1.0);
+        varFactorsThisConstraint.set(1,1.0);
+        varFactorsThisConstraint.set(2,1.0);
+        varFactorsAllConstraints.set(constraintIndex,varFactorsThisConstraint);
+
+        constraintIndex = 1;
+        constraintNames.set(constraintIndex,"c2");
+        varFactorsThisConstraint.set(0,1.0);
+        varFactorsThisConstraint.set(1,-3.0);
+        varFactorsThisConstraint.set(2,1.0);
+        varFactorsAllConstraints.set(constraintIndex,varFactorsThisConstraint);
 
         rng[0] = new IloRange[2];
-        rng[0][0] = model.addLe(model.sum(model.prod(-1.0, x[0]),
+        rng[0][0] = model.addLe(model.sum(
+              model.prod(-1.0, x[0]),
                 model.prod( 1.0, x[1]),
                 model.prod( 1.0, x[2])), 20.0, "c1");
-        rng[0][1] = model.addLe(model.sum(model.prod( 1.0, x[0]),
+        rng[0][1] = model.addLe(model.sum(
+              model.prod( 1.0, x[0]),
                 model.prod(-3.0, x[1]),
                 model.prod( 1.0, x[2])), 30.0, "c2");
     }
