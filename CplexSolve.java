@@ -8,18 +8,18 @@ public class CplexSolve {
       // Create the modeler/solver object
       try (IloCplex cplex = new IloCplex()) {
 
-         IloNumVar[][] var = new IloNumVar[1][];
+         IloNumVar[] cplexVars = new IloNumVar[];
          IloRange[][] rng = new IloRange[1][];
 
-         populateByRow(cplex, var, rng);
+         populateByRow(cplex, cplexVars, rng);
 
          // write model to file
          cplex.exportModel("lpex1.lp");
 
          // solve the model and display the solution if one was found
          if (cplex.solve()) {
-            double[] x = cplex.getValues(var[0]);
-            double[] dj = cplex.getReducedCosts(var[0]);
+            double[] x = cplex.getValues(cplexVars);
+            double[] dj = cplex.getReducedCosts(cplexVars);
             double[] pi = cplex.getDuals(rng[0]);
             double[] slack = cplex.getSlacks(rng[0]);
 
@@ -47,7 +47,7 @@ public class CplexSolve {
 
 
    static void populateByRow(IloMPModeler model,
-                             IloNumVar[][] var,
+                             IloNumVar[] var,
                              IloRange[][] rng) throws IloException {
         /*
         double[]    lb      = {0.0, 0.0, 0.0};
@@ -64,18 +64,18 @@ public class CplexSolve {
       cplexVariables[1] = model.numVar(0.0, Double.MAX_VALUE, "x2");
       cplexVariables[2] = model.numVar(0.0, Double.MAX_VALUE, "x3");
 
-      var[0] = new IloNumVar[3];
-      var[0][0] = cplexVariables[0]; //model.numVar(0.0,40.0,"x1");
-      var[0][1] = cplexVariables[1]; //model.numVar(0.0,Double.MAX_VALUE,"x2");
-      var[0][2] = cplexVariables[2]; //model.numVar(0.0,Double.MAX_VALUE,"x3");
-      IloNumVar[] x = var[0];
+      var = new IloNumVar[3];
+      var[0] = cplexVariables[0]; //model.numVar(0.0,40.0,"x1");
+      var[1] = cplexVariables[1]; //model.numVar(0.0,Double.MAX_VALUE,"x2");
+      var[2] = cplexVariables[2]; //model.numVar(0.0,Double.MAX_VALUE,"x3");
+      IloNumVar[] x = var;
 
       //https://www.ibm.com/docs/api/v1/content/SSSA5P_12.8.0/ilog.odms.cplex.help/refdotnetcplex/html/T_ILOG_Concert_ILinearNumExpr.htm
       //Objective
       IloLinearNumExpr objective = model.linearNumExpr();
-      objective.addTerm(1.0, var[0][0]);
-      objective.addTerm(2.0, var[0][1]);
-      objective.addTerm(3.0, var[0][2]);
+      objective.addTerm(1.0, var[0]);
+      objective.addTerm(2.0, var[1]);
+      objective.addTerm(3.0, var[2]);
       //double[] objvals = {1.0, 2.0, 3.0};
       //model.addMaximize(model.scalProd(x, objvals));
       model.addMaximize(objective);
