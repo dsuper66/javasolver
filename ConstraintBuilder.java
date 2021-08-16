@@ -19,10 +19,7 @@ public class ConstraintBuilder {
    public static Constraint objectiveFn = new Constraint(
          "", "", "", "", 0.0, "");
    public static List<Variable> variables = new ArrayList<>();
-   //Var factor inputs are used to create varFactor rows
-   //which are then related to c and v by row and col
-   public static List<VarFactor> varFactorInputs = new ArrayList<>();
-   public static List<List<Double>> varFactorRows = new ArrayList<>();
+   public static List<VarFactor> varFactors = new ArrayList<>();
 
    public static void readConstraints(){
       String dir = "/Users/davidbullen/java/";
@@ -53,18 +50,14 @@ public class ConstraintBuilder {
       }
    }
 
+   /*
    public static void resetMathModel() {
       constraints = new ArrayList<>();
       variables = new ArrayList<>();
       varFactorInputs = new ArrayList<>();
 
       varFactorRows = new ArrayList<>();
-        /*
-        reducedCosts = new ArrayList<>();
-        rhsValues = new ArrayList<>();
-        objectiveFn = Constraint("", "", "", "", 0.0, "");
-        objectiveRhs = 0.0;*/
-   }
+   }*/
 
    public static void processConstraintDefs(ModelDataService modelDataService) {
       final String[] msg = {""};
@@ -89,28 +82,13 @@ public class ConstraintBuilder {
                       rhsValue =
                            modelDataService.getDoubleValue(
                                  constraintDef.rhsProperty, List.of(parentElement.elementId));
-                    /*
-                    val rhsValueFromProperty = parentElement.properties.find {
-                        case (name, _) => name == constraintDef.rhsProperty
-                    }
-                    if (rhsValueFromProperty.isDefined) {
-                        rhsValue = rhsValueFromProperty.get._2.toString.toDouble
-                    }*/
-
                   } else { //RHS is from specified value
                      rhsValue = constraintDef.rhsValue;
                   }
 
-
-                  //String constraintId = s"${constraintDef.constraintType}.${parentElement.elementId}"
-                  //String constraintString = s"$constraintId:\n"
-
                   String constraintId = String.format("%s.%s",
                         constraintDef.constraintType, parentElement.elementId);
-                  //String constraintString = String.format("%s\n", constraintId);
-                  //AtomicReference<String> constraintString = new AtomicReference<>();
                   final String[] constraintString = {String.format("%s\n", constraintId)};
-                  //constraintString.set(String.format("%s\n", constraintId));
 
                   //              var msgForThisConstraint = s"\n\n${parentElement.elementId} " +
 //                s"has constraint: ${constraintDef.constraintType}\n with components:\n"
@@ -124,7 +102,6 @@ public class ConstraintBuilder {
                      String variableId = createVariable(parentElement.elementId, constraintDef.varType);
                      //Add its factor
                      Double varFactor = constraintDef.factorValue;
-                     //TODO... add factor from property (if there ever is one)
                      setVarFactor(variableId, constraintId, varFactor);
 
                      //constraintString += s " ${if (varFactor > 0) " + " else " "}$varFactor * $variableId\n"
@@ -272,10 +249,6 @@ public class ConstraintBuilder {
 
    public static String createVariable(String elementId, String varType) {
       String varId = String.format("%s.%s", elementId, varType);
-      /*
-      if (!variables.exists(v = > v.varId == varId)){
-         variables = variables :+Variable(varId, varType, elementId)
-      }*/
       if (variables //add the variable
             .stream()
             .filter(v -> v.varId.equals(varId))
@@ -291,8 +264,8 @@ public class ConstraintBuilder {
          String constraintId,
          Double value) {
       VarFactor varFactor = new VarFactor(varId, constraintId, value);
-      if (!varFactorInputs.contains(varFactor)) {
-         varFactorInputs.add(varFactor);
+      if (!varFactors.contains(varFactor)) {
+         varFactors.add(varFactor);
       }
    }
 
@@ -304,7 +277,7 @@ public class ConstraintBuilder {
       return variables
             .stream()
             .map(v ->
-               varFactorInputs
+               varFactors
                      .stream()
                      .filter(vf -> vf.varId.equals(v.varId) && vf.constraintId.equals(c.constraintId))
                      .findFirst().map(vf -> vf.value)
