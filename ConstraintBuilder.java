@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ConstraintBuilder {
-
+   //Defs are read in
    public static List<ConstraintComp> constraintComps = new ArrayList<>();
    public static List<ConstraintDef> constraintDefs = new ArrayList<>();
 
+   //Created from defs
    public static List<Constraint> constraints = new ArrayList<>();
    public static Constraint objectiveFn = new Constraint(
          "", "", "", "", 0.0, "");
