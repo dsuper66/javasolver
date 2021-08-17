@@ -153,12 +153,14 @@ public class PreProcessing {
 
                      //Get the nwEnodeId for the mktEnode
                      String nwEnodeId = modelDataService.getStringValue(
-                           ModelDefService.PropertyType.nwEnodeForMktEnode, List.of(mktEnodeId));
+                           ModelDefService.PropertyType.nwEnodeForMktEnode, mktEnodeId);
 
+                     //System.out.println("found nwEnodeId " + nwEnodeId);
                      //Get the busId for the nwEnodeId
                      String busId = modelDataService.getStringValue(
-                           ModelDefService.PropertyType.busForNwEnode, List.of(nwEnodeId));
+                           ModelDefService.PropertyType.busForNwEnode, nwEnodeId);
 
+                     //System.out.println("found busId " + busId);
                      modelDataService.addProperty(
                            ModelDefService.PropertyType.weightPnodeBus,
                            List.of(pn.elementId, busId),

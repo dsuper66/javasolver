@@ -215,6 +215,11 @@ public class ModelDataService {
         return getStringValue(propertyTypeId, List.of(elementId));
     }
 
+    public String getStringValue(ModelDefService.PropertyType propertyType, String elementId) {
+        //System.out.println("looking for " + propertyType.name() + " of " + elementId + " in " + propertiesMap);
+        return getStringValue(propertyType,List.of(elementId));
+    }
+
     public String getStringValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
         return getStringValue(propertyType.name(),elementIds);
         /*

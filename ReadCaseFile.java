@@ -170,11 +170,11 @@ public class ReadCaseFile {
                         for (Integer orderNum : orderNumFieldNum.keySet()) {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
-                            //If multiple then "-" between
-                            elementId += ((elementId.length() > 0) ? "-" : "") + trimmedData; //thisRowData.get(fieldNum - 1);
+                            //If multiple components then "-" between
+                            elementId += ((elementId.length() > 0) ? "^" : "") + trimmedData; //thisRowData.get(fieldNum - 1);
                         }
-                        //replace spaces within (don't use underscores because there are already some)
-                        elementId = elementId.replaceAll("\\s{1,}", "^").trim();
+                        //replace spaces within
+                        elementId = elementId.replaceAll("\\s{1,}", "-").trim();
                         //Note that these means only one type of each element per row
                         //elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
                         elementTypeAndIdFromThisRow.put(elementType, elementId);
@@ -191,10 +191,10 @@ public class ReadCaseFile {
 
                     for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
-                        //replace spaces with underscore
+                        //replace spaces
                         String trimmedData =
                               thisRowData.get(fieldNum - 1).stripLeading().stripTrailing()
-                                    .replaceAll("\\s{1,}", "_").trim();
+                                    .replaceAll("\\s{1,}", "-").trim();
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If any of the element types have this property then assign the value
