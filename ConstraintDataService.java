@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ConstraintBuilder {
+public class ConstraintDataService {
    //Defs are read in
    public static List<ConstraintComp> constraintComps = new ArrayList<>();
    public static List<ConstraintDef> constraintDefs = new ArrayList<>();
@@ -219,6 +219,7 @@ public class ConstraintBuilder {
                });
       }
       System.out.println(">>>Constraints:\n" + msg[0]);
+      variables.forEach(v -> System.out.println("var:" + v.varId));
    }
 
    public static void addConstraint(

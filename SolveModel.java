@@ -11,8 +11,8 @@ public class SolveModel {
         //ReadCaseFile readCaseFile = new ReadCaseFile();
         ReadCaseFile.readCase(modelDataService);
         PreProcessing.calculateDerivedProperties(modelDataService);
-        ConstraintBuilder.readConstraints();
-        ConstraintBuilder.processConstraintDefs(modelDataService);
+        ConstraintDataService.readConstraints();
+        ConstraintDataService.processConstraintDefs(modelDataService);
         CplexSolve.doCplexSolve();
 /*
         // Create the modeler/solver object

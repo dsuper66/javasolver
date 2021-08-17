@@ -3,7 +3,7 @@ import ilog.cplex.IloCplex;
 
 public class CplexSolve {
 
-   public static void doCplexSolve() {
+   public static void doCplexSolve(ConstraintDataService constraintDataService) {
 
       // Create the modeler/solver object
       try (IloCplex cplex = new IloCplex()) {
