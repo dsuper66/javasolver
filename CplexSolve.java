@@ -11,7 +11,11 @@ public class CplexSolve {
          IloNumVar[][] cplexVars = new IloNumVar[1][];
          IloRange[][]  cplexConstraints = new IloRange[1][];
 
-         populateByRow(cplex, cplexVars, cplexConstraints);
+         populateByRow(
+               cplex,
+               cplexVars,
+               cplexConstraints,
+               constraintDataService);
 
          // write model to file
          cplex.exportModel("lpex1.lp");
@@ -48,21 +52,37 @@ public class CplexSolve {
 
    static void populateByRow(IloMPModeler model,
                              IloNumVar[][] cplexVars,
-                             IloRange[][] cplexConstraints) throws IloException {
+                             IloRange[][] cplexConstraints,
+                             ConstraintDataService constraintDataService
+                             ) throws IloException {
       int varCount = 3;
       //https://www.ibm.com/docs/en/icos/12.10.0?topic=cm-numvar-method-1
       //Variables
       cplexVars[0] = new IloNumVar[varCount];
+      int varIndex = 0;
+      for (Variable var : constraintDataService.variables) {
+         cplexVars[0][varIndex] = model.numVar(0.0,Double.MAX_VALUE,var.varId);
+         varIndex++;
+      }
+
+      /*
       cplexVars[0][0] = model.numVar(0.0,40.0,"x1");
       cplexVars[0][1] = model.numVar(0.0,Double.MAX_VALUE,"x2");
-      cplexVars[0][2] = model.numVar(0.0,Double.MAX_VALUE,"x3");
+      cplexVars[0][2] = model.numVar(0.0,Double.MAX_VALUE,"x3"); */
 
       //https://www.ibm.com/docs/api/v1/content/SSSA5P_12.8.0/ilog.odms.cplex.help/refdotnetcplex/html/T_ILOG_Concert_ILinearNumExpr.htm
       //Objective
       IloLinearNumExpr objective = model.linearNumExpr();
+      varIndex = 0;
+      for (Double varFactor
+            : constraintDataService.getVarFactorRow(constraintDataService.objectiveFn)
+           ) {
+         objective.addTerm(varFactor,cplexVars[0][varIndex]);
+      }
+      /*
       objective.addTerm(1.0,cplexVars[0][0]);
       objective.addTerm(2.0,cplexVars[0][1]);
-      objective.addTerm(3.0,cplexVars[0][2]);
+      objective.addTerm(3.0,cplexVars[0][2]); */
       model.addMaximize(objective);
 
       //https://www.ibm.com/docs/en/icos/12.8.0.0?topic=technology-adding-constraints-iloconstraint-ilorange
@@ -100,7 +120,7 @@ public class CplexSolve {
          IloLinearNumExpr lhs = model.linearNumExpr();
          Double[] varFactors = varFactorsAllConstraints[constraintIndex];
 
-         for (int varIndex = 0; varIndex < varCount; varIndex++) {
+         for (varIndex = 0; varIndex < varCount; varIndex++) {
             lhs.addTerm(varFactors[varIndex], cplexVars[0][varIndex]);
          }
          IloRange cplexConstraint

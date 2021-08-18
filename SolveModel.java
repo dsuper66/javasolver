@@ -11,9 +11,11 @@ public class SolveModel {
         //ReadCaseFile readCaseFile = new ReadCaseFile();
         ReadCaseFile.readCase(modelDataService);
         PreProcessing.calculateDerivedProperties(modelDataService);
-        ConstraintDataService.readConstraints();
-        ConstraintDataService.processConstraintDefs(modelDataService);
-        CplexSolve.doCplexSolve();
+
+        ConstraintDataService constraintDataService = new ConstraintDataService();
+        constraintDataService.readConstraints();
+        constraintDataService.processConstraintDefs(modelDataService);
+        CplexSolve.doCplexSolve(constraintDataService);
 /*
         // Create the modeler/solver object
         try (IloCplex cplex = new IloCplex()) {

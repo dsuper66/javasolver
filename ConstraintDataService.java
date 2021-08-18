@@ -194,9 +194,6 @@ public class ConstraintDataService {
                                     //The varFactor relates the variable to the particular constraint
                                     setVarFactor(variableId, constraintId, varFactor);
 
-                                    //constraintString += s " ${if (varFactor > 0) " + " else "
-                                    //"}$varFactor * $variableId \n";
-
                                     constraintString[0] = constraintString[0]
                                                           + String.format("+ %1.2f * %s\n", varFactor, variableId);
                                  });
