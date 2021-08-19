@@ -1,6 +1,8 @@
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
+import java.util.List;
+
 public class CplexSolve {
 
    public static void doCplexSolve(ConstraintDataService constraintDataService) {
@@ -55,7 +57,7 @@ public class CplexSolve {
                              IloRange[][] cplexConstraints,
                              ConstraintDataService constraintDataService
                              ) throws IloException {
-      int varCount = 3;
+      int varCount = constraintDataService.variables.size();
       //https://www.ibm.com/docs/en/icos/12.10.0?topic=cm-numvar-method-1
       //Variables
       cplexVars[0] = new IloNumVar[varCount];
@@ -75,7 +77,7 @@ public class CplexSolve {
       IloLinearNumExpr objective = model.linearNumExpr();
       varIndex = 0;
       for (Double varFactor
-            : constraintDataService.getVarFactorRow(constraintDataService.objectiveFn)
+            : constraintDataService.getVarFactorValsRow(constraintDataService.objectiveFn)
            ) {
          objective.addTerm(varFactor,cplexVars[0][varIndex]);
       }
@@ -91,41 +93,59 @@ public class CplexSolve {
       //https://stackoverflow.com/questions/5207162/define-a-fixed-size-list-in-java
 
       //Constraints
-      int constraintCount = 2;
-      Double[][] varFactorsAllConstraints = new Double[constraintCount][varCount];
-      String[] constraintNames = new String[constraintCount];
+      int constraintCount = constraintDataService.constraints.size();
+      cplexConstraints[0] = new IloRange[constraintCount];
+      int constraintIndex = 0;
+      for (Constraint constraint : constraintDataService.constraints) {
+
+         IloLinearNumExpr lhs = model.linearNumExpr();
+         List<Double> varFactors = constraintDataService.getVarFactorValsRow(constraint);
+         for (varIndex = 0; varIndex < varCount; varIndex++) {
+            lhs.addTerm(varFactors.get(varIndex), cplexVars[0][varIndex]);
+         }
+
+         IloRange cplexConstraint
+               = model.addLe(lhs,constraint.rhsValue,constraint.constraintId);
+         cplexConstraints[0][constraintIndex] = cplexConstraint;
+         constraintIndex++;
+      }
+/*
+      Double[][] varFactorValsAllConstraints = new Double[constraintCount][varCount];
+      String[] constraintIds = new String[constraintCount];
       Double[] constraintRhs = new Double[constraintCount];
 
       int constraintIndex = 0;
       Double[] varFactorsThisConstraint = new Double[varCount];
-      constraintNames[constraintIndex] = "c1";
+      constraintIds[constraintIndex] = "c1";
       constraintRhs[constraintIndex] = 20.0;
       varFactorsThisConstraint[0] = -1.0;
       varFactorsThisConstraint[1] = 1.0;
       varFactorsThisConstraint[2] = 1.0;
-      varFactorsAllConstraints[constraintIndex] = varFactorsThisConstraint;
+      varFactorValsAllConstraints[constraintIndex] = varFactorsThisConstraint;
 
       constraintIndex = 1;
       varFactorsThisConstraint = new Double[varCount];
-      constraintNames[constraintIndex] = "c2";
+      constraintIds[constraintIndex] = "c2";
       constraintRhs[constraintIndex] = 30.0;
       varFactorsThisConstraint[0] = 1.0;
       varFactorsThisConstraint[1] = -3.0;
       varFactorsThisConstraint[2] = 1.0;
-      varFactorsAllConstraints[constraintIndex] = varFactorsThisConstraint;
+      varFactorValsAllConstraints[constraintIndex] = varFactorsThisConstraint;
 
       cplexConstraints[0] = new IloRange[constraintCount];
 
       for (constraintIndex = 0; constraintIndex < constraintCount; constraintIndex++) {
          IloLinearNumExpr lhs = model.linearNumExpr();
-         Double[] varFactors = varFactorsAllConstraints[constraintIndex];
+         Double[] varFactors = varFactorValsAllConstraints[constraintIndex];
 
          for (varIndex = 0; varIndex < varCount; varIndex++) {
             lhs.addTerm(varFactors[varIndex], cplexVars[0][varIndex]);
          }
          IloRange cplexConstraint
-               = model.addLe(lhs,constraintRhs[constraintIndex],constraintNames[constraintIndex]);
+               = model.addLe(lhs,constraintRhs[constraintIndex],constraintIds[constraintIndex]);
          cplexConstraints[0][constraintIndex] = cplexConstraint;
       }
+
+ */
    }
 }

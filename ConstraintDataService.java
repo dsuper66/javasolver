@@ -270,7 +270,8 @@ public class ConstraintDataService {
 
    //Get the row of var factor values for the constraint
    //https://stackoverflow.com/questions/45793226/cannot-make-filter-foreach-collect-in-one-stream
-   public List<Double> getVarFactorRow(Constraint c) {
+   //Ordering: https://stackoverflow.com/questions/29216588/how-to-ensure-order-of-processing-in-java8-streams
+   public List<Double> getVarFactorValsRow(Constraint c) {
       //If there is a varFactor for this constraint+var then add it otherwise add zero
       return variables
             .stream()
