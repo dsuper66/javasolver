@@ -107,9 +107,17 @@ public class CplexSolve {
             lhs.addTerm(varFactors.get(varIndex), cplexVars[0][varIndex]);
          }
 
-         IloRange cplexConstraint
-               = model.addLe(lhs,constraint.rhsValue,constraint.constraintId);
-         cplexConstraints[0][constraintIndex] = cplexConstraint;
+         if (constraint.inequality.equals("le")) {
+            IloRange cplexConstraint
+                  = model.addLe(lhs, constraint.rhsValue, constraint.constraintId);
+            cplexConstraints[0][constraintIndex] = cplexConstraint;
+         }
+         else if (constraint.inequality.equals("eq")) {
+            IloRange cplexConstraint
+                  = model.addEq(lhs, constraint.rhsValue, constraint.constraintId);
+            cplexConstraints[0][constraintIndex] = cplexConstraint;
+         }
+
          constraintIndex++;
       }
 /*
