@@ -16,7 +16,8 @@ public class SolveModel {
         constraintDataService.readConstraints();
         constraintDataService.processConstraintDefs(modelDataService);
         CplexSolve.doCplexSolve(constraintDataService);
-/*
+
+        /*
         // Create the modeler/solver object
         try (IloCplex cplex = new IloCplex()) {
 
@@ -55,7 +56,9 @@ public class SolveModel {
         }
         catch (IloException e) {
             System.err.println("Concert exception '" + e + "' caught");
-        }*/
+        }
+
+         */
     }
 
 

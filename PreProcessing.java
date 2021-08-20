@@ -17,6 +17,9 @@ public class PreProcessing {
 
       setupBidsAndOffers(modelDataService);
 
+      //Add mathModel element for the objective
+      modelDataService.addElement(ModelDefService.ElementType.mathModel, "mathModel");
+
       //Filter out zero factors and dead buses and branches that don't have two live buses
 
       //Assign mktBranch limit to branch
@@ -56,7 +59,7 @@ public class PreProcessing {
          modelDataService.addProperty(
                ModelDefService.PropertyType.displayName,
                enOfferTrancheId,
-               pnodeId + "." + enOfferType);
+               pnodeId + "_" + enOfferType);
 
          //debug... price and limit
          Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit, List.of(enOfferTrancheId));

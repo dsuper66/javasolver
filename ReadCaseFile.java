@@ -170,11 +170,11 @@ public class ReadCaseFile {
                         for (Integer orderNum : orderNumFieldNum.keySet()) {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
-                            //If multiple components then "-" between
-                            elementId += ((elementId.length() > 0) ? "^" : "") + trimmedData; //thisRowData.get(fieldNum - 1);
+                            //If multiple components then "x" between
+                            elementId += ((elementId.length() > 0) ? "x" : "") + trimmedData; //thisRowData.get(fieldNum - 1);
                         }
                         //replace spaces within
-                        elementId = elementId.replaceAll("\\s{1,}", "-").trim();
+                        elementId = elementId.replaceAll("\\s{1,}", "v").trim();
                         //Note that these means only one type of each element per row
                         //elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
                         elementTypeAndIdFromThisRow.put(elementType, elementId);
@@ -194,7 +194,7 @@ public class ReadCaseFile {
                         //replace spaces
                         String trimmedData =
                               thisRowData.get(fieldNum - 1).stripLeading().stripTrailing()
-                                    .replaceAll("\\s{1,}", "-").trim();
+                                    .replaceAll("\\s{1,}", "v").trim();
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If any of the element types have this property then assign the value

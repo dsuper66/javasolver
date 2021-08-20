@@ -12,7 +12,8 @@ public class ModelDefService {
         bus,
         tranche,
         enOfferTranche,
-        bidTranche
+        bidTranche,
+        mathModel
     }
 
     public enum PropertyType {

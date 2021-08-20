@@ -86,7 +86,7 @@ public class ConstraintDataService {
                      rhsValue = constraintDef.rhsValue;
                   }
 
-                  String constraintId = String.format("%s.%s",
+                  String constraintId = String.format("con_%s.%s",
                         constraintDef.constraintType, parentElement.elementId);
                   final String[] constraintString = {String.format("%s\n", constraintId)};
 
@@ -99,7 +99,7 @@ public class ConstraintDataService {
                   //Check if parent element has var in the constraint components
                   if (!constraintDef.varType.equals("") ) {
                      //Add the variable
-                     String variableId = createVariable(parentElement.elementId, constraintDef.varType);
+                     String variableId = addVariable(parentElement.elementId, constraintDef.varType);
                      //Add its factor
                      Double varFactor = constraintDef.factorValue;
                      setVarFactor(variableId, constraintId, varFactor);
@@ -190,7 +190,7 @@ public class ConstraintDataService {
                                     ));*/
 
                                     //VariableId for constraint component
-                                    String variableId = createVariable(childElement.elementId, constraintComp.varType);
+                                    String variableId = addVariable(childElement.elementId, constraintComp.varType);
                                     //The varFactor relates the variable to the particular constraint
                                     setVarFactor(variableId, constraintId, varFactor);
 
@@ -235,7 +235,8 @@ public class ConstraintDataService {
             rhsValue,
             constraintString);
 
-      if (constraintType == "objective") {
+      System.out.println("Adding constraint:" + constraintId + " " + constraintType);
+      if (elementId.equals("mathModel")) {
          objectiveFn = newC;
       } else if (constraints //add the constraint
             .stream()
@@ -245,9 +246,11 @@ public class ConstraintDataService {
       }
    }
 
-   public static String createVariable(String elementId, String varType) {
-      String varId = String.format("%s.%s", elementId, varType);
-      if (variables //add the variable
+   public static String addVariable(String elementId, String varType) {
+      String varId = String.format("var_%s.%s", elementId, varType);
+      //add the variable if it is new and this is not the objective constraint
+      if (!elementId.equals("mathModel")
+            && variables
             .stream()
             .filter(v -> v.varId.equals(varId))
             .collect(Collectors.toList()).isEmpty()) {
@@ -263,6 +266,7 @@ public class ConstraintDataService {
          Double value) {
       VarFactor varFactor = new VarFactor(varId, constraintId, value);
       if (!varFactors.contains(varFactor)) {
+         System.out.println("varFactor for var:" + varId + " constraint:" + constraintId);
          varFactors.add(varFactor);
       }
    }
@@ -271,14 +275,15 @@ public class ConstraintDataService {
    //Get the row of var factor values for the constraint
    //https://stackoverflow.com/questions/45793226/cannot-make-filter-foreach-collect-in-one-stream
    //Ordering: https://stackoverflow.com/questions/29216588/how-to-ensure-order-of-processing-in-java8-streams
-   public List<Double> getVarFactorValsRow(Constraint c) {
+   public List<Double> getVarFactorValsRow(String constraintId) {
+      System.out.println("getVarFactorValsRow:" + constraintId);
       //If there is a varFactor for this constraint+var then add it otherwise add zero
       return variables
             .stream()
             .map(v ->
                varFactors
                      .stream()
-                     .filter(vf -> vf.varId.equals(v.varId) && vf.constraintId.equals(c.constraintId))
+                     .filter(vf -> vf.varId.equals(v.varId) && vf.constraintId.equals(constraintId))
                      .findFirst().map(vf -> vf.value)
                      .orElse(0.0))
             .collect(Collectors.toList());
