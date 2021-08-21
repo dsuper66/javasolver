@@ -7,10 +7,10 @@ public class PropertyTypeDef {
 
     public PropertyTypeDef(
             ModelDefService.PropertyType propertyType,
-            List<String> elementTypes,
+            List<ModelDefService.ElementType> elementTypes,
             String valueType) {
         this.propertyTypeId = propertyType.name();
-        this.elementTypes = elementTypes;
+        this.elementTypes = elementTypes.stream().map(Enum::name).toList();
         this.valueType = valueType;
     }
 }
