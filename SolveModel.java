@@ -13,10 +13,11 @@ public class SolveModel {
         PreProcessing.calculateDerivedProperties(modelDataService);
 
         ConstraintDataService constraintDataService = new ConstraintDataService();
-        constraintDataService.readConstraints();
+        ConstraintDataService.readConstraints();
         constraintDataService.processConstraintDefs(modelDataService);
         CplexSolve.doCplexSolve(constraintDataService);
 
+        //The cplex demo solve
         /*
         // Create the modeler/solver object
         try (IloCplex cplex = new IloCplex()) {

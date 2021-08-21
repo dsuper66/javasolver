@@ -5,8 +5,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class PreProcessing {
 
-   //static ModelDefService modelDefService = new ModelDefService();
-
    public static void calculateDerivedProperties(ModelDataService modelDataService) {
       System.out.println("pre-proc: calculateDerivedProperties");
 
@@ -141,8 +139,7 @@ public class PreProcessing {
             Double sumFactors = sumPnodeFactors.get(pn.elementId);
             Double enodeFactor = property.doubleValue;
             //uncomment the following to test getDoubleValue
-            //modelDataService.getDoubleValue("factorPnodeMktEnode",
-            //        List.of(pn.elementId, mktEnodeId));
+            //modelDataService.getDoubleValue("factorPnodeMktEnode",List.of(pn.elementId, mktEnodeId));
 
             Double weight =
                   (sumFactors == 0.0) ? 0.0 : //don't div by zero

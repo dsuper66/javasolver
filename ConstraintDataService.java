@@ -23,8 +23,8 @@ public class ConstraintDataService {
 
    public static void readConstraints() {
       String dir = "/Users/davidbullen/java/";
-      String defFile = "constraint-defs.json";
-      String compFile = "constraint-comps.json";
+      String defFile = "constraint-defs2.json";
+      String compFile = "constraint-comps2.json";
       //https://attacomsian.com/blog/jackson-read-json-file
       //ObjectMapper mapper = new ObjectMapper();
       try {

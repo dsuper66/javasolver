@@ -5,25 +5,6 @@ public class PropertyTypeDef {
     final List<String> elementTypes;
     final String valueType;
 
-    /*
-    public enum PropertyTypeId {
-        fromBus,
-        toBus,
-        susceptance,
-        resistance,
-        nwEnodeForMktEnode,
-        busForNwEnode,
-        factorPnodeMktEnode,
-        electricalIsland,
-        tranchePnode,
-        tranchePrice,
-        trancheLimit,
-        tradeType,
-        //Derived
-        weightPnodeMktEnode,
-        weightPnodeBus
-    }*/
-
     public PropertyTypeDef(
             ModelDefService.PropertyType propertyType,
             List<String> elementTypes,

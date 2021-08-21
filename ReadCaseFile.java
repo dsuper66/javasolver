@@ -188,7 +188,6 @@ public class ReadCaseFile {
                     }
 
                     //Get and assign the Properties
-
                     for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
                         //replace spaces
@@ -197,22 +196,8 @@ public class ReadCaseFile {
                                     .replaceAll("\\s{1,}", "v").trim();
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
-                        //If any of the element types have this property then assign the value
-                        /*
-                        for (var elementIdTypeMap : elementIdTypeMapFromThisRow.entrySet()) {
-                            Boolean elementHasThisProperty = modelDefService.elementTypeHasProperty(
-                                            elementIdTypeMap.getValue(), propertyTypeId);
-
-                            if (elementHasThisProperty) {
-
-                                modelDataService.assignElementProperty(
-                                        elementIdTypeMap.getKey(), propertyTypeId, fieldValue);
-                            }
-                        }*/
-
                         //If we have all elements that match the property type then assign the value
                         //Get the property def for the property type that was found
-
                         modelDefService.propertyTypeDef(propertyTypeId).ifPresent(propertyTypeDef -> {
                             ArrayList<String> elementIds = new ArrayList<>();
                             boolean foundAllElementTypes = true;

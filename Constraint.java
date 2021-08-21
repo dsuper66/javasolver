@@ -1,11 +1,11 @@
 public class Constraint {
 
-   final String constraintId;
-   final String constraintType;
-   final String elementId;
-   final String inequality;
-   final Double rhsValue;
-   final String constraintString;
+   public final String constraintId;
+   public final String constraintType;
+   public final String elementId;
+   public final String inequality;
+   public final Double rhsValue;
+   public final String constraintString;
    //Double shadowPrice = 0.0; //result
 
    public Constraint(String constraintId,
