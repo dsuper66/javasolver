@@ -165,16 +165,16 @@ public class ReadCaseFile {
 
                     for (String elementType : elementTypeFieldMaps.keySet()) {
                         Map<Integer, Integer> orderNumFieldNum = elementTypeFieldMaps.get(elementType);
-                        String elementId = "";
+                        StringBuilder elementIdConcat = new StringBuilder();
                         //Create the elementId from one or more fields
                         for (Integer orderNum : orderNumFieldNum.keySet()) {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
                             //If multiple components then "x" between
-                            elementId += ((elementId.length() > 0) ? "x" : "") + trimmedData; //thisRowData.get(fieldNum - 1);
+                            elementIdConcat.append((elementIdConcat.length() > 0) ? "x" : "").append(trimmedData);
                         }
                         //replace spaces within
-                        elementId = elementId.replaceAll("\\s{1,}", "v").trim();
+                        String elementId = elementIdConcat.toString().replaceAll("\\s{1,}", "v").trim();
                         //Note that these means only one type of each element per row
                         //elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
                         elementTypeAndIdFromThisRow.put(elementType, elementId);
