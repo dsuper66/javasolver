@@ -25,6 +25,7 @@ public class PreProcessing {
 
    }
 
+   //Bids and Offers
    private static void setupBidsAndOffers(ModelDataService modelDataService) {
       //enOfferTranche elements as tranche where trancheType = "ENOF"
       //This is effectively just a set of elements that is a subset of the tranche elements
@@ -99,8 +100,8 @@ public class PreProcessing {
 
    }
 
+   //Pnode to bus weights
    private static void calcPnodeBusWeights(ModelDataService modelDataService) {
-      //Pnode to bus weights
 
       //Sum the factors for each pnode
       System.out.println(LocalDateTime.now() + " start sum factors");
