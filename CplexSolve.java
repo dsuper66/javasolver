@@ -68,11 +68,6 @@ public class CplexSolve {
          varIndex++;
       }
 
-      /*
-      cplexVars[0][0] = model.numVar(0.0,40.0,"x1");
-      cplexVars[0][1] = model.numVar(0.0,Double.MAX_VALUE,"x2");
-      cplexVars[0][2] = model.numVar(0.0,Double.MAX_VALUE,"x3"); */
-
       //https://www.ibm.com/docs/api/v1/content/SSSA5P_12.8.0/ilog.odms.cplex.help/refdotnetcplex/html/T_ILOG_Concert_ILinearNumExpr.htm
       //Objective
       IloLinearNumExpr objective = model.linearNumExpr();
@@ -82,10 +77,6 @@ public class CplexSolve {
          System.out.println(">>>CPLEX obj varFactor:[" + varIndex + "]" + varFactor);
          varIndex++;
       }
-      /*
-      objective.addTerm(1.0,cplexVars[0][0]);
-      objective.addTerm(2.0,cplexVars[0][1]);
-      objective.addTerm(3.0,cplexVars[0][2]); */
       model.addMaximize(objective);
 
       //https://www.ibm.com/docs/en/icos/12.8.0.0?topic=technology-adding-constraints-iloconstraint-ilorange
@@ -98,8 +89,10 @@ public class CplexSolve {
       cplexConstraints[0] = new IloRange[constraintCount];
       int constraintIndex = 0;
       for (Constraint constraint : constraintDataService.constraints) {
-         System.out.println("cplex constraint:" + constraint.constraintId + " rhs:" + constraint.rhsValue);
+         System.out.printf("cplex constraint[%d]:%s rhs:%f%n",
+               constraintIndex,constraint.constraintId,constraint.rhsValue);
 
+         //LHS
          IloLinearNumExpr lhs = model.linearNumExpr();
          List<Double> varFactors = constraintDataService.getVarFactorValsRow(constraint.constraintId);
          System.out.println("varFactors:" + varFactors);
@@ -107,6 +100,7 @@ public class CplexSolve {
             lhs.addTerm(varFactors.get(varIndex), cplexVars[0][varIndex]);
          }
 
+         //GE LT EQ
          if (constraint.inequality.equals("le")) {
             IloRange cplexConstraint
                   = model.addLe(lhs, constraint.rhsValue, constraint.constraintId);
@@ -120,43 +114,5 @@ public class CplexSolve {
 
          constraintIndex++;
       }
-/*
-      Double[][] varFactorValsAllConstraints = new Double[constraintCount][varCount];
-      String[] constraintIds = new String[constraintCount];
-      Double[] constraintRhs = new Double[constraintCount];
-
-      int constraintIndex = 0;
-      Double[] varFactorsThisConstraint = new Double[varCount];
-      constraintIds[constraintIndex] = "c1";
-      constraintRhs[constraintIndex] = 20.0;
-      varFactorsThisConstraint[0] = -1.0;
-      varFactorsThisConstraint[1] = 1.0;
-      varFactorsThisConstraint[2] = 1.0;
-      varFactorValsAllConstraints[constraintIndex] = varFactorsThisConstraint;
-
-      constraintIndex = 1;
-      varFactorsThisConstraint = new Double[varCount];
-      constraintIds[constraintIndex] = "c2";
-      constraintRhs[constraintIndex] = 30.0;
-      varFactorsThisConstraint[0] = 1.0;
-      varFactorsThisConstraint[1] = -3.0;
-      varFactorsThisConstraint[2] = 1.0;
-      varFactorValsAllConstraints[constraintIndex] = varFactorsThisConstraint;
-
-      cplexConstraints[0] = new IloRange[constraintCount];
-
-      for (constraintIndex = 0; constraintIndex < constraintCount; constraintIndex++) {
-         IloLinearNumExpr lhs = model.linearNumExpr();
-         Double[] varFactors = varFactorValsAllConstraints[constraintIndex];
-
-         for (varIndex = 0; varIndex < varCount; varIndex++) {
-            lhs.addTerm(varFactors[varIndex], cplexVars[0][varIndex]);
-         }
-         IloRange cplexConstraint
-               = model.addLe(lhs,constraintRhs[constraintIndex],constraintIds[constraintIndex]);
-         cplexConstraints[0][constraintIndex] = cplexConstraint;
-      }
-
- */
    }
 }

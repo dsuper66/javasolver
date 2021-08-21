@@ -6,7 +6,7 @@ public class Constraint {
    String inequality;
    Double rhsValue;
    String constraintString;
-   Double shadowPrice = 0.0;
+   //Double shadowPrice = 0.0; //result
 
    public Constraint(String constraintId,
                      String constraintType,
