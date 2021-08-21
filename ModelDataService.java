@@ -5,25 +5,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ModelDataService {
-    private ModelDefService modelDefService = new ModelDefService();
+    private final ModelDefService modelDefService = new ModelDefService();
 
-    private ArrayList<ModelElement> modelElementsArray = new ArrayList<>();
-    public HashMap<String,ModelElement> modelElementsMap = new HashMap<>();
+    private final ArrayList<ModelElement> modelElementsArray = new ArrayList<>();
+    public final HashMap<String,ModelElement> modelElementsMap = new HashMap<>();
 
-    public ArrayList<ElementProperty> propertiesArray = new ArrayList<>();
-    public HashMap<String,ElementProperty> propertiesMap = new HashMap<>();
+    public final ArrayList<ElementProperty> propertiesArray = new ArrayList<>();
+    public final HashMap<String,ElementProperty> propertiesMap = new HashMap<>();
 
     //--------Elements-----------
-    //Add element with properties
-    /*
-    public void addElement(
-            String elementId,
-            String elementType,
-            Map<String, List<String>> properties) {
-
-        this.modelElements.add(
-                new ModelElement(elementId,elementType,properties));
-    }*/
 
     //Add element
     public String makeElementKey(String elementTypeId,String elementId) {
@@ -42,13 +32,6 @@ public class ModelDataService {
             String elementType,
             String elementId) {
 
-        /*
-        HashMap<String, List<String>> properties = new HashMap<>();
-        List<String> elementTypeProperties = modelDefService.getPropertiesForElementType(elementType);
-        //Add an empty property list for each property
-        for (String propertyType : elementTypeProperties) {
-            properties.putIfAbsent(propertyType,List.of(""));
-        }*/
         //Add to map and array
         modelElementsMap.computeIfAbsent(makeElementKey(elementType,elementId),k -> {
             ModelElement newModelElement = new ModelElement(elementId,elementType);
@@ -57,30 +40,6 @@ public class ModelDataService {
         });
 
     }
-
-    //Set the property of the element (if it exists)
-    //https://www.baeldung.com/java-optional
-    /*
-    public void assignElementProperty(String elementId, String propertyType, String value) {
-        getElement(elementId).ifPresent(modelElement ->
-                {
-                    if (modelElement.elementType.equals("bus")) {
-                        //System.out.println("elementId:" + elementId + " propertyType:" + propertyType + " propertyValue:" + value);
-                    }
-                }
-        );
-    }*/
-/*
-    public Optional<ModelElement> getElement(String elementId) {
-        Optional<ModelElement> opt =
-                modelElementsArray
-                        .stream()
-                        .filter(e -> e.elementId.equals(elementId))
-                        .findFirst();
-        //opt.ifPresent(modelElement ->
-        //    System.out.println(elementId + " properties:" + modelElement.properties));
-        return opt;
-    }*/
 
     public List<ModelElement> getElements(ModelDefService.ElementType elementType) {
         return getElements(elementType.name());
@@ -222,11 +181,6 @@ public class ModelDataService {
 
     public String getStringValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
         return getStringValue(propertyType.name(),elementIds);
-        /*
-        Optional<ElementProperty> opt = Optional.ofNullable(
-                propertiesMap.get(makePropertyKey(propertyType.name(), elementIds)));
-        return opt.map(p -> p.stringValue)
-                .orElse("");*/
     }
 
     public String getStringValue(String propertyTypeId, List<String> elementIds) {
@@ -245,34 +199,6 @@ public class ModelDataService {
     }
     public Double getDoubleValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
         return getDoubleValue(propertyType.name(),elementIds);
-        /*
-        if (propertyTypeId.equals("factorPnodeMktEnode")) {
-            System.out.println("looking for: " + propertyTypeId + " elements:" + elementIds);
-        }*/
-        /*
-        Optional<ElementProperty> opt = getProperty(propertyType,elementIds);
-        return opt.map(p -> p.doubleValue)
-                .orElse(0.0); */
-        /*
-        List<ElementProperty> propertiesThisType = getProperties(propertyTypeId);
-        Optional<ElementProperty> opt =
-                propertiesThisType
-                        .stream()
-                        .filter(p -> {
-                            Boolean matched = true;
-                            Integer index = 0;
-                            for (String elementId : p.elementIds) {
-                                if (!elementIds.get(index).equals(elementId)) {
-                                    matched = false;
-                                    break;
-                                }
-                                index++;
-                            }
-                            return matched;
-                        })
-                        .findFirst();
-        return opt.map(p -> p.doubleValue)
-                .orElse(0.0);*/
     }
     public Double getDoubleValueElseOne(String propertyTypeId, String elementId) {
         return getDoubleValueElseOne(propertyTypeId, List.of(elementId));
@@ -284,34 +210,12 @@ public class ModelDataService {
               .orElse(1.0);
     }
 
-    //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
     //This is the old slow way, now uses map
     public Optional<ElementProperty> getProperty(ModelDefService.PropertyType propertyType, List<String> elementIds) {
         List<ElementProperty> propertiesThisType = getProperties(propertyType);
-        Optional<ElementProperty> opt =
-                propertiesThisType
-                        .stream()
-                        .filter(p -> p.elementIds.equals(elementIds))
-                        /*
-                        Boolean matched = true;
-                        Integer index = 0;
-                        for (String elementId : elementIds) {
-                            if (propertyTypeId.equals("nwEnodeForMktEnode")) {
-                                System.out.println("checking:" + p.propertyTypeId + " el:" + elementId);
-                            }
-                            if (!elementIds.get(index).equals(elementId)) {
-                                matched = false;
-                                break;
-                            }
-                            index++;
-                        }
-                        return matched;*/
-                        .findFirst();
-
-        //System.out.println(opt.map(o -> "found:" + o));
-        return opt;
-
+        return propertiesThisType
+                .stream()
+                .filter(p -> p.elementIds.equals(elementIds))
+                .findFirst();
     }
-
-
 }

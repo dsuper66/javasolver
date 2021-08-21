@@ -64,7 +64,7 @@ public class ModelDefService {
                     "enBidTranche"
             );*/
 
-    static List<PropertyTypeDef> propertyTypeDefDefs =
+    static final List<PropertyTypeDef> propertyTypeDefDefs =
             List.of(
                     //Inputs
                     new PropertyTypeDef(PropertyType.fromBus, List.of("branch"), "busId"),
@@ -133,11 +133,9 @@ public class ModelDefService {
     //}
 
     public Optional<PropertyTypeDef> propertyTypeDef(String propertyType) {
-        Optional<PropertyTypeDef> opt =
-                propertyTypeDefDefs
-                        .stream()
-                        .filter(e -> e.propertyTypeId.equals(propertyType))
-                        .findFirst();
-        return opt;
+        return propertyTypeDefDefs
+                .stream()
+                .filter(e -> e.propertyTypeId.equals(propertyType))
+                .findFirst();
     }
 }

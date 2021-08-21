@@ -1,9 +1,9 @@
 import java.util.List;
 
 public class PropertyTypeDef {
-    String propertyTypeId;
-    List<String> elementTypes;
-    String valueType;
+    final String propertyTypeId;
+    final List<String> elementTypes;
+    final String valueType;
 
     /*
     public enum PropertyTypeId {

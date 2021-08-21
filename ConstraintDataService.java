@@ -15,11 +15,11 @@ public class ConstraintDataService {
    public static List<ConstraintDef> constraintDefs = new ArrayList<>();
 
    //Created from defs
-   public List<Constraint> constraints = new ArrayList<>();
+   public final List<Constraint> constraints = new ArrayList<>();
    public Constraint objectiveFn = new Constraint(
          "", "", "", "", 0.0, "");
-   public List<Variable> variables = new ArrayList<>();
-   public List<VarFactor> varFactors = new ArrayList<>();
+   public final List<Variable> variables = new ArrayList<>();
+   public final List<VarFactor> varFactors = new ArrayList<>();
 
    public static void readConstraints() {
       String dir = "/Users/davidbullen/java/";

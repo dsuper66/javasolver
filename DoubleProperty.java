@@ -1,9 +1,9 @@
 import java.util.List;
 
 public class DoubleProperty {
-    String propertyType;
-    List<String> elementIds;
-    Double value;
+    final String propertyType;
+    final List<String> elementIds;
+    final Double value;
 
     public DoubleProperty(
             String propertyType,

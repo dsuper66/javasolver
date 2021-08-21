@@ -2,19 +2,8 @@
 
 public class ModelElement {
 
-    String elementId;
-    String elementType;
-    //Map<String, List<String>> properties;
-
-    /*
-    public ModelElement(
-            String elementId,
-            String elementType,
-            Map<String, List<String>> properties) {
-        this.elementId = elementId;
-        this.elementType = elementType;
-        this.properties = properties;
-    }*/
+    final String elementId;
+    final String elementType;
 
     public ModelElement(
             String elementId,

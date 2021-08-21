@@ -1,10 +1,10 @@
 import java.util.List;
 
 public class ElementProperty {
-    String propertyTypeId;
-    List<String> elementIds;
-    String stringValue;
-    Double doubleValue;
+    final String propertyTypeId;
+    final List<String> elementIds;
+    final String stringValue;
+    final Double doubleValue;
 
     public ElementProperty(
             String propertyTypeId,

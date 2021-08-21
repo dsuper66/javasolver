@@ -1,7 +1,7 @@
 public class VarFactor {
-   String varId;
-   String constraintId;
-   Double value;
+   final String varId;
+   final String constraintId;
+   final Double value;
 
    VarFactor(String varId, String constraintId, Double value) {
       this.varId = varId;

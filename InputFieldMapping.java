@@ -6,40 +6,12 @@ import java.util.stream.Collectors;
 
 public class InputFieldMapping {
 
-    //-------Section filter-------
-/*
-    private class SectionFilter {
-        String sectionName;
-        String fieldName;
-        String fieldValue;
-        Boolean include;
-
-        private SectionFilter(
-                String sectionName,
-                String fieldName,
-                String fieldValue,
-                Boolean include) {
-            this.sectionName = sectionName;
-            this.fieldName = fieldName;
-            this.fieldValue = fieldValue;
-            this.include = include;
-        }
-    }
-
-    private ArrayList<SectionFilter> sectionFilters = new ArrayList<>();
-
-    public void addSectionFilter(String sectionName, String fieldName, String fieldValue, Boolean include) {
-        this.sectionFilters.add(
-                new SectionFilter(sectionName,fieldName,fieldValue,include));
-    }*/
-
-
     //-------Element mapping-------
     private class FieldElementMap {
-        String sectionName;
-        String fieldName;
-        String elementType;
-        Integer order;
+        final String sectionName;
+        final String fieldName;
+        final String elementType;
+        final Integer order;
 
         private FieldElementMap(
                 String sectionName,
@@ -52,28 +24,12 @@ public class InputFieldMapping {
             this.order = order;
         }
     }
-    private ArrayList<FieldElementMap> fieldElementMaps = new ArrayList<>();
+    private final ArrayList<FieldElementMap> fieldElementMaps = new ArrayList<>();
 
     public void addFieldElementMap(String sectionName, String fieldName, String elementType, Integer order) {
         this.fieldElementMaps.add(
                 new FieldElementMap(sectionName,fieldName, elementType, order));
     }
-
-    //Get the element type for the field name
-    /*
-    private String elementTypeForFieldName(String fieldName) {
-        List<FieldElementMap> matchingFeildElementMaps =
-                (List<FieldElementMap>) fieldElementMaps
-                        .stream()
-                        .filter(fem -> fem.fieldName.toUpperCase().equals(fieldName.toUpperCase()))
-                        .collect(Collectors.toList());
-        if (!matchingFeildElementMaps.isEmpty()){
-            return matchingFeildElementMaps.get(0).elementType;
-        }
-        else {
-            return "";
-        }
-    }*/
 
     //For the Header row, return matching ELEMENTS and the orderNum,fieldNum that hold their component(s)
     public HashMap<String,Map<Integer,Integer>> getElementFieldMapForSectionFieldNames(
@@ -90,7 +46,7 @@ public class InputFieldMapping {
                     fieldElementMaps
                             .stream()
                             .filter(fem ->
-                                    fem.fieldName.toUpperCase().equals(thisFieldName.toUpperCase())
+                                    fem.fieldName.equalsIgnoreCase(thisFieldName)
                                     && fem.sectionName.toUpperCase().equals(thisSectionName))
                             .collect(Collectors.toList());
 
@@ -124,9 +80,9 @@ public class InputFieldMapping {
     //-------Property mapping-------
 
     private class FieldPropertyMap {
-        String sectionName;
-        String fieldName;
-        String propertyType;
+        final String sectionName;
+        final String fieldName;
+        final String propertyType;
 
         private FieldPropertyMap(
                 String sectionName,
@@ -138,7 +94,7 @@ public class InputFieldMapping {
         }
     }
 
-    private ArrayList<FieldPropertyMap> fieldPropertyMaps = new ArrayList<>();
+    private final ArrayList<FieldPropertyMap> fieldPropertyMaps = new ArrayList<>();
 
     public void addFieldPropertyMap(String sectionName, String fieldName, String propertyType) {
         this.fieldPropertyMaps.add(
@@ -159,8 +115,8 @@ public class InputFieldMapping {
             List<FieldPropertyMap> matchingFieldPropertyMaps =
                     fieldPropertyMaps
                             .stream()
-                            .filter(fpm -> fpm.fieldName.toUpperCase().equals(thisFieldName.toUpperCase())
-                                    && fpm.sectionName.toUpperCase().equals(thisSectionName.toUpperCase()))
+                            .filter(fpm -> fpm.fieldName.equalsIgnoreCase(thisFieldName)
+                                    && fpm.sectionName.equalsIgnoreCase(thisSectionName))
                             .collect(Collectors.toList());
 
             //Create a mapping from the elementType to an map of orderNum,fieldNum
@@ -174,31 +130,8 @@ public class InputFieldMapping {
                 propertyTypeFieldMap.put(thisPropertyType,thisFieldNum);
             }
         }
-                /*
-        return fieldNames
-                .stream()
-                .map(fn -> elementTypeForFieldName(fn))
-                .collect(Collectors.toList());*/
 
         return propertyTypeFieldMap;
     }
 
-    //-------Element is a Property-------
-    /*
-    private class ElementPropertyMap {
-        String elementType;
-        String propertyType;
-
-        private ElementPropertyMap(
-                String elementType,
-                String propertyType){
-            this.elementType = elementType;
-            this.propertyType = propertyType;
-        }
-    }
-    private ArrayList<ElementPropertyMap> elementPropertyMaps = new ArrayList<>();
-    public void addElementPropertyMap(String elementType, String propertyType) {
-        this.elementPropertyMaps.add(
-                new ElementPropertyMap(elementType, propertyType));
-    }*/
 }

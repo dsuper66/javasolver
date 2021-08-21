@@ -6,8 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ReadCaseFile {
-    static InputFieldMapping inputFieldMapping = new InputFieldMapping();
-    static ModelDefService modelDefService = new ModelDefService();
+    static final InputFieldMapping inputFieldMapping = new InputFieldMapping();
+    static final ModelDefService modelDefService = new ModelDefService();
     //static ModelElementDataService modelElementDataService = new ModelElementDataService();
 
     public static void readCase(ModelDataService modelDataService) throws IOException {
@@ -88,7 +88,7 @@ public class ReadCaseFile {
 
         //Interval 10:00
         LocalDateTime caseInterval =
-                LocalDateTime.of(2021, 7, 06,10,0);
+                LocalDateTime.of(2021, 7, 6,10,0);
 
         //Case file names
         //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
@@ -123,7 +123,7 @@ public class ReadCaseFile {
             HashMap<String, Map<Integer, Integer>> elementTypeFieldMaps = new HashMap<>();
             HashMap<String, Integer> propertyTypeFieldMaps = new HashMap<>();
 
-            Boolean dataIsIntervalBased = false; //If interval based then filter data on interval
+            boolean dataIsIntervalBased = false; //If interval based then filter data on interval
             while ((curLine = bufferedReader.readLine()) != null) {
 
                 //HEADER: Get the headers and see which match elements and properties
@@ -215,7 +215,7 @@ public class ReadCaseFile {
 
                         modelDefService.propertyTypeDef(propertyTypeId).ifPresent(propertyTypeDef -> {
                             ArrayList<String> elementIds = new ArrayList<>();
-                            Boolean foundAllElementTypes = true;
+                            boolean foundAllElementTypes = true;
                             for (String elementType : propertyTypeDef.elementTypes) {
                                 //System.out.println("propertyType:" + propertyTypeId + " elementType:" + elementType);
                                 String elementId = elementTypeAndIdFromThisRow.get(elementType);
