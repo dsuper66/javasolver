@@ -56,11 +56,12 @@ public class ConstraintDataService {
       //Constraint Defs
       for (ConstraintDef constraintDef : constraintDefs) {
          //===Define the Constraint===
-         boolean createTheConstraint = true; //Constraint is not created if it can be replaced by bounds on the Var
          //Get the parent elements that match the ConstraintDef elementType
          //e.g. for node balance, do each bus
          for (ModelElement parentElement
                : modelDataService.getElements(constraintDef.elementType)) {
+
+            boolean createTheConstraint = true; //Constraint is not created if it can be replaced by bounds on the Var
 
             //LE or EQ
             String inEquality = constraintDef.inEquality;
@@ -91,7 +92,8 @@ public class ConstraintDataService {
                      .noneMatch(cc -> cc.constraintType.equals(constraintDef.constraintType))){
 
                   //Add the variable with bounds
-                  addVariable(parentElement.elementId, constraintDef.varType);
+                  //***For now ASSUME it is LE***
+                  addVariable(parentElement.elementId, constraintDef.varType, 0.0, rhsValue);
                   createTheConstraint = false;
                }
                else { //Add VarFactor to the constraint

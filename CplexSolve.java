@@ -64,7 +64,7 @@ public class CplexSolve {
       cplexVars[0] = new IloNumVar[varCount];
       int varIndex = 0;
       for (Variable var : constraintDataService.variables) {
-         cplexVars[0][varIndex] = model.numVar(0.0,Double.MAX_VALUE,var.varId);
+         cplexVars[0][varIndex] = model.numVar(var.lowerBound,var.upperBound,var.varId);
          System.out.println(">>>CPLEX var:[" + varIndex + "]" + var.varId);
          varIndex++;
       }
@@ -102,12 +102,12 @@ public class CplexSolve {
          }
 
          //GE LT EQ
-         if (constraint.inequality.equals("le")) {
+         if (constraint.inequality.equalsIgnoreCase("le")) {
             IloRange cplexConstraint
                   = model.addLe(lhs, constraint.rhsValue, constraint.constraintId);
             cplexConstraints[0][constraintIndex] = cplexConstraint;
          }
-         else if (constraint.inequality.equals("eq")) {
+         else if (constraint.inequality.equalsIgnoreCase("eq")) {
             IloRange cplexConstraint
                   = model.addEq(lhs, constraint.rhsValue, constraint.constraintId);
             cplexConstraints[0][constraintIndex] = cplexConstraint;
