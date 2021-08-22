@@ -95,7 +95,8 @@ public class CplexSolve {
 
          //LHS
          IloLinearNumExpr lhs = model.linearNumExpr();
-         List<Double> varFactors = constraintDataService.getVarFactorValsRow(constraint.constraintId);
+         List<Double> varFactors = constraintDataService.varFactorValsMap.get(constraint.constraintId);
+         //constraintDataService.getVarFactorValsRow(constraint.constraintId);
          for (varIndex = 0; varIndex < varCount; varIndex++) {
             lhs.addTerm(varFactors.get(varIndex), cplexVars[0][varIndex]);
          }

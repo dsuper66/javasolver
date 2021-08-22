@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ConstraintDataService {
@@ -21,6 +18,7 @@ public class ConstraintDataService {
          "", "", "", "", 0.0, "");
    public final List<Variable> variables = new ArrayList<>();
    public final List<VarFactor> varFactors = new ArrayList<>();
+   public HashMap<String,List<Double>> varFactorValsMap = new HashMap();
 
    public static void readConstraints() {
       String dir = "/Users/davidbullen/java/";
@@ -187,6 +185,8 @@ public class ConstraintDataService {
                      inEquality,
                      rhsValue,
                      constraintString[0]);
+
+               varFactorValsMap.put(constraintId,getVarFactorValsRow(constraintId));
                msg[0] = msg[0] + constraintString[0] + "\n";
             }
          }
