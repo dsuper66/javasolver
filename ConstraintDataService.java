@@ -35,16 +35,12 @@ public class ConstraintDataService {
          JsonReader reader = new JsonReader(new FileReader(dir + defFile));
          //final List<ConstraintDef> constraintDefs = Arrays.asList(gson.fromJson(reader, ConstraintDef[].class));
          constraintDefs = Arrays.asList(gson.fromJson(reader, ConstraintDef[].class));
-         for (ConstraintDef cd : constraintDefs) {
-            System.out.println("constraint def:" + cd.constraintType);
-         }
+         //constraintDefs.forEach(cd -> System.out.println(">>>constraint def:" + cd.constraintType));
 
          reader = new JsonReader(new FileReader(dir + compFile));
          //final List<ConstraintComp> constraintComps = Arrays.asList(gson.fromJson(reader, ConstraintComp[].class));
          constraintComps = Arrays.asList(gson.fromJson(reader, ConstraintComp[].class));
-         for (ConstraintComp cc : constraintComps) {
-            System.out.println("constraint comp:" + cc.constraintType);
-         }
+         //constraintComps.forEach(cc -> System.out.println(">>>constraint comp:" + cc.constraintType));
 
       } catch (Exception ex) {
          ex.printStackTrace();
@@ -147,7 +143,7 @@ public class ConstraintDataService {
                            //or the parent property from the factorParentProperty of the child
                            //(if no factor found then these default to 1.0)
 
-                           System.out.println(">>>" + cc.factorProperty);
+                           //System.out.println(">>>" + cc.factorProperty);
                            varFactor = varFactor
                                        //factorProperty of the child
                                        // e.g., dirBranch direction applies to dirBranch
@@ -191,8 +187,9 @@ public class ConstraintDataService {
             }
          }
       }
-      System.out.println(">>>Constraints:\n" + msg[0]);
-      this.variables.forEach(v -> System.out.println("var:" + v.varId));
+
+      //System.out.println(">>>Constraints:\n" + msg[0]);
+      //this.variables.forEach(v -> System.out.println(">>>var:" + v.varId));
    }
 
    public void addConstraint(
@@ -250,7 +247,7 @@ public class ConstraintDataService {
          Double value) {
       VarFactor varFactor = new VarFactor(varId, constraintId, value);
       if (!varFactors.contains(varFactor)) {
-         System.out.println("varFactor for var:" + varId + " constraint:" + constraintId);
+         //System.out.println(">>>varFactor for var:" + varId + " constraint:" + constraintId);
          varFactors.add(varFactor);
       }
    }

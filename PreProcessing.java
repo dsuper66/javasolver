@@ -86,7 +86,7 @@ public class PreProcessing {
       //Energy bids from pnodeload
       for (ElementProperty pnodeLoadProperty : modelDataService.getProperties(ModelDefService.PropertyType.pnodeLoad)) {
 
-         System.out.println(">>>" + pnodeLoadProperty.elementIds.get(0) + " " + pnodeLoadProperty.doubleValue);
+         //System.out.println(">>>" + pnodeLoadProperty.elementIds.get(0) + " " + pnodeLoadProperty.doubleValue);
 
          //Create the bidTranche element
          //use the pnode id for the bid tranche id

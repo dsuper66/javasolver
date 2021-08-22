@@ -110,7 +110,7 @@ public class ReadCaseFile {
         //06-JUL-2021 00:00
         dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm", Locale.ENGLISH);
         String caseIntervalInFile = caseInterval.format(dateFormatter).toUpperCase();
-        System.out.println(">>>>"+ caseIntervalInFile);
+        //System.out.println(">>>"+ caseIntervalInFile);
 
         //Read the different case types
         for (String caseType : casefileTypes){

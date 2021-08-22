@@ -65,7 +65,7 @@ public class CplexSolve {
       int varIndex = 0;
       for (Variable var : constraintDataService.variables) {
          cplexVars[0][varIndex] = model.numVar(var.lowerBound,var.upperBound,var.varId);
-         System.out.println(">>>CPLEX var:[" + varIndex + "]" + var.varId);
+         //System.out.println(">>>CPLEX var:[" + varIndex + "]" + var.varId);
          varIndex++;
       }
 
@@ -75,7 +75,7 @@ public class CplexSolve {
       varIndex = 0;
       for (Double varFactor : constraintDataService.getVarFactorValsRow(constraintDataService.objectiveFn.constraintId)) {
          objective.addTerm(varFactor,cplexVars[0][varIndex]);
-         System.out.println(">>>CPLEX obj varFactor:[" + varIndex + "]" + varFactor);
+         //System.out.println(">>>CPLEX obj varFactor:[" + varIndex + "]" + varFactor);
          varIndex++;
       }
       model.addMaximize(objective);
@@ -90,13 +90,12 @@ public class CplexSolve {
       cplexConstraints[0] = new IloRange[constraintCount];
       int constraintIndex = 0;
       for (Constraint constraint : constraintDataService.constraints) {
-         System.out.printf("cplex constraint[%d]:%s rhs:%f%n",
-               constraintIndex,constraint.constraintId,constraint.rhsValue);
+         //System.out.printf(">>>cplex constraint[%d]:%s rhs:%f%n",
+         //      constraintIndex,constraint.constraintId,constraint.rhsValue);
 
          //LHS
          IloLinearNumExpr lhs = model.linearNumExpr();
          List<Double> varFactors = constraintDataService.getVarFactorValsRow(constraint.constraintId);
-         System.out.println("varFactors:" + varFactors);
          for (varIndex = 0; varIndex < varCount; varIndex++) {
             lhs.addTerm(varFactors.get(varIndex), cplexVars[0][varIndex]);
          }
