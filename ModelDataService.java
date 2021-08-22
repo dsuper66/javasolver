@@ -64,6 +64,13 @@ public class ModelDataService {
             Double value) {
         addProperty(propertyType.name(),elementIds,value);
     }
+    //Double using property type, single element
+    public void addProperty(
+          ModelDefService.PropertyType propertyType,
+          String elementId,
+          Double value) {
+        addProperty(propertyType.name(),List.of(elementId),value);
+    }
     //String using property type, single element
     public void addProperty(
             ModelDefService.PropertyType propertyType,

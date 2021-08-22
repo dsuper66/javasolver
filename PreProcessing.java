@@ -1,6 +1,7 @@
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class PreProcessing {
@@ -23,6 +24,22 @@ public class PreProcessing {
 
       //Make the tranche name readable
 
+      //Add directional branches
+      for (ModelElement branch : modelDataService.getElements(ModelDefService.ElementType.branch)) {
+
+         String fromBusId = modelDataService.getStringValue(ModelDefService.PropertyType.fromBus,branch.elementId);
+         String toBusId = modelDataService.getStringValue(ModelDefService.PropertyType.toBus,branch.elementId);
+         Map<String,Double> mult = Map.of("FWD",1.0,"REV",-1.0);
+         for (String dirString : mult.keySet()) {
+            String dirBranchId = branch.elementId + dirString;
+            modelDataService.addElement(ModelDefService.ElementType.dirBranch, dirBranchId);
+            modelDataService.addProperty(ModelDefService.PropertyType.branchForDirBranch, dirBranchId, branch.elementId);
+            modelDataService.addProperty(ModelDefService.PropertyType.dirBranchDirection, dirBranchId, mult.get(dirString));
+            modelDataService.addProperty(ModelDefService.PropertyType.fromBus, dirBranchId, fromBusId);
+            modelDataService.addProperty(ModelDefService.PropertyType.toBus, dirBranchId, toBusId);
+
+         }
+      }
    }
 
    //Bids and Offers

@@ -38,7 +38,9 @@ public class ModelDefService {
       mktBrLimitRev,
       dirBranchLimit,
       displayName,
-      branchForMktBranch
+      branchForMktBranch,
+      branchForDirBranch,
+      dirBranchDirection
    }
 
    //The properties of an element type
@@ -87,7 +89,9 @@ public class ModelDefService {
                new PropertyTypeDef(
                      PropertyType.toBus, List.of(ElementType.dirBranch), "busId"),
                new PropertyTypeDef(
-                     PropertyType.dirBranchLimit, List.of(ElementType.dirBranch), "double")
+                     PropertyType.dirBranchLimit, List.of(ElementType.dirBranch), "double"),
+               new PropertyTypeDef(
+                     PropertyType.branchForDirBranch, List.of(ElementType.dirBranch), "branchId")
 
          );
 
