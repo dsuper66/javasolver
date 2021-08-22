@@ -48,6 +48,7 @@ public class ConstraintDataService {
    }
 
    public void processConstraintDefs(ModelDataService modelDataService) {
+      //noinspection MismatchedReadAndWriteOfArray
       final String[] msg = {""};
       //Constraint Defs
       for (ConstraintDef constraintDef : constraintDefs) {
