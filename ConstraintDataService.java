@@ -52,12 +52,14 @@ public class ConstraintDataService {
       final String[] msg = {""};
       //Constraint Defs
       for (ConstraintDef constraintDef : constraintDefs) {
+         System.out.println(">>>ConstraintDef:" + constraintDef.constraintType);
          //===Define the Constraint===
          //Get the parent elements that match the ConstraintDef elementType
          //e.g. for node balance, do each bus
          for (ModelElement parentElement
                : modelDataService.getElements(constraintDef.elementType)) {
 
+            System.out.println(">>>ModelElement:" + parentElement.elementType + " " +  parentElement.elementId);
             boolean createTheConstraint = true; //Constraint is not created if it can be replaced by bounds on the Var
 
             //LE or EQ
