@@ -90,8 +90,8 @@ public class CplexSolve {
       cplexConstraints[0] = new IloRange[constraintCount];
       int constraintIndex = 0;
       for (Constraint constraint : constraintDataService.constraints) {
-         //System.out.printf(">>>cplex constraint[%d]:%s rhs:%f%n",
-         //      constraintIndex,constraint.constraintId,constraint.rhsValue);
+         System.out.printf(">>>cplex constraint[%d]:%s rhs:%f%n",
+               constraintIndex,constraint.constraintId,constraint.rhsValue);
 
          //LHS
          IloLinearNumExpr lhs = model.linearNumExpr();

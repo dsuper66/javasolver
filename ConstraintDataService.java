@@ -59,7 +59,8 @@ public class ConstraintDataService {
          for (ModelElement parentElement
                : modelDataService.getElements(constraintDef.elementType)) {
 
-            System.out.println(">>>ModelElement:" + parentElement.elementType + " " +  parentElement.elementId);
+            System.out.println(">>>con:" + constraintDef.constraintType
+                               + " " + parentElement.elementType + " " +  parentElement.elementId);
             boolean createTheConstraint = true; //Constraint is not created if it can be replaced by bounds on the Var
 
             //LE or EQ
@@ -220,10 +221,15 @@ public class ConstraintDataService {
       }
    }
 
+   /*
+   private String makeVarId(String elementId, String varType){
+      return String.format("var_%s.%s", elementId, varType);
+   }*/
    //Variable assign LB and UB (create if necessary)
    private void addVariable(String elementId, String varType, Double lowerBound, Double upperBound) {
+      String varId = addVariable(elementId,varType);
       Optional<Variable> varOpt = variables.stream()
-            .filter(v -> v.varId.equals(addVariable(elementId, varType)))
+            .filter(v -> v.varId.equals(varId))
             .findFirst();
       if (varOpt.isPresent()) {
          Variable var =  varOpt.get();
