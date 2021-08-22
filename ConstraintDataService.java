@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ConstraintDataService {
@@ -55,6 +56,7 @@ public class ConstraintDataService {
       //Constraint Defs
       for (ConstraintDef constraintDef : constraintDefs) {
          //===Define the Constraint===
+         boolean createTheConstraint = true; //Constraint is not created if it can be replaced by bounds on the Var
          //Get the parent elements that match the ConstraintDef elementType
          //e.g. for node balance, do each bus
          for (ModelElement parentElement
@@ -63,8 +65,7 @@ public class ConstraintDataService {
             //LE or EQ
             String inEquality = constraintDef.inEquality;
 
-            //--RHS--
-            //RHS from parent or value
+            //RHS (from parent or value)
             Double rhsValue;
             //RHS from parent
             //check if RHS is a property of the parent element, e.g., brLimit for branch
@@ -80,103 +81,112 @@ public class ConstraintDataService {
                   constraintDef.constraintType, parentElement.elementId);
             final String[] constraintString = {String.format("%s\n", constraintId)};
 
-            //===Components of the Constraint===
-
-            //--Var Factor from parent--
-            //Check if parent element has var in the constraint components
+            //Check for Var Factor from parent
             if (!constraintDef.varType.equals("")) {
-               //Add the variable
-               String variableId = addVariable(parentElement.elementId, constraintDef.varType);
-               //Add its factor
-               Double varFactor = constraintDef.factorValue;
-               setVarFactor(variableId, constraintId, varFactor);
 
-               //constraintString += s " ${if (varFactor > 0) " + " else " "}$varFactor * $variableId\n"
-               constraintString[0] += String.format("+ %1.2f * %s\n", varFactor, variableId);
-            }
+               //If this constraint has no components
+               //then the limit on this var can be applied directly to the bounds of the variable
+               //and no constraint is added
+               if (constraintComps.stream()
+                     .noneMatch(cc -> cc.constraintType.equals(constraintDef.constraintType))){
 
-            //--Components--
-            for (ConstraintComp cc : constraintComps) {
-               if (cc.constraintType.equals(constraintDef.constraintType)) {
-                  //Get component elements where their elementType matches AND their property
-                  //as specified by propertyMap matches the constraintDef parent element
-
-                  //elements where elementType matches constraint component
-                  //then check for property map from parent to child, or child to parent, or to self
-                  for (ModelElement childMatchingType : modelDataService.getElements(cc.elementType)) {
-                     if ((
-                           //e.g. all bids and offers are in objective constraint
-                           cc.propertyMap.equals("all")
-                           //parentElement matches constraintComp.propertyMap
-                           //e.g. nodeBal... propertyMap is fromBus,
-                           // child is dirBranch matching parent bus
-                           || modelDataService.getStringValue(
-                                 cc.propertyMap, childMatchingType.elementId).equals
-                                 (parentElement.elementId)
-                           //or map via non-zero factor, e.g., weightTrancheBus(t,b) > 0
-                           || modelDataService.getDoubleValue(
-                                 cc.propertyMap,
-                                 List.of(childMatchingType.elementId, parentElement.elementId))
-                              > 0
-                           //or child matches propertyMap from parent
-                           //e.g. power flow... propertyMap is fromBus,
-                           // child elements are buses matching parent branch
-                           || modelDataService.getStringValue(
-                                 cc.propertyMap, parentElement.elementId).equals
-                                 (childMatchingType.elementId)
-                           || cc.propertyMap.equals("self")
-                              && parentElement.elementId.equals(childMatchingType.elementId)
-                     )) {
-                        //VarFactor for component
-                        Double varFactor = cc.factorValue;
-
-                        //and potentially from the factorProperty of the parent or child to themselves
-                        //or the parent property from the factorParentProperty of the child
-                        //(if no factor found then these default to 1.0)
-
-                        System.out.println(">>>" + cc.factorProperty);
-                        varFactor = varFactor
-                                    //factorProperty of the child
-                                    // e.g., dirBranch direction applies to dirBranch
-                                    * modelDataService.getDoubleValueElseOne
-                              (cc.factorProperty, childMatchingType.elementId)
-                                    //factorProperty of the parent applied to child
-                                    // e.g., bus child of powerflow has susceptance of parent
-                                    * modelDataService.getDoubleValueElseOne
-                              (cc.factorParentProperty, parentElement.elementId)
-                                    //factorProperty of the child applied to child ??
-                                    //* modelDataService.getDoubleValueElseOne
-                                    //(constraintComp.factorProperty, parentElement.elementId)
-                                    //and tranche can map to more than one bus, via factor
-                                    * modelDataService.getDoubleValueElseOne
-                              (cc.factorProperty,
-                                    List.of(childMatchingType.elementId, parentElement.elementId));
-
-                        //VariableId for constraint component
-                        String variableId = addVariable(childMatchingType.elementId, cc.varType);
-                        //The varFactor relates the variable to the particular constraint
-                        setVarFactor(variableId, constraintId, varFactor);
-
-                        constraintString[0] = constraintString[0]
-                                              + String.format("+ %1.2f * %s\n", varFactor, variableId);
-                     }
-                  }
+                  //Add the variable with bounds
+                  addVariable(parentElement.elementId, constraintDef.varType);
+                  createTheConstraint = false;
+               }
+               else { //Add VarFactor to the constraint
+                  //Add the Variable
+                  String variableId = addVariable(parentElement.elementId, constraintDef.varType);
+                  //Add the VarFactor
+                  Double varFactor = constraintDef.factorValue;
+                  setVarFactor(variableId, constraintId, varFactor);
+                  constraintString[0] += String.format("+ %1.2f * %s\n", varFactor, variableId);
                }
             }
 
-            //Inequality RHS
-            //constraintString += s " $inEquality $rhsValue"
-            constraintString[0] += String.format("%s %1.2f", inEquality, rhsValue);
+            //--Components--
+            if (createTheConstraint) {
+               //These set the VarFactors which define the LHS
+               for (ConstraintComp cc : constraintComps) {
+                  if (cc.constraintType.equals(constraintDef.constraintType)) {
+                     //Get component elements where their elementType matches AND their property
+                     //as specified by propertyMap matches the constraintDef parent element
 
-            addConstraint(
-                  constraintId,
-                  constraintDef.constraintType,
-                  parentElement.elementId,
-                  inEquality,
-                  rhsValue,
-                  constraintString[0]);
+                     //elements where elementType matches constraint component
+                     //then check for property map from parent to child, or child to parent, or to self
+                     for (ModelElement childMatchingType : modelDataService.getElements(cc.elementType)) {
+                        if ((
+                              //e.g. all bids and offers are in objective constraint
+                              cc.propertyMap.equals("all")
+                              //parentElement matches constraintComp.propertyMap
+                              //e.g. nodeBal... propertyMap is fromBus,
+                              // child is dirBranch matching parent bus
+                              || modelDataService.getStringValue(
+                                    cc.propertyMap, childMatchingType.elementId).equals
+                                    (parentElement.elementId)
+                              //or map via non-zero factor, e.g., weightTrancheBus(t,b) > 0
+                              || modelDataService.getDoubleValue(
+                                    cc.propertyMap,
+                                    List.of(childMatchingType.elementId, parentElement.elementId))
+                                 > 0
+                              //or child matches propertyMap from parent
+                              //e.g. power flow... propertyMap is fromBus,
+                              // child elements are buses matching parent branch
+                              || modelDataService.getStringValue(
+                                    cc.propertyMap, parentElement.elementId).equals
+                                    (childMatchingType.elementId)
+                              || cc.propertyMap.equals("self")
+                                 && parentElement.elementId.equals(childMatchingType.elementId)
+                        )) {
+                           //VarFactor for component
+                           Double varFactor = cc.factorValue;
 
-            msg[0] = msg[0] + constraintString[0] + "\n"; //msgForThisConstraint
+                           //and potentially from the factorProperty of the parent or child to themselves
+                           //or the parent property from the factorParentProperty of the child
+                           //(if no factor found then these default to 1.0)
+
+                           System.out.println(">>>" + cc.factorProperty);
+                           varFactor = varFactor
+                                       //factorProperty of the child
+                                       // e.g., dirBranch direction applies to dirBranch
+                                       * modelDataService.getDoubleValueElseOne
+                                 (cc.factorProperty, childMatchingType.elementId)
+                                       //factorProperty of the parent applied to child
+                                       // e.g., bus child of powerflow has susceptance of parent
+                                       * modelDataService.getDoubleValueElseOne
+                                 (cc.factorParentProperty, parentElement.elementId)
+                                       //factorProperty of the child applied to child ??
+                                       //* modelDataService.getDoubleValueElseOne
+                                       //(constraintComp.factorProperty, parentElement.elementId)
+                                       //and tranche can map to more than one bus, via factor
+                                       * modelDataService.getDoubleValueElseOne
+                                 (cc.factorProperty,
+                                       List.of(childMatchingType.elementId, parentElement.elementId));
+
+                           //VariableId for constraint component
+                           String variableId = addVariable(childMatchingType.elementId, cc.varType);
+                           //The varFactor relates the variable to the particular constraint
+                           setVarFactor(variableId, constraintId, varFactor);
+
+                           constraintString[0] = constraintString[0]
+                                                 + String.format("+ %1.2f * %s\n", varFactor, variableId);
+                        }
+                     }
+                  }
+               }
+
+               //Inequality RHS
+               constraintString[0] += String.format("%s %1.2f", inEquality, rhsValue);
+               //Create the constraint
+               addConstraint(
+                     constraintId,
+                     constraintDef.constraintType,
+                     parentElement.elementId,
+                     inEquality,
+                     rhsValue,
+                     constraintString[0]);
+               msg[0] = msg[0] + constraintString[0] + "\n";
+            }
          }
       }
       System.out.println(">>>Constraints:\n" + msg[0]);
@@ -208,7 +218,20 @@ public class ConstraintDataService {
       }
    }
 
-   public String addVariable(String elementId, String varType) {
+   //Variable assign LB and UB (create if necessary)
+   private void addVariable(String elementId, String varType, Double lowerBound, Double upperBound) {
+      Optional<Variable> varOpt = variables.stream()
+            .filter(v -> v.varId.equals(addVariable(elementId, varType)))
+            .findFirst();
+      if (varOpt.isPresent()) {
+         Variable var =  varOpt.get();
+         var.lowerBound = lowerBound;
+         var.upperBound = upperBound;
+      }
+   }
+
+   //Create variable if not already
+   private String addVariable(String elementId, String varType) {
       String varId = String.format("var_%s.%s", elementId, varType);
       //add the variable if it is new and this is not the objective constraint
       if (!elementId.equals("mathModel")

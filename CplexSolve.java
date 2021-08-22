@@ -57,9 +57,10 @@ public class CplexSolve {
                              IloRange[][] cplexConstraints,
                              ConstraintDataService constraintDataService
                              ) throws IloException {
+
+      //Variables
       int varCount = constraintDataService.variables.size();
       //https://www.ibm.com/docs/en/icos/12.10.0?topic=cm-numvar-method-1
-      //Variables
       cplexVars[0] = new IloNumVar[varCount];
       int varIndex = 0;
       for (Variable var : constraintDataService.variables) {
