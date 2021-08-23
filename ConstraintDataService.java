@@ -18,7 +18,7 @@ public class ConstraintDataService {
          "", "", "", "", 0.0, "");
    public final List<Variable> variables = new ArrayList<>();
    public final List<VarFactor> varFactors = new ArrayList<>();
-   public HashMap<String,List<Double>> varFactorValsMap = new HashMap();
+   public HashMap<String,List<Double>> varFactorValsMap = new HashMap<>();
 
    public static void readConstraints() {
       String dir = "/Users/davidbullen/java/";
