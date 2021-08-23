@@ -1,23 +1,30 @@
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CplexSolve {
 
-   public static void doCplexSolve(ConstraintDataService constraintDataService) {
+   public ConstraintDataService constraintDataService;
+
+   public void doCplexSolve() {
 
       // Create the modeler/solver object
       try (IloCplex cplex = new IloCplex()) {
 
          IloNumVar[][] cplexVars = new IloNumVar[1][];
-         IloRange[][]  cplexConstraints = new IloRange[1][];
+         IloRange[][] cplexConstraints = new IloRange[1][];
 
          populateByRow(
                cplex,
                cplexVars,
                cplexConstraints,
-               constraintDataService);
+               constraintDataService.constraints,
+               constraintDataService.variablesList,
+               constraintDataService.varFactorValsConstraintMap,
+               constraintDataService.objectiveFn);
 
          // write model to file
          cplex.exportModel("lpex1.lp");
@@ -55,16 +62,19 @@ public class CplexSolve {
    static void populateByRow(IloMPModeler model,
                              IloNumVar[][] cplexVars,
                              IloRange[][] cplexConstraints,
-                             ConstraintDataService constraintDataService
-                             ) throws IloException {
+                             List<Constraint> constraints,
+                             List<Variable> variables,
+                             HashMap<String, HashMap<Integer, Double>> varFactorMap,
+                             Constraint objectiveFn
+   ) throws IloException {
 
       //Variables
-      int varCount = constraintDataService.variables.size();
+      int varCount = variables.size();
       //https://www.ibm.com/docs/en/icos/12.10.0?topic=cm-numvar-method-1
       cplexVars[0] = new IloNumVar[varCount];
       int varIndex = 0;
-      for (Variable var : constraintDataService.variables) {
-         cplexVars[0][varIndex] = model.numVar(var.lowerBound,var.upperBound,var.varId);
+      for (Variable var : variables) {
+         cplexVars[0][varIndex] = model.numVar(var.lowerBound, var.upperBound, var.varId);
          //System.out.println(">>>CPLEX var:[" + varIndex + "]" + var.varId);
          varIndex++;
       }
@@ -72,11 +82,10 @@ public class CplexSolve {
       //https://www.ibm.com/docs/api/v1/content/SSSA5P_12.8.0/ilog.odms.cplex.help/refdotnetcplex/html/T_ILOG_Concert_ILinearNumExpr.htm
       //Objective
       IloLinearNumExpr objective = model.linearNumExpr();
-      varIndex = 0;
-      for (Double varFactor : constraintDataService.getVarFactorValsRow(constraintDataService.objectiveFn.constraintId)) {
-         objective.addTerm(varFactor,cplexVars[0][varIndex]);
+      Map<Integer, Double> varFactors = varFactorMap.get(objectiveFn.constraintId);
+      for (varIndex = 0; varIndex < varCount; varIndex++) {
+         objective.addTerm(varFactors.getOrDefault(varIndex, 0.0), cplexVars[0][varIndex]);
          //System.out.println(">>>CPLEX obj varFactor:[" + varIndex + "]" + varFactor);
-         varIndex++;
       }
       model.addMaximize(objective);
 
@@ -86,19 +95,18 @@ public class CplexSolve {
       //https://stackoverflow.com/questions/5207162/define-a-fixed-size-list-in-java
 
       //Constraints
-      int constraintCount = constraintDataService.constraints.size();
+      int constraintCount = constraints.size();
       cplexConstraints[0] = new IloRange[constraintCount];
       int constraintIndex = 0;
-      for (Constraint constraint : constraintDataService.constraints) {
+      for (Constraint constraint : constraints) {
          System.out.printf(">>>cplex constraint[%d]:%s rhs:%f%n",
-               constraintIndex,constraint.constraintId,constraint.rhsValue);
+               constraintIndex, constraint.constraintId, constraint.rhsValue);
 
          //LHS
          IloLinearNumExpr lhs = model.linearNumExpr();
-         List<Double> varFactors = constraintDataService.varFactorValsMap.get(constraint.constraintId);
-         //constraintDataService.getVarFactorValsRow(constraint.constraintId);
+         varFactors = varFactorMap.get(constraint.constraintId);
          for (varIndex = 0; varIndex < varCount; varIndex++) {
-            lhs.addTerm(varFactors.get(varIndex), cplexVars[0][varIndex]);
+            lhs.addTerm(varFactors.getOrDefault(varIndex, 0.0), cplexVars[0][varIndex]);
          }
 
          //GE LT EQ
@@ -106,8 +114,7 @@ public class CplexSolve {
             IloRange cplexConstraint
                   = model.addLe(lhs, constraint.rhsValue, constraint.constraintId);
             cplexConstraints[0][constraintIndex] = cplexConstraint;
-         }
-         else if (constraint.inequality.equalsIgnoreCase("eq")) {
+         } else if (constraint.inequality.equalsIgnoreCase("eq")) {
             IloRange cplexConstraint
                   = model.addEq(lhs, constraint.rhsValue, constraint.constraintId);
             cplexConstraints[0][constraintIndex] = cplexConstraint;

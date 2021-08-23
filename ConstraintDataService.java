@@ -16,11 +16,13 @@ public class ConstraintDataService {
    public final List<Constraint> constraints = new ArrayList<>();
    public Constraint objectiveFn = new Constraint(
          "", "", "", "", 0.0, "");
-   public final List<Variable> variables = new ArrayList<>();
-   public final List<VarFactor> varFactors = new ArrayList<>();
-   public HashMap<String,List<Double>> varFactorValsMap = new HashMap<>();
+   public final List<Variable> variablesList = new ArrayList<>();
+   public final HashMap<String, Integer> variablesMap = new HashMap<>();
 
-   public static void readConstraints() {
+   public final List<VarFactor> varFactors = new ArrayList<>();
+   public final HashMap<String, HashMap<Integer, Double>> varFactorValsConstraintMap = new HashMap<>();
+
+   public void readConstraints() {
       String dir = "/Users/davidbullen/java/";
       String defFile = "constraint-defs2.json";
       String compFile = "constraint-comps2.json";
@@ -58,7 +60,7 @@ public class ConstraintDataService {
                : modelDataService.getElements(constraintDef.elementType)) {
 
             System.out.println(">>>con:" + constraintDef.constraintType
-                               + " " + parentElement.elementType + " " +  parentElement.elementId);
+                               + " " + parentElement.elementType + " " + parentElement.elementId);
             boolean createTheConstraint = true; //Constraint is not created if it can be replaced by bounds on the Var
 
             //LE or EQ
@@ -87,14 +89,13 @@ public class ConstraintDataService {
                //then the limit on this var can be applied directly to the bounds of the variable
                //and no constraint is added
                if (constraintComps.stream()
-                     .noneMatch(cc -> cc.constraintType.equals(constraintDef.constraintType))){
+                     .noneMatch(cc -> cc.constraintType.equals(constraintDef.constraintType))) {
 
                   //Add the variable with bounds
                   //***For now ASSUME it is LE***
                   addVariable(parentElement.elementId, constraintDef.varType, 0.0, rhsValue);
                   createTheConstraint = false;
-               }
-               else { //Add VarFactor to the constraint
+               } else { //Add VarFactor to the constraint
                   //Add the Variable
                   String variableId = addVariable(parentElement.elementId, constraintDef.varType);
                   //Add the VarFactor
@@ -186,7 +187,7 @@ public class ConstraintDataService {
                      rhsValue,
                      constraintString[0]);
 
-               varFactorValsMap.put(constraintId,getVarFactorValsRow(constraintId));
+               //varFactorValsMap.put(constraintId,getVarFactorValsRow(constraintId));
                msg[0] = msg[0] + constraintString[0] + "\n";
             }
          }
@@ -221,30 +222,28 @@ public class ConstraintDataService {
       }
    }
 
-   /*
-   private String makeVarId(String elementId, String varType){
+
+   private String makeVarId(String elementId, String varType) {
       return String.format("var_%s.%s", elementId, varType);
-   }*/
+   }
+
    //Variable assign LB and UB (create if necessary)
    private void addVariable(String elementId, String varType, Double lowerBound, Double upperBound) {
-      String varId = addVariable(elementId,varType);
-      Optional<Variable> varOpt = variables.stream()
-            .filter(v -> v.varId.equals(varId))
-            .findFirst();
-      if (varOpt.isPresent()) {
-         Variable var =  varOpt.get();
-         var.lowerBound = lowerBound;
-         var.upperBound = upperBound;
-      }
+      String varId = addVariable(elementId, varType);
+      Variable var = variablesList.get(variablesMap.get(varId));
+      var.lowerBound = lowerBound;
+      var.upperBound = upperBound;
    }
 
    //Create variable if not already
    private String addVariable(String elementId, String varType) {
-      String varId = String.format("var_%s.%s", elementId, varType);
+      String varId = makeVarId(elementId, varType);
       //add the variable if it is new and this is not the objective constraint
-      if (!elementId.equals("mathModel")
-          && variables.stream().noneMatch(v -> v.varId.equals(varId))) {
-         variables.add(new Variable(varId, varType, elementId));
+      if (!elementId.equals("mathModel")) {
+         if (variablesMap.get(varId) == null) {
+            variablesList.add(new Variable(varId, varType, elementId));
+            variablesMap.put(varId, variablesList.size() - 1);
+         }
       }
       return varId;
    }
@@ -268,7 +267,7 @@ public class ConstraintDataService {
    public List<Double> getVarFactorValsRow(String constraintId) {
       //System.out.println("getVarFactorValsRow:" + constraintId);
       //If there is a varFactor for this constraint+var then add it otherwise add zero
-      return variables
+      return variablesList
             .stream()
             .map(v ->
                   varFactors
