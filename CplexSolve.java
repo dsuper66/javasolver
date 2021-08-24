@@ -1,7 +1,6 @@
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +20,9 @@ public class CplexSolve {
                cplex,
                cplexVars,
                cplexConstraints,
+               constraintDataService.varIdList,
+               constraintDataService.upperBounds,
                constraintDataService.constraints,
-               constraintDataService.variablesList,
-               constraintDataService.varFactorValsConstraintMap,
                constraintDataService.objectiveFn);
 
          // write model to file
@@ -62,19 +61,19 @@ public class CplexSolve {
    static void populateByRow(IloMPModeler model,
                              IloNumVar[][] cplexVars,
                              IloRange[][] cplexConstraints,
+                             List<String> varIds,
+                             Map<String,Double> upperBounds,
                              List<Constraint> constraints,
-                             List<Variable> variables,
-                             HashMap<String, HashMap<Integer, Double>> varFactorMap,
                              Constraint objectiveFn
    ) throws IloException {
 
       //Variables
-      int varCount = variables.size();
+      int varCount = varIds.size();
       //https://www.ibm.com/docs/en/icos/12.10.0?topic=cm-numvar-method-1
       cplexVars[0] = new IloNumVar[varCount];
       int varIndex = 0;
-      for (Variable var : variables) {
-         cplexVars[0][varIndex] = model.numVar(var.lowerBound, var.upperBound, var.varId);
+      for (String varId : varIds) {
+         cplexVars[0][varIndex] = model.numVar(0.0, upperBounds.getOrDefault(varId,Double.MAX_VALUE), varId);
          //System.out.println(">>>CPLEX var:[" + varIndex + "]" + var.varId);
          varIndex++;
       }
@@ -82,9 +81,9 @@ public class CplexSolve {
       //https://www.ibm.com/docs/api/v1/content/SSSA5P_12.8.0/ilog.odms.cplex.help/refdotnetcplex/html/T_ILOG_Concert_ILinearNumExpr.htm
       //Objective
       IloLinearNumExpr objective = model.linearNumExpr();
-      Map<Integer, Double> varFactors = varFactorMap.get(objectiveFn.constraintId);
+      //Map<Integer, Double> varFactors = varFactorMap.get(objectiveFn.constraintId);
       for (varIndex = 0; varIndex < varCount; varIndex++) {
-         objective.addTerm(varFactors.getOrDefault(varIndex, 0.0), cplexVars[0][varIndex]);
+         objective.addTerm(objectiveFn.varFactorMap.getOrDefault(varIndex, 0.0), cplexVars[0][varIndex]);
          //System.out.println(">>>CPLEX obj varFactor:[" + varIndex + "]" + varFactor);
       }
       model.addMaximize(objective);
@@ -104,9 +103,9 @@ public class CplexSolve {
 
          //LHS
          IloLinearNumExpr lhs = model.linearNumExpr();
-         varFactors = varFactorMap.get(constraint.constraintId);
+         //varFactors = varFactorMap.get(constraint.constraintId);
          for (varIndex = 0; varIndex < varCount; varIndex++) {
-            lhs.addTerm(varFactors.getOrDefault(varIndex, 0.0), cplexVars[0][varIndex]);
+            lhs.addTerm(constraint.varFactorMap.getOrDefault(varIndex, 0.0), cplexVars[0][varIndex]);
          }
 
          //GE LT EQ
