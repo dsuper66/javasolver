@@ -207,6 +207,8 @@ public class ConstraintDataService {
 
       //System.out.println(">>>Constraints:\n" + msg[0]);
       //this.variables.forEach(v -> System.out.println(">>>var:" + v.varId));
+      System.out.println(">>>Constraints:" + constraints.size() + " Vars:" + varIdList.size());
+
    }
 
    /*

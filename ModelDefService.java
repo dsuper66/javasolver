@@ -62,7 +62,7 @@ public class ModelDefService {
                new PropertyTypeDef(
                      PropertyType.factorPnodeMktEnode, List.of(ElementType.pnode, ElementType.mktEnode), "double"),
                new PropertyTypeDef(
-                     PropertyType.electricalIsland, List.of(ElementType.bus), "integer"),
+                     PropertyType.electricalIsland, List.of(ElementType.bus), "double"),
                new PropertyTypeDef(
                      PropertyType.tranchePnode, List.of(ElementType.tranche), "pnodeId"),
                new PropertyTypeDef(

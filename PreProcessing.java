@@ -29,7 +29,8 @@ public class PreProcessing {
 
          String fromBusId = modelDataService.getStringValue(ModelDefService.PropertyType.fromBus,branch.elementId);
          String toBusId = modelDataService.getStringValue(ModelDefService.PropertyType.toBus,branch.elementId);
-         Map<String,Double> mult = Map.of("FWD",1.0,"REV",-1.0);
+         //Map<String,Double> mult = Map.of("FWD",1.0,"REV",-1.0);
+         Map<String,Double> mult = Map.of("FWD",1.0);
          for (String dirString : mult.keySet()) {
             String dirBranchId = branch.elementId + dirString;
             modelDataService.addElement(ModelDefService.ElementType.dirBranch, dirBranchId);
@@ -120,6 +121,10 @@ public class PreProcessing {
    //Pnode to bus weights
    private static void calcPnodeBusWeights(ModelDataService modelDataService) {
 
+      //Get enode island
+
+      //Exclude island 0 enodes from factor calc
+
       //Sum the factors for each pnode
       System.out.println(LocalDateTime.now() + " start sum factors");
       HashMap<String, Double> sumPnodeFactors = new HashMap<>();
@@ -184,6 +189,11 @@ public class PreProcessing {
                   + "bus(" + busId + ")," + weight);
          }
       }
+
+      //Remove buses at island 0
+
+      //Filter out any other island... buses and pnodes
+
       //Timing
       //System.out.println(">>>" + (time1.doubleValue() / 1000.0));
       //System.out.println(">>>" + (time2.doubleValue() / 1000.0));
