@@ -31,6 +31,7 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"ID_ST","mktEnode",1);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_KV","mktEnode",2);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_EQUIPMENT","mktEnode",3);
+        //properties
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"ID_ENODE","nwEnodeForMktEnode");
 
@@ -38,12 +39,17 @@ public class ReadCaseFile {
         //network enode to bus
         //I,NETDATA,ENODEBUS,1.0,ID_ENODE,ID_BUS,ID_KV,ID_ST,ELECTRICAL_ISLAND,REFERENCE
         sectionName = "ENODEBUS";
-        inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"ID_BUS","bus",1);
+        inputFieldMapping.addFieldElementMap(
+              sectionName,"ID_ENODE",ModelDefService.ElementType.nwEnode.name());
+        inputFieldMapping.addFieldElementMap(
+              sectionName,"ID_BUS",ModelDefService.ElementType.bus.name());
         //properties
-        inputFieldMapping.addFieldPropertyMap(sectionName,"ID_BUS","busForNwEnode");
         inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ELECTRICAL_ISLAND","electricalIsland");
+              sectionName,"ID_BUS",ModelDefService.PropertyType.busForNwEnode.name());
+        inputFieldMapping.addFieldPropertyMap(
+                sectionName,"ELECTRICAL_ISLAND",ModelDefService.PropertyType.busElecIsland.name());
+        inputFieldMapping.addFieldPropertyMap(
+              sectionName,"ELECTRICAL_ISLAND",ModelDefService.PropertyType.nwEnodeElecIsland.name());
         //branch to bus
         //I,NETDATA,BRANCHBUS,1.0,ID_BRANCH,ID_FROMBUS,ID_TOBUS,SUSCEPTANCE,RESISTANCE,REMOVE
         sectionName = "BRANCHBUS";
@@ -125,6 +131,8 @@ public class ReadCaseFile {
             HashMap<String, Map<Integer, Integer>> elementTypeFieldMaps = new HashMap<>();
             HashMap<String, Integer> propertyTypeFieldMaps = new HashMap<>();
 
+            //List<String> excludedPropertyValue = List.of(ModelDefService.PropertyType.electricalIsland + "0");
+
             boolean dataIsIntervalBased = false; //If interval based then filter data on interval
             while ((curLine = bufferedReader.readLine()) != null) {
 
@@ -157,6 +165,7 @@ public class ReadCaseFile {
 
                 //DATA: Create the elements and properties
                 else if (curLine.startsWith("D") && (!dataIsIntervalBased || curLine.contains(caseIntervalInFile))) {
+
                     List<String> thisRowData = Arrays.asList(curLine.split(","));
 
                     //ELEMENT
@@ -193,7 +202,7 @@ public class ReadCaseFile {
                     for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
                         //replace spaces
-                        String trimmedData =
+                        String valueString =
                               thisRowData.get(fieldNum - 1).stripLeading().stripTrailing()
                                     .replaceAll("\\s{1,}", "v").trim();
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
@@ -220,7 +229,7 @@ public class ReadCaseFile {
                                             + propertyTypeId + "(" + elementIds + ") = " + fieldValue);
                                 }*/
                                 //Add the property
-                                modelDataService.addProperty(propertyTypeId, elementIds, trimmedData);
+                                modelDataService.addProperty(propertyTypeId, elementIds, valueString);
                             }
                         });
                     }

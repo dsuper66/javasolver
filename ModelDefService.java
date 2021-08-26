@@ -32,7 +32,8 @@ public class ModelDefService {
       weightTrancheBus,
       susceptance,
       resistance,
-      electricalIsland,
+      busElecIsland,
+      nwEnodeElecIsland,
       weightPnodeBus,
       mktBrLimitFwd,
       mktBrLimitRev,
@@ -62,7 +63,9 @@ public class ModelDefService {
                new PropertyTypeDef(
                      PropertyType.factorPnodeMktEnode, List.of(ElementType.pnode, ElementType.mktEnode), "double"),
                new PropertyTypeDef(
-                     PropertyType.electricalIsland, List.of(ElementType.bus), "double"),
+                     PropertyType.busElecIsland, List.of(ElementType.bus), "double"),
+               new PropertyTypeDef(
+                     PropertyType.nwEnodeElecIsland, List.of(ElementType.nwEnode), "double"),
                new PropertyTypeDef(
                      PropertyType.tranchePnode, List.of(ElementType.tranche), "pnodeId"),
                new PropertyTypeDef(

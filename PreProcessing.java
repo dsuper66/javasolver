@@ -9,6 +9,9 @@ public class PreProcessing {
    public static void calculateDerivedProperties(ModelDataService modelDataService) {
       System.out.println("pre-proc: calculateDerivedProperties");
 
+      //Exclude island 0 bus, enode, branch
+
+
       long startTime = System.currentTimeMillis();
       calcPnodeBusWeights(modelDataService);
       System.out.println("time taken calcPnodeBusWeights:" + (System.currentTimeMillis() - startTime) / 1000.0);
@@ -39,6 +42,30 @@ public class PreProcessing {
             modelDataService.addProperty(ModelDefService.PropertyType.fromBus, dirBranchId, fromBusId);
             modelDataService.addProperty(ModelDefService.PropertyType.toBus, dirBranchId, toBusId);
 
+         }
+      }
+   }
+
+   public static void excludeeIsland(ModelDataService modelDataService){
+
+      List<ModelElement> pnodes = modelDataService.getElements(ModelDefService.ElementType.pnode);
+      for (ModelElement pn : pnodes) {
+         //for each enode factor for this pnode
+         for (ElementProperty property : modelDataService.getProperties(
+               ModelDefService.PropertyType.factorPnodeMktEnode,
+               ModelDefService.ElementType.pnode,
+               pn.elementId)) {
+
+            long startTime = System.currentTimeMillis();
+            String mktEnodeId = modelDataService.getElementId(property, "mktEnode");
+            //Get the nwEnodeId for the mktEnode
+            String nwEnodeId = modelDataService.getStringValue(
+                  ModelDefService.PropertyType.nwEnodeForMktEnode, mktEnodeId);
+
+            //System.out.println("found nwEnodeId " + nwEnodeId);
+            //Get the busId for the nwEnodeId
+            String busId = modelDataService.getStringValue(
+                  ModelDefService.PropertyType.busForNwEnode, nwEnodeId);
          }
       }
    }
@@ -121,10 +148,6 @@ public class PreProcessing {
    //Pnode to bus weights
    private static void calcPnodeBusWeights(ModelDataService modelDataService) {
 
-      //Get enode island
-
-      //Exclude island 0 enodes from factor calc
-
       //Sum the factors for each pnode
       System.out.println(LocalDateTime.now() + " start sum factors");
       HashMap<String, Double> sumPnodeFactors = new HashMap<>();
@@ -154,6 +177,7 @@ public class PreProcessing {
                ModelDefService.PropertyType.factorPnodeMktEnode,
                ModelDefService.ElementType.pnode,
                pn.elementId)) {
+
             long startTime = System.currentTimeMillis();
             String mktEnodeId = modelDataService.getElementId(property, "mktEnode");
             time1.addAndGet(System.currentTimeMillis());
@@ -189,10 +213,6 @@ public class PreProcessing {
                   + "bus(" + busId + ")," + weight);
          }
       }
-
-      //Remove buses at island 0
-
-      //Filter out any other island... buses and pnodes
 
       //Timing
       //System.out.println(">>>" + (time1.doubleValue() / 1000.0));

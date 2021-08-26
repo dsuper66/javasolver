@@ -26,6 +26,9 @@ public class InputFieldMapping {
     }
     private final ArrayList<FieldElementMap> fieldElementMaps = new ArrayList<>();
 
+    public void addFieldElementMap(String sectionName, String fieldName, String elementType) {
+        addFieldElementMap(sectionName, fieldName, elementType,1);
+    }
     public void addFieldElementMap(String sectionName, String fieldName, String elementType, Integer order) {
         this.fieldElementMaps.add(
               new FieldElementMap(sectionName, fieldName, elementType, order));
