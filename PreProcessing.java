@@ -46,28 +46,46 @@ public class PreProcessing {
       }
    }
 
-   public static void excludeeIsland(ModelDataService modelDataService){
+   public static void excludeIsland(ModelDataService modelDataService){
 
-      List<ModelElement> pnodes = modelDataService.getElements(ModelDefService.ElementType.pnode);
-      for (ModelElement pn : pnodes) {
-         //for each enode factor for this pnode
+      //for each pnode-enode factor remove the mapping if enode is in excluded island
+
          for (ElementProperty property : modelDataService.getProperties(
-               ModelDefService.PropertyType.factorPnodeMktEnode,
-               ModelDefService.ElementType.pnode,
-               pn.elementId)) {
+               ModelDefService.PropertyType.factorPnodeMktEnode)) {
 
-            long startTime = System.currentTimeMillis();
-            String mktEnodeId = modelDataService.getElementId(property, "mktEnode");
+            //If mktEnode is in island x then set the factor to zero
+            String mktEnodeId = modelDataService.getElementId(property, ModelDefService.ElementType.mktEnode);
             //Get the nwEnodeId for the mktEnode
             String nwEnodeId = modelDataService.getStringValue(
                   ModelDefService.PropertyType.nwEnodeForMktEnode, mktEnodeId);
 
-            //System.out.println("found nwEnodeId " + nwEnodeId);
-            //Get the busId for the nwEnodeId
-            String busId = modelDataService.getStringValue(
-                  ModelDefService.PropertyType.busForNwEnode, nwEnodeId);
+            String elecIsland = modelDataService.getStringValue(
+                  ModelDefService.PropertyType.nwEnodeElecIsland, nwEnodeId);
+
+            if (elecIsland.equals("0")) {
+               modelDataService.removeProperty(property);
+               /*
+               modelDataService.removeProperty(
+                     ModelDefService.PropertyType.factorPnodeMktEnode,
+                     ModelDefService.ElementType.mktEnode,
+                     mktEnodeId);
+
+                */
+            }
          }
+
+      //For each branch-bus property if bus is in excluded island then remove the properties and the branch
+      for (ElementProperty property : modelDataService.getProperties(
+            ModelDefService.PropertyType.fromBus)) {
+
+         String busId = modelDataService.getElementId(property, ModelDefService.ElementType.bus);
+         //Get the island for the bus
+         String elecIsland = modelDataService.getStringValue(
+               ModelDefService.PropertyType.nwEnodeElecIsland, busId);
+
       }
+
+      //For each bus, in the excluded island remove bus from element list
    }
 
    //Bids and Offers
@@ -170,7 +188,7 @@ public class PreProcessing {
       AtomicLong time2 = new AtomicLong();
       AtomicLong time3 = new AtomicLong();
 
-      //get the properties factorPnodeMktEnode(pnode,mktEnode) where the pnode matches this pnode
+      //get the properties factorPnodeMktEnode(pnode,mktEnode)
       for (ModelElement pn : pnodes) {
          //for each enode factor for this pnode
          for (ElementProperty property : modelDataService.getProperties(
