@@ -26,7 +26,6 @@ public class ModelDataService {
          String elementId) {
       addElement(elementType.name(), elementId);
    }
-
    //Adding from the read
    public void addElement(
          String elementType,
@@ -38,7 +37,16 @@ public class ModelDataService {
          this.modelElementsArray.add(newModelElement);
          return newModelElement;
       });
+   }
 
+   public void removeElement(ModelDefService.ElementType elementType, String elementId) {
+      String elKey = makeElementKey(elementType.name(), elementId);
+      ModelElement elementToRemove = modelElementsMap.get(elKey);
+      if (elementToRemove != null) {
+         modelElementsMap.remove(elKey);
+         modelElementsArray.remove(elementToRemove);
+      }
+      //this.modelElementsArray
    }
 
    public List<ModelElement> getElements(ModelDefService.ElementType elementType) {

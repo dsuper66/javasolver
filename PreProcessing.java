@@ -10,7 +10,7 @@ public class PreProcessing {
       System.out.println("pre-proc: calculateDerivedProperties");
 
       //Exclude island 0 bus, enode, branch
-
+      excludeIsland(modelDataService);
 
       long startTime = System.currentTimeMillis();
       calcPnodeBusWeights(modelDataService);
@@ -21,8 +21,6 @@ public class PreProcessing {
       //Add mathModel element for the objective
       modelDataService.addElement(ModelDefService.ElementType.mathModel, "mathModel");
 
-      //Filter out zero factors and dead buses and branches that don't have two live buses
-
       //Assign mktBranch limit to branch
 
       //Make the tranche name readable
@@ -30,10 +28,10 @@ public class PreProcessing {
       //Add directional branches
       for (ModelElement branch : modelDataService.getElements(ModelDefService.ElementType.branch)) {
 
-         String fromBusId = modelDataService.getStringValue(ModelDefService.PropertyType.fromBus,branch.elementId);
-         String toBusId = modelDataService.getStringValue(ModelDefService.PropertyType.toBus,branch.elementId);
+         String fromBusId = modelDataService.getStringValue(ModelDefService.PropertyType.fromBus, branch.elementId);
+         String toBusId = modelDataService.getStringValue(ModelDefService.PropertyType.toBus, branch.elementId);
          //Map<String,Double> mult = Map.of("FWD",1.0,"REV",-1.0);
-         Map<String,Double> mult = Map.of("FWD",1.0);
+         Map<String, Double> mult = Map.of("FWD", 1.0);
          for (String dirString : mult.keySet()) {
             String dirBranchId = branch.elementId + dirString;
             modelDataService.addElement(ModelDefService.ElementType.dirBranch, dirBranchId);
@@ -46,46 +44,60 @@ public class PreProcessing {
       }
    }
 
-   public static void excludeIsland(ModelDataService modelDataService){
+   public static void excludeIsland(ModelDataService modelDataService) {
 
-      //for each pnode-enode factor remove the mapping if enode is in excluded island
-
-         for (ElementProperty property : modelDataService.getProperties(
-               ModelDefService.PropertyType.factorPnodeMktEnode)) {
-
-            //If mktEnode is in island x then set the factor to zero
-            String mktEnodeId = modelDataService.getElementId(property, ModelDefService.ElementType.mktEnode);
-            //Get the nwEnodeId for the mktEnode
-            String nwEnodeId = modelDataService.getStringValue(
-                  ModelDefService.PropertyType.nwEnodeForMktEnode, mktEnodeId);
-
-            String elecIsland = modelDataService.getStringValue(
-                  ModelDefService.PropertyType.nwEnodeElecIsland, nwEnodeId);
-
-            if (elecIsland.equals("0")) {
-               modelDataService.removeProperty(property);
-               /*
-               modelDataService.removeProperty(
-                     ModelDefService.PropertyType.factorPnodeMktEnode,
-                     ModelDefService.ElementType.mktEnode,
-                     mktEnodeId);
-
-                */
-            }
-         }
-
-      //For each branch-bus property if bus is in excluded island then remove the properties and the branch
+      System.out.println("Exclude factorPnodeMktEnode");
+      //Remove each pnode-enode factor if in excluded island
       for (ElementProperty property : modelDataService.getProperties(
-            ModelDefService.PropertyType.fromBus)) {
+            ModelDefService.PropertyType.factorPnodeMktEnode)) {
 
-         String busId = modelDataService.getElementId(property, ModelDefService.ElementType.bus);
-         //Get the island for the bus
+         String mktEnodeId = modelDataService.getElementId(property, ModelDefService.ElementType.mktEnode);
+         //Get the nwEnodeId and electrical island for the mktEnode
+         String nwEnodeId = modelDataService.getStringValue(
+               ModelDefService.PropertyType.nwEnodeForMktEnode, mktEnodeId);
          String elecIsland = modelDataService.getStringValue(
-               ModelDefService.PropertyType.nwEnodeElecIsland, busId);
+               ModelDefService.PropertyType.nwEnodeElecIsland, nwEnodeId);
 
+         if (elecIsland.equals("0") || elecIsland.equals("1")) {
+            System.out.println("removing property: " + property.propertyTypeId + " " + property.elementIds);
+            modelDataService.removeProperty(property);
+            //No need to remove enodes because they have no associated constraints
+         }
       }
 
-      //For each bus, in the excluded island remove bus from element list
+      System.out.println("Exclude branch with dead bus");
+      //Remove branch and bus if bus is in excluded island
+      for (ModelDefService.PropertyType pType
+            : List.of(ModelDefService.PropertyType.fromBus, ModelDefService.PropertyType.toBus)) {
+
+         for (ElementProperty property : modelDataService.getProperties(pType)) {
+
+            String busId = property.stringValue;
+            //Get the island for the bus
+            String elecIsland = modelDataService.getStringValue(
+                  ModelDefService.PropertyType.busElecIsland, busId);
+            if (elecIsland.equals("0") || elecIsland.equals("1")) {
+               //Delete the property, the bus and the branch
+               System.out.println(">>> Deleting branch:" +  " and bus:" + busId);
+               modelDataService.removeProperty(property);
+               modelDataService.removeElement(ModelDefService.ElementType.bus,busId);
+               String branchId = modelDataService.getElementId(property, ModelDefService.ElementType.branch);
+               modelDataService.removeElement(ModelDefService.ElementType.branch,branchId);
+            }
+         }
+      }
+
+      //Remove bus if in excluded island
+      for (ModelElement bus : modelDataService.getElements(ModelDefService.ElementType.bus)) {
+         //Get the island for the bus
+         String elecIsland = modelDataService.getStringValue(
+               ModelDefService.PropertyType.busElecIsland, bus.elementId);
+         if (elecIsland.equals("0") || elecIsland.equals("1")) {
+            //Delete the bus
+            System.out.println(">>> Deleting bus:" + bus.elementId);
+            modelDataService.removeElement(ModelDefService.ElementType.bus,bus.elementId);
+         }
+      }
    }
 
    //Bids and Offers

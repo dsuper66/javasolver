@@ -182,10 +182,10 @@ public class ReadCaseFile {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
                             //If multiple components then "x" between
-                            elementIdConcat.append((elementIdConcat.length() > 0) ? "x" : "").append(trimmedData);
+                            elementIdConcat.append((elementIdConcat.length() > 0) ? "^" : "").append(trimmedData);
                         }
                         //replace spaces within
-                        String elementId = elementIdConcat.toString().replaceAll("\\s{1,}", "v").trim();
+                        String elementId = elementIdConcat.toString().replaceAll("\\s{1,}", "~").trim();
                         //Note that these means only one type of each element per row
                         //elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
                         elementTypeAndIdFromThisRow.put(elementType, elementId);
@@ -201,10 +201,10 @@ public class ReadCaseFile {
                     //Get and assign the Properties
                     for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
-                        //replace spaces
+                        //replace multiple spaces
                         String valueString =
                               thisRowData.get(fieldNum - 1).stripLeading().stripTrailing()
-                                    .replaceAll("\\s{1,}", "v").trim();
+                                    .replaceAll("\\s{1,}", "~").trim();
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If we have all elements that match the property type then assign the value
