@@ -25,7 +25,11 @@ public class PreProcessing {
 
       //Make the tranche name readable
 
-      //Add directional branches
+
+   }
+
+   //Add directional branches
+   private  static void addDirBranches(ModelDataService modelDataService) {
       for (ModelElement branch : modelDataService.getElements(ModelDefService.ElementType.branch)) {
 
          String fromBusId = modelDataService.getStringValue(ModelDefService.PropertyType.fromBus, branch.elementId);
@@ -44,7 +48,9 @@ public class PreProcessing {
       }
    }
 
+   //Exclude islands
    public static void excludeIsland(ModelDataService modelDataService) {
+      List<String> includeList = List.of("2");
 
       System.out.println("Exclude factorPnodeMktEnode");
       //Remove each pnode-enode factor if in excluded island
@@ -58,7 +64,7 @@ public class PreProcessing {
          String elecIsland = modelDataService.getStringValue(
                ModelDefService.PropertyType.nwEnodeElecIsland, nwEnodeId);
 
-         if (elecIsland.equals("0") || elecIsland.equals("1")) {
+         if (!includeList.contains(elecIsland)) {
             System.out.println("removing property: " + property.propertyTypeId + " " + property.elementIds);
             modelDataService.removeProperty(property);
             //No need to remove enodes because they have no associated constraints
@@ -76,7 +82,7 @@ public class PreProcessing {
             //Get the island for the bus
             String elecIsland = modelDataService.getStringValue(
                   ModelDefService.PropertyType.busElecIsland, busId);
-            if (elecIsland.equals("0") || elecIsland.equals("1")) {
+            if (!includeList.contains(elecIsland)) {
                //Delete the property, the bus and the branch
                System.out.println(">>> Deleting branch:" +  " and bus:" + busId);
                modelDataService.removeProperty(property);
@@ -92,7 +98,7 @@ public class PreProcessing {
          //Get the island for the bus
          String elecIsland = modelDataService.getStringValue(
                ModelDefService.PropertyType.busElecIsland, bus.elementId);
-         if (elecIsland.equals("0") || elecIsland.equals("1")) {
+         if (!includeList.contains(elecIsland)) {
             //Delete the bus
             System.out.println(">>> Deleting bus:" + bus.elementId);
             modelDataService.removeElement(ModelDefService.ElementType.bus,bus.elementId);
@@ -106,7 +112,8 @@ public class PreProcessing {
       //This is effectively just a set of elements that is a subset of the tranche elements
       //the properties are unchanged because the i.d. is the same
       String enOfferType = "ENOF";
-      for (String enOfferTrancheId : modelDataService.getElementIds(
+      for (String enOfferTrancheId
+            : modelDataService.getElementIds(
             ModelDefService.ElementType.tranche,
             ModelDefService.PropertyType.trancheType,
             enOfferType
@@ -129,10 +136,11 @@ public class PreProcessing {
                   weightPnodeBusProperty.doubleValue);
          }
          //Display name
+         /*
          modelDataService.addProperty(
                ModelDefService.PropertyType.displayName,
                enOfferTrancheId,
-               pnodeId + "_" + enOfferType);
+               pnodeId + "_" + enOfferType);*/
 
          //debug... price and limit
          Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit, List.of(enOfferTrancheId));
@@ -142,37 +150,38 @@ public class PreProcessing {
       }
 
       //Energy bids from pnodeload
-      for (ElementProperty pnodeLoadProperty : modelDataService.getProperties(ModelDefService.PropertyType.pnodeLoad)) {
+      for (ElementProperty pnodeLoadProperty
+            : modelDataService.getProperties(ModelDefService.PropertyType.pnodeLoad)) {
 
          //System.out.println(">>>" + pnodeLoadProperty.elementIds.get(0) + " " + pnodeLoadProperty.doubleValue);
 
-         //Create the bidTranche element
-         //use the pnode id for the bid tranche id
-         String pnodeId = pnodeLoadProperty.elementIds.get(0);
-         modelDataService.addElement(ModelDefService.ElementType.bidTranche, pnodeId);
+         if (pnodeLoadProperty.doubleValue > 0) {
+            //Create the bidTranche element
+            //use the pnode id for the bid tranche id
+            String pnodeId = pnodeLoadProperty.elementIds.get(0);
+            modelDataService.addElement(ModelDefService.ElementType.bidTranche, pnodeId);
 
-         //Create bid tranche properties from the pnode load
-         modelDataService.addProperty(
-               ModelDefService.PropertyType.trancheLimit, List.of(pnodeId), pnodeLoadProperty.doubleValue);
-         Double bidPrice = 20000.0;
-         modelDataService.addProperty(
-               ModelDefService.PropertyType.tranchePrice, List.of(pnodeId), bidPrice);
-         //weightTrancheBus... if the tranche has non-zero weight then it clears at the bus
-         //Get all bus weights for the pnode and assign them to the OFFER tranche
-         for (ElementProperty weightPnodeBusProperty
-               : modelDataService.getProperties(
-               ModelDefService.PropertyType.weightPnodeBus,
-               ModelDefService.ElementType.pnode,
-               pnodeId)) {
-            String busId = weightPnodeBusProperty.elementIds.get(1);
+            //Create bid tranche properties from the pnode load
             modelDataService.addProperty(
-                  ModelDefService.PropertyType.weightTrancheBus,
-                  List.of(pnodeId, busId),
-                  weightPnodeBusProperty.doubleValue);
+                  ModelDefService.PropertyType.trancheLimit, List.of(pnodeId), pnodeLoadProperty.doubleValue);
+            Double bidPrice = 20000.0;
+            modelDataService.addProperty(
+                  ModelDefService.PropertyType.tranchePrice, List.of(pnodeId), bidPrice);
+            //weightTrancheBus... if the tranche has non-zero weight then it clears at the bus
+            //Get all bus weights for the pnode and assign them to the tranche
+            for (ElementProperty weightPnodeBusProperty
+                  : modelDataService.getProperties(
+                  ModelDefService.PropertyType.weightPnodeBus,
+                  ModelDefService.ElementType.pnode,
+                  pnodeId)) {
+               String busId = weightPnodeBusProperty.elementIds.get(1);
+               modelDataService.addProperty(
+                     ModelDefService.PropertyType.weightTrancheBus,
+                     List.of(pnodeId, busId),
+                     weightPnodeBusProperty.doubleValue);
+            }
          }
-
       }
-
    }
 
    //Pnode to bus weights

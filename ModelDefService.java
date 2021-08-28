@@ -38,7 +38,7 @@ public class ModelDefService {
       mktBrLimitFwd,
       mktBrLimitRev,
       dirBranchLimit,
-      displayName,
+      //displayName,
       branchForMktBranch,
       branchForDirBranch,
       dirBranchDirection

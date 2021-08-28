@@ -182,7 +182,7 @@ public class ReadCaseFile {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
                             //If multiple components then "x" between
-                            elementIdConcat.append((elementIdConcat.length() > 0) ? "^" : "").append(trimmedData);
+                            elementIdConcat.append((elementIdConcat.length() > 0) ? "x" : "").append(trimmedData);
                         }
                         //replace spaces within
                         String elementId = elementIdConcat.toString().replaceAll("\\s{1,}", "~").trim();
