@@ -97,7 +97,7 @@ public class ReadCaseFile {
         //Interval 18:00
         //String dt = "2018-03-19T06:00:00+01:00";
         //OffsetDateTime dateTime = OffsetDateTime.parse(dt);
-        LocalDateTime caseInterval = LocalDateTime.of(2021, 7, 6,18,0);
+        LocalDateTime caseInterval = LocalDateTime.of(2021, 7, 6,18,30);
 
         //Case file names
         //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";

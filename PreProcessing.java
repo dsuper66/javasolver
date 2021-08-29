@@ -165,11 +165,11 @@ public class PreProcessing {
             : modelDataService.getProperties(ModelDefService.PropertyType.pnodeLoad)) {
 
          //System.out.println(">>>" + pnodeLoadProperty.elementIds.get(0) + " " + pnodeLoadProperty.doubleValue);
-
-         if (pnodeLoadProperty.doubleValue > 0) {
+         double pnodeLoad = pnodeLoadProperty.doubleValue * 1.0;
+         if (pnodeLoad > 0) {
             //Create the bidTranche element using the pnode id
             String pnodeId = pnodeLoadProperty.elementIds.get(0);
-            String tranchId = pnodeId + "load";
+            String tranchId = pnodeId;
 
             //Get all bus weights for the pnode and assign them to the tranche
             double sumWeights = 0.0;
@@ -194,9 +194,9 @@ public class PreProcessing {
             if (sumWeights > 0.0) {
                //Add the tranch, using the pnode Id
                modelDataService.addElement(ModelDefService.ElementType.bidTranche, tranchId);
-               //Create tranche properties from the pnode load
+               //Create a tranch from the pnode load
                modelDataService.addProperty(
-                     ModelDefService.PropertyType.trancheLimit, List.of(tranchId), pnodeLoadProperty.doubleValue);
+                     ModelDefService.PropertyType.trancheLimit, List.of(tranchId), pnodeLoad);
                Double bidPrice = 20000.0;
                modelDataService.addProperty(
                      ModelDefService.PropertyType.tranchePrice, List.of(tranchId), bidPrice);
@@ -243,11 +243,11 @@ public class PreProcessing {
             time1.addAndGet(System.currentTimeMillis());
             time1.addAndGet(-startTime);
 
+            //Calculate the weight
             Double sumFactors = sumPnodeFactors.get(pn.elementId);
             Double enodeFactor = property.doubleValue;
             //uncomment the following to test getDoubleValue
             //modelDataService.getDoubleValue("factorPnodeMktEnode",List.of(pn.elementId, mktEnodeId));
-
             Double weight =
                   (sumFactors == 0.0) ? 0.0 : //don't div by zero
                         enodeFactor / sumFactors;
@@ -267,10 +267,13 @@ public class PreProcessing {
                   List.of(pn.elementId, busId),
                   weight);
 
+            /*
             System.out.println(
                   enodeFactor + "," + pn.elementId + "," + mktEnodeId
                   + ",nwEnode(" + nwEnodeId + "),"
                   + "bus(" + busId + ")," + weight);
+
+             */
          }
       }
 

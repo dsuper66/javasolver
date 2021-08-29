@@ -48,7 +48,7 @@ public class CplexSolve {
 
             int ncons = slack.length;
             for (int i = 0; i < ncons; ++i) {
-               cplex.output().println("Constraint " + i +
+               cplex.output().println("Constraint " + i + " " + cplexConstraints[0][i].getName() +
                                       ": Slack = " + slack[i] +
                                       " Pi = " + pi[i]);
             }
