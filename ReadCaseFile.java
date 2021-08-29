@@ -92,9 +92,10 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"KEY3","mktBranch",3);
         inputFieldMapping.addFieldPropertyMap(sectionName,"BASECASEMWLIMITFOR", "mktBrLimit");
 
-        //Interval 10:00
-        LocalDateTime caseInterval =
-                LocalDateTime.of(2021, 7, 6,10,0);
+        //Interval 18:00
+        //String dt = "2018-03-19T06:00:00+01:00";
+        //OffsetDateTime dateTime = OffsetDateTime.parse(dt);
+        LocalDateTime caseInterval = LocalDateTime.of(2021, 7, 6,18,0);
 
         //Case file names
         //"/Users/davidbullen/java/MSS_51112021071200687_0X/MSS_51112021071200687_0X.DAILY";
@@ -107,8 +108,9 @@ public class ReadCaseFile {
 
         //Make the file name for time based MSSNET
         //MSS_51112021071200687_0X_06-JUL-2021_10_00_0.MSSNET
-        DateTimeFormatter dateFormatter
-                = DateTimeFormatter.ofPattern("dd-MMM-yyyy_hh_mm", Locale.ENGLISH);
+        //DateTimeFormatter dateFormatter
+        //      = DateTimeFormatter.ofPattern("dd-MMM-yyyy_hh_mm", Locale.ENGLISH);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy_HH_mm", Locale.ENGLISH);
         String timeBasedMSSNET = "_" + caseInterval.format(dateFormatter).toUpperCase() + "_0.MSSNET";
 
         //File types to read
@@ -116,7 +118,7 @@ public class ReadCaseFile {
 
         //Set the interval for filtering in the file if it has an interval field
         //06-JUL-2021 00:00
-        dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm", Locale.ENGLISH);
+        dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm", Locale.ENGLISH);
         String caseIntervalInFile = caseInterval.format(dateFormatter).toUpperCase();
         //System.out.println(">>>"+ caseIntervalInFile);
 

@@ -51,7 +51,6 @@ public class ConstraintDataService {
    }
 
    public void processConstraintDefs(ModelDataService modelDataService) {
-      //noinspection MismatchedReadAndWriteOfArray
       final String[] msg = {""};
       //Constraint Defs
       for (ConstraintDef constraintDef : constraintDefs) {
@@ -206,7 +205,7 @@ public class ConstraintDataService {
          }
       }
 
-      //System.out.println(">>>Constraints:\n" + msg[0]);
+      System.out.println(">>>Constraints:\n" + msg[0]);
       //this.variables.forEach(v -> System.out.println(">>>var:" + v.varId));
       System.out.println(">>>Constraints:" + constraints.size() + " Vars:" + varIdList.size());
 

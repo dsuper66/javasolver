@@ -18,6 +18,8 @@ public class PreProcessing {
 
       setupBidsAndOffers(modelDataService);
 
+      addDirBranches(modelDataService);
+
       //Add mathModel element for the objective
       modelDataService.addElement(ModelDefService.ElementType.mathModel, "mathModel");
 
