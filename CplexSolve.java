@@ -21,6 +21,7 @@ public class CplexSolve {
                cplexVars,
                cplexConstraints,
                constraintDataService.varIdList,
+               constraintDataService.lowerBounds,
                constraintDataService.upperBounds,
                constraintDataService.constraints,
                constraintDataService.objectiveFn);
@@ -62,6 +63,7 @@ public class CplexSolve {
                              IloNumVar[][] cplexVars,
                              IloRange[][] cplexConstraints,
                              List<String> varIds,
+                             Map<String,Double> lowerBounds,
                              Map<String,Double> upperBounds,
                              List<Constraint> constraints,
                              Constraint objectiveFn
@@ -73,7 +75,10 @@ public class CplexSolve {
       cplexVars[0] = new IloNumVar[varCount];
       int varIndex = 0;
       for (String varId : varIds) {
-         cplexVars[0][varIndex] = model.numVar(0.0, upperBounds.getOrDefault(varId,Double.MAX_VALUE), varId);
+         cplexVars[0][varIndex] = model.numVar(
+               lowerBounds.getOrDefault(varId,0.0),
+               upperBounds.getOrDefault(varId,Double.MAX_VALUE),
+               varId);
          //System.out.println(">>>CPLEX var:[" + varIndex + "]" + var.varId);
          varIndex++;
       }

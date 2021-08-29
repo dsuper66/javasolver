@@ -19,6 +19,7 @@ public class ConstraintDataService {
    public Constraint objectiveFn = new Constraint(
          "", "", "", "", 0.0);
    public final List<String> varIdList = new ArrayList<>(); //Order is important
+   public final HashMap<String, Double> lowerBounds = new HashMap<>();
    public final HashMap<String, Double> upperBounds = new HashMap<>();
    public final HashMap<String, Integer> varIndexes = new HashMap<>();
 
@@ -84,7 +85,7 @@ public class ConstraintDataService {
                   constraintDef.constraintType, parentElement.elementId);
             final String[] constraintString = {String.format("%s\n", constraintId)};
 
-            HashMap<String,Double> varFactorVals = new HashMap<>();
+            //HashMap<String,Double> varFactorVals = new HashMap<>();
 
             //Check for Var Factor from parent
             if (!constraintDef.varType.equals("")) {
@@ -92,7 +93,7 @@ public class ConstraintDataService {
                //If this constraint has no components
                //then the limit on this var can be applied directly to the bounds of the variable
                //and no constraint is added
-               String varId = makeVarId(parentElement.elementId, constraintDef.varType);
+               String varId = addVar(parentElement.elementId, constraintDef.varType);
                if (constraintComps.stream()
                      .noneMatch(cc -> cc.constraintType.equals(constraintDef.constraintType))) {
                   //Add the variable with bounds
@@ -102,7 +103,7 @@ public class ConstraintDataService {
                   createTheConstraint = false;
                } else { //Add VarFactor to the constraint
                   Double varFactor = constraintDef.factorValue;
-                  varFactorVals.put(varId,varFactor);
+                  //varFactorVals.put(varId,varFactor);
                   //String variableId = addVariable(parentElement.elementId, constraintDef.varType);
                   //Add the VarFactor
                   //Double varFactor = constraintDef.factorValue;
@@ -185,7 +186,7 @@ public class ConstraintDataService {
                                        List.of(childMatchingType.elementId, parentElement.elementId));
 
                            //VariableId for constraint component
-                           String varId = makeVarId(childMatchingType.elementId, cc.varType);
+                           String varId = addVar(childMatchingType.elementId, cc.varType);
                            Integer varIndex = addVariable(varId);
                            //The varFactor relates the variable to the particular constraint
                            //setVarFactor(variableId, constraintId, varFactorVal);
@@ -211,34 +212,12 @@ public class ConstraintDataService {
 
    }
 
-   /*
-   public Constraint addConstraint(
-         String constraintId,
-         String constraintType,
-         String elementId,
-         String inequality,
-         Double rhsValue) {
-
-      Constraint newC = new Constraint(
-            constraintId,
-            constraintType,
-            elementId,
-            inequality,
-            rhsValue);
-
-      //System.out.println("Adding constraint:" + constraintId + " " + constraintType);
-      if (elementId.equals("mathModel")) {
-         this.objectiveFn = newC;
-      } else if (constraints.stream().noneMatch(c -> c.constraintId.equals(constraintId))) {
-         //add the constraint if not already there
-         constraints.add(newC);
+   private String addVar(String elementId, String varType) {
+      String varId = String.format("var_%s.%s", elementId, varType);
+      if (varType.equals("branchFlow")){
+         lowerBounds.putIfAbsent(varId,-Double.MAX_VALUE);
       }
-      return newC;
-   }*/
-
-
-   private String makeVarId(String elementId, String varType) {
-      return String.format("var_%s.%s", elementId, varType);
+      return varId;
    }
 
    //Variable assign LB and UB (create if necessary)
