@@ -69,8 +69,10 @@ public class ReadCaseFile {
         // TRADERBLOCKLIMIT,TRADERBLOCKPRICE,SIXSEC,RESERVEPERCENT,DISPATCHABLE
         sectionName = "BIDSANDOFFERS";
         inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","pnode",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","tranche",1);
-        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","tranche",2);
+        //inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKALTKEY","tranche",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"PNODENAME","tranche",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"TRADETYPE","tranche",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"TRADERBLOCKTRANCHE","tranche",3);
         //Map a field name to a property type
         inputFieldMapping.addFieldPropertyMap(sectionName,"TRADETYPE", "trancheType");
         inputFieldMapping.addFieldPropertyMap(sectionName, "TRADERBLOCKLIMIT", "trancheLimit");

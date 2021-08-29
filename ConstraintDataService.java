@@ -213,7 +213,7 @@ public class ConstraintDataService {
 
    private String addVar(String elementId, String varType) {
       String varId = String.format("var_%s.%s", elementId, varType);
-      if (varType.equals("branchFlow")){
+      if (varType.equals("branchFlow") || varType.equals("phaseAngle")){
          lowerBounds.putIfAbsent(varId,-Double.MAX_VALUE);
       }
       return varId;
