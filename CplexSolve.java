@@ -41,7 +41,7 @@ public class CplexSolve {
 
             int nvars = x.length;
             for (int j = 0; j < nvars; ++j) {
-               cplex.output().println("Variable " + j +
+               cplex.output().println("Variable " + j + " " + cplexVars[0][j].getName() +
                                       ": Value = " + x[j] +
                                       " Reduced cost = " + dj[j]);
             }
