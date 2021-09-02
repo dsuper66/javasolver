@@ -1,6 +1,7 @@
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,7 @@ public class CplexSolve {
             int nvars = x.length;
             double genCleared = 0.0;
             double loadCleared = 0.0;
+            HashMap<String,Double> busNetFlow = new HashMap<>();
             for (int j = 0; j < nvars; ++j) {
                String varId = cplexVars[0][j].getName();
                cplex.output().println("Variable," + j + "," + varId +
@@ -56,6 +58,22 @@ public class CplexSolve {
                         String fromBus = constraintDataService.fromBus.get(modelVar.elementId());
                         String toBus = constraintDataService.toBus.get(modelVar.elementId());
                         cplex.output().println("from: " + fromBus + "  to: " + toBus);
+                        //fromBus
+                        Double netFlow = busNetFlow.get(fromBus);
+                        if (netFlow == null) {
+                           busNetFlow.put(fromBus,-x[j]);
+                        }
+                        else {
+                           busNetFlow.put(fromBus, netFlow - x[j]);
+                        }
+                        //toBus
+                        netFlow = busNetFlow.get(toBus);
+                        if (netFlow == null) {
+                           busNetFlow.put(toBus,+x[j]);
+                        }
+                        else {
+                           busNetFlow.put(toBus, netFlow + x[j]);
+                        }
                      }
                   }
                }
@@ -63,9 +81,11 @@ public class CplexSolve {
 
             int ncons = slack.length;
             for (int i = 0; i < ncons; ++i) {
-               cplex.output().println("Constraint " + i + " " + cplexConstraints[0][i].getName() +
+               String constraintId = cplexConstraints[0][i].getName();
+               cplex.output().println("Constraint " + i + " " + constraintId +
                                       ": Slack = " + slack[i] +
                                       " Pi = " + pi[i]);
+
             }
             cplex.output().println("load: " + loadCleared + " gen: " + genCleared);
          }
