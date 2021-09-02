@@ -49,11 +49,14 @@ public class CplexSolve {
                                       ",$" + dj[j]);
                ConstraintDataService.ModelVar modelVar = constraintDataService.modelVars.get(varId);
                if (modelVar != null) {
-                  if (modelVar.varType().equals("enTrancheCleared")) {
-                     genCleared += x[j];
-                  }
-                  else if (modelVar.varType().equals("bidTrancheCleared")) {
-                     loadCleared += x[j];
+                  switch (modelVar.varType()) {
+                     case "enTrancheCleared" -> genCleared += x[j];
+                     case "bidTrancheCleared" -> loadCleared += x[j];
+                     case "branchFlow" -> {
+                        String fromBus = constraintDataService.fromBus.get(modelVar.elementId());
+                        String toBus = constraintDataService.toBus.get(modelVar.elementId());
+                        cplex.output().println("from: " + fromBus + "  to: " + toBus);
+                     }
                   }
                }
             }
