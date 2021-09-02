@@ -40,10 +40,22 @@ public class CplexSolve {
             cplex.output().println("Solution value  = " + cplex.getObjValue());
 
             int nvars = x.length;
+            double genCleared = 0.0;
+            double loadCleared = 0.0;
             for (int j = 0; j < nvars; ++j) {
-               cplex.output().println("Variable " + j + " " + cplexVars[0][j].getName() +
-                                      ": Value = " + x[j] +
-                                      " Reduced cost = " + dj[j]);
+               String varId = cplexVars[0][j].getName();
+               cplex.output().println("Variable," + j + "," + varId +
+                                      "," + x[j] +
+                                      ",$" + dj[j]);
+               ConstraintDataService.ModelVar modelVar = constraintDataService.modelVars.get(varId);
+               if (modelVar != null) {
+                  if (modelVar.varType().equals("enTrancheCleared")) {
+                     genCleared += x[j];
+                  }
+                  else if (modelVar.varType().equals("bidTrancheCleared")) {
+                     loadCleared += x[j];
+                  }
+               }
             }
 
             int ncons = slack.length;
@@ -52,6 +64,7 @@ public class CplexSolve {
                                       ": Slack = " + slack[i] +
                                       " Pi = " + pi[i]);
             }
+            cplex.output().println("load: " + loadCleared + " gen: " + genCleared);
          }
       } catch (IloException e) {
          System.err.println("Concert exception '" + e + "' caught");

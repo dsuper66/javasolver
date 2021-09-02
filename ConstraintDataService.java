@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ConstraintDataService {
    //Defs are read in
@@ -23,7 +20,12 @@ public class ConstraintDataService {
    public final HashMap<String, Double> upperBounds = new HashMap<>();
    public final HashMap<String, Integer> varIndexes = new HashMap<>();
 
+   //For reporting
+   public final HashMap<String,ModelVar> modelVars = new HashMap<>();
+
    //public final List<VarFactor> varFactors = new ArrayList<>();
+
+   record ModelVar (String varId,String varType,String elementId){}
 
    public void readConstraints() {
       String dir = "/Users/davidbullen/java/";
@@ -211,8 +213,13 @@ public class ConstraintDataService {
 
    }
 
+   /*
+   public Optional<ModelVar> getModelVar(String varId) {
+      return Optional.ofNullable(modelVars.get(varId));
+   }*/
    private String addVar(String elementId, String varType) {
       String varId = String.format("var_%s.%s", elementId, varType);
+      modelVars.putIfAbsent(varId,new ModelVar(varId,varType,elementId));
       if (varType.equals("branchFlow") || varType.equals("phaseAngle")){
          lowerBounds.putIfAbsent(varId,-Double.MAX_VALUE);
       }
