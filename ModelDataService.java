@@ -258,12 +258,19 @@ public class ModelDataService {
             .orElse(1.0);
    }
 
+
+   public Optional<ElementProperty> getProperty(ModelDefService.PropertyType propertyType, String elementId) {
+      return Optional.ofNullable(
+            propertiesMap.get(makePropertyKey(propertyType.name(), List.of(elementId))));
+   }
+
    //This is the old slow way, now uses map
+   /*
    public Optional<ElementProperty> getProperty(ModelDefService.PropertyType propertyType, List<String> elementIds) {
       List<ElementProperty> propertiesThisType = getProperties(propertyType);
       return propertiesThisType
             .stream()
             .filter(p -> p.elementIds.equals(elementIds))
             .findFirst();
-   }
+   }*/
 }

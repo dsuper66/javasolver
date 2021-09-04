@@ -41,13 +41,15 @@ public class ModelDefService {
       //displayName,
       branchForMktBranch,
       branchForDirBranch,
-      dirBranchDirection
+      dirBranchDirection,
+      busStation,
+      busKv
    }
 
    //The properties of an element type
    static final List<PropertyTypeDef> propertyTypeDefDefs =
          List.of(
-               //Inputs
+               //branch
                new PropertyTypeDef(
                      PropertyType.fromBus, List.of(ElementType.branch), "busId"),
                new PropertyTypeDef(
@@ -56,16 +58,28 @@ public class ModelDefService {
                      PropertyType.susceptance, List.of(ElementType.branch), "double"),
                new PropertyTypeDef(
                      PropertyType.resistance, List.of(ElementType.branch), "double"),
+               //mktEnode
                new PropertyTypeDef(
                      PropertyType.nwEnodeForMktEnode, List.of(ElementType.mktEnode), "nwEnodeId"),
+               //nwEnode
                new PropertyTypeDef(
                      PropertyType.busForNwEnode, List.of(ElementType.nwEnode), "busId"),
                new PropertyTypeDef(
+                     PropertyType.nwEnodeElecIsland, List.of(ElementType.nwEnode), "string"),
+               //pnode
+               new PropertyTypeDef(
+                     PropertyType.pnodeLoad, List.of(ElementType.pnode), "double"),
+               //pnode,mktEnode
+               new PropertyTypeDef(
                      PropertyType.factorPnodeMktEnode, List.of(ElementType.pnode, ElementType.mktEnode), "double"),
+               //bus
                new PropertyTypeDef(
                      PropertyType.busElecIsland, List.of(ElementType.bus), "string"),
                new PropertyTypeDef(
-                     PropertyType.nwEnodeElecIsland, List.of(ElementType.nwEnode), "string"),
+                     PropertyType.busStation, List.of(ElementType.bus), "string"),
+               new PropertyTypeDef(
+                     PropertyType.busKv, List.of(ElementType.bus), "string"),
+               //offer
                new PropertyTypeDef(
                      PropertyType.tranchePnode, List.of(ElementType.tranche), "pnodeId"),
                new PropertyTypeDef(
@@ -74,15 +88,14 @@ public class ModelDefService {
                      PropertyType.trancheLimit, List.of(ElementType.tranche), "double"),
                new PropertyTypeDef(
                      PropertyType.trancheType, List.of(ElementType.tranche), "string"),
-               new PropertyTypeDef(
-                     PropertyType.pnodeLoad, List.of(ElementType.pnode), "double"),
+               //mktBranch
                new PropertyTypeDef(
                      PropertyType.mktBrLimitFwd, List.of(ElementType.mktBranch), "double"),
                new PropertyTypeDef(
                      PropertyType.mktBrLimitRev, List.of(ElementType.mktBranch), "double"),
                new PropertyTypeDef(
                      PropertyType.branchForMktBranch, List.of(ElementType.mktBranch), "branchId"),
-               //Derived
+               //----Derived---
                new PropertyTypeDef(
                      PropertyType.weightPnodeBus, List.of(ElementType.pnode, ElementType.bus), "double"),
                new PropertyTypeDef(

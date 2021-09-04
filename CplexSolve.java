@@ -88,6 +88,7 @@ public class CplexSolve {
 
             }
             cplex.output().println("load: " + loadCleared + " gen: " + genCleared);
+            cplex.output().println(busNetFlow);
          }
       } catch (IloException e) {
          System.err.println("Concert exception '" + e + "' caught");

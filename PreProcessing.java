@@ -2,6 +2,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class PreProcessing {
@@ -28,6 +29,46 @@ public class PreProcessing {
       //Make the tranche name readable
 
 
+   }
+
+   //Replace busId with station~kv~busId
+   private static void replaceBusId(ModelDataService modelDataService){
+      HashMap<String,String> newBusNameForOld = new HashMap<>();
+      //For each bus, replace the id
+      for (ModelElement bus : modelDataService.getElements(ModelDefService.ElementType.bus)) {
+         String busId = bus.elementId;
+         String busStation = modelDataService.getStringValue(ModelDefService.PropertyType.busStation, busId);
+         String busKv = modelDataService.getStringValue(ModelDefService.PropertyType.busKv, busId);
+
+         //Replace element
+         String newBusName = busStation + "~" + busKv + "~" + busId;
+         modelDataService.addElement(ModelDefService.ElementType.bus,newBusName);
+         modelDataService.removeElement(ModelDefService.ElementType.bus,busId);
+         //Map the new name
+         newBusNameForOld.put(busId,newBusName);
+      }
+      //Update busName in NwEnode-Bus
+      for (ModelElement nwEnode : modelDataService.getElements(ModelDefService.ElementType.nwEnode)) {
+         modelDataService.getProperty(
+               ModelDefService.PropertyType.busForNwEnode,nwEnode.elementId).ifPresent(property -> {
+               String busId = property.stringValue;
+               Optional.ofNullable(newBusNameForOld.get(busId)).ifPresent(newBusName ->
+               {
+                  modelDataService.addProperty(ModelDefService.PropertyType.busForNwEnode, nwEnode.elementId, newBusName);
+                  modelDataService.removeProperty(property);
+               });
+               }
+         );
+      }
+
+      //Update busName in Branch-Bus
+      for (ModelDefService.PropertyType pType
+            : List.of(ModelDefService.PropertyType.fromBus, ModelDefService.PropertyType.toBus)) {
+         for (ElementProperty property : modelDataService.getProperties(pType)) {
+            String busId = property.stringValue;
+
+         }
+      }
    }
 
    //Add directional branches
@@ -79,7 +120,6 @@ public class PreProcessing {
             : List.of(ModelDefService.PropertyType.fromBus, ModelDefService.PropertyType.toBus)) {
 
          for (ElementProperty property : modelDataService.getProperties(pType)) {
-
             String busId = property.stringValue;
             //Get the island for the bus
             String elecIsland = modelDataService.getStringValue(

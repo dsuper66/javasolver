@@ -41,8 +41,16 @@ public class ReadCaseFile {
         sectionName = "ENODEBUS";
         inputFieldMapping.addFieldElementMap(
               sectionName,"ID_ENODE",ModelDefService.ElementType.nwEnode.name());
+
         inputFieldMapping.addFieldElementMap(
               sectionName,"ID_BUS",ModelDefService.ElementType.bus.name());
+        /*
+        inputFieldMapping.addFieldElementMap(
+                    sectionName,"ID_ST",ModelDefService.ElementType.bus.name(),1);
+        inputFieldMapping.addFieldElementMap(
+              sectionName,"ID_KV",ModelDefService.ElementType.bus.name(),2);
+        inputFieldMapping.addFieldElementMap(
+              sectionName,"ID_BUS",ModelDefService.ElementType.bus.name(),3);*/
         //properties
         inputFieldMapping.addFieldPropertyMap(
               sectionName,"ID_BUS",ModelDefService.PropertyType.busForNwEnode.name());
@@ -185,11 +193,11 @@ public class ReadCaseFile {
                         for (Integer orderNum : orderNumFieldNum.keySet()) {
                             Integer fieldNum = orderNumFieldNum.get(orderNum);
                             String trimmedData = thisRowData.get(fieldNum - 1).stripLeading().stripTrailing();
-                            //If multiple components then "x" between
-                            elementIdConcat.append((elementIdConcat.length() > 0) ? "x" : "").append(trimmedData);
+                            //If multiple components then "~" between
+                            elementIdConcat.append((elementIdConcat.length() > 0) ? "~" : "").append(trimmedData);
                         }
                         //replace spaces within
-                        String elementId = elementIdConcat.toString().replaceAll("\\s{1,}", "~").trim();
+                        String elementId = elementIdConcat.toString().replaceAll("\\s{1,}", "_").trim();
                         //Note that these means only one type of each element per row
                         //elementTypeAndIdFromThisRow.put(elementType, elementId.stripTrailing());
                         elementTypeAndIdFromThisRow.put(elementType, elementId);
@@ -205,10 +213,10 @@ public class ReadCaseFile {
                     //Get and assign the Properties
                     for (String propertyTypeId : propertyTypeFieldMaps.keySet()) {
                         Integer fieldNum = propertyTypeFieldMaps.get(propertyTypeId);
-                        //replace multiple spaces
+                        //replace spaces within
                         String valueString =
                               thisRowData.get(fieldNum - 1).stripLeading().stripTrailing()
-                                    .replaceAll("\\s{1,}", "~").trim();
+                                    .replaceAll("\\s{1,}", "_").trim();
                         //System.out.println("propertyType:" + propertyType + " propertyValue:" + propertyValue);
 
                         //If we have all elements that match the property type then assign the value
@@ -227,8 +235,9 @@ public class ReadCaseFile {
                                 }
                             }
                             if (foundAllElementTypes) {
+                                /*
                                 String thisSectionName = thisRowData.get(2);
-                                /*if (thisSectionName.equals("NODE")) {
+                                if (thisSectionName.equals("NODE")) {
                                     System.out.println(thisSectionName + " read:"
                                             + propertyTypeId + "(" + elementIds + ") = " + fieldValue);
                                 }*/
