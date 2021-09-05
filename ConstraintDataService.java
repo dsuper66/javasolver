@@ -22,8 +22,8 @@ public class ConstraintDataService {
 
    //For reporting
    public final HashMap<String,ModelVar> modelVars = new HashMap<>();
-   public final HashMap<String,String> fromBus = new HashMap<>();
-   public final HashMap<String,String> toBus = new HashMap<>();
+   public final HashMap<String,String> fromBusMap = new HashMap<>();
+   public final HashMap<String,String> toBusMap = new HashMap<>();
 
    //public final List<VarFactor> varFactors = new ArrayList<>();
 
@@ -165,10 +165,10 @@ public class ConstraintDataService {
                         )) {
                            //For reporting
                            if (parentElement.elementType.equals("bus") && cc.propertyMap.equals("fromBus")){
-                              fromBus.putIfAbsent(childMatchingType.elementId,parentElement.elementId);
+                              fromBusMap.putIfAbsent(childMatchingType.elementId,parentElement.elementId);
                            }
                            else if (parentElement.elementType.equals("bus") && cc.propertyMap.equals("toBus")){
-                              toBus.putIfAbsent(childMatchingType.elementId,parentElement.elementId);
+                              toBusMap.putIfAbsent(childMatchingType.elementId,parentElement.elementId);
                            }
 
                            //VarFactor for component
@@ -219,15 +219,15 @@ public class ConstraintDataService {
 
       //Check
       for(ModelElement branch : modelDataService.getElements(ModelDefService.ElementType.dirBranch) ){
-         String fromBusString = fromBus.get(branch.elementId);
-         String toBusString = toBus.get(branch.elementId);
+         String fromBusString = fromBusMap.get(branch.elementId);
+         String toBusString = toBusMap.get(branch.elementId);
          if (fromBusString == null || toBusString == null) {
             System.out.println("####Branch: " + branch.elementId + " is missing from or to bus");
          }
       }
       System.out.println(">>>Constraints:\n" + msg[0]);
       //this.variables.forEach(v -> System.out.println(">>>var:" + v.varId));
-      System.out.println(">>>Constraints:" + constraints.size() + " Vars:" + varIdList.size());
+      System.out.println(">>>>>>>>>>>>>>>>>>Constraints:" + constraints.size() + " Vars:" + varIdList.size() + "<<<<<<<<<<<<<<<<<<<<");
 
    }
 

@@ -46,18 +46,21 @@ public class CplexSolve {
             HashMap<String,Double> busNetFlow = new HashMap<>();
             for (int j = 0; j < nvars; ++j) {
                String varId = cplexVars[0][j].getName();
-               cplex.output().println("Variable," + j + "," + varId +
+               /* cplex.output().println("Variable," + j + "," + varId +
                                       "," + x[j] +
-                                      ",$" + dj[j]);
+                                      ",$" + dj[j]); */
                ConstraintDataService.ModelVar modelVar = constraintDataService.modelVars.get(varId);
                if (modelVar != null) {
                   switch (modelVar.varType()) {
                      case "enTrancheCleared" -> genCleared += x[j];
-                     case "bidTrancheCleared" -> loadCleared += x[j];
+                     case "bidTrancheCleared" -> {
+                        loadCleared += x[j];
+                        cplex.output().println("bid," + varId + "," + x[j]);
+                     }
                      case "branchFlow" -> {
-                        String fromBus = constraintDataService.fromBus.get(modelVar.elementId());
-                        String toBus = constraintDataService.toBus.get(modelVar.elementId());
-                        cplex.output().println("from: " + fromBus + "  to: " + toBus);
+                        String fromBus = constraintDataService.fromBusMap.get(modelVar.elementId());
+                        String toBus = constraintDataService.toBusMap.get(modelVar.elementId());
+                        cplex.output().println("br," + varId + "," + fromBus + "," + toBus + "," + x[j]);
                         //fromBus
                         Double netFlow = busNetFlow.get(fromBus);
                         if (netFlow == null) {
@@ -88,7 +91,14 @@ public class CplexSolve {
 
             }
             cplex.output().println("load: " + loadCleared + " gen: " + genCleared);
+            /*
+            //Net branch flow for bus
             cplex.output().println(busNetFlow);
+            for (var busNetFlowEntry : busNetFlow.entrySet()) {
+               if (Math.abs(busNetFlowEntry.getValue()) > 0.001) {
+                  cplex.output().println(busNetFlowEntry.getKey() + "," + busNetFlowEntry.getValue());
+               }
+            }*/
          }
       } catch (IloException e) {
          System.err.println("Concert exception '" + e + "' caught");

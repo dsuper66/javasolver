@@ -44,6 +44,7 @@ public class ReadCaseFile {
 
         inputFieldMapping.addFieldElementMap(
               sectionName,"ID_BUS",ModelDefService.ElementType.bus.name());
+
         /*
         inputFieldMapping.addFieldElementMap(
                     sectionName,"ID_ST",ModelDefService.ElementType.bus.name(),1);
@@ -54,6 +55,11 @@ public class ReadCaseFile {
         //properties
         inputFieldMapping.addFieldPropertyMap(
               sectionName,"ID_BUS",ModelDefService.PropertyType.busForNwEnode.name());
+        inputFieldMapping.addFieldPropertyMap(
+              sectionName,"ID_ST",ModelDefService.PropertyType.busStation.name());
+        inputFieldMapping.addFieldPropertyMap(
+              sectionName,"ID_KV",ModelDefService.PropertyType.busKv.name());
+
         inputFieldMapping.addFieldPropertyMap(
                 sectionName,"ELECTRICAL_ISLAND",ModelDefService.PropertyType.busElecIsland.name());
         inputFieldMapping.addFieldPropertyMap(
