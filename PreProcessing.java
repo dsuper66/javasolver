@@ -34,8 +34,8 @@ public class PreProcessing {
    }
 
    //Replace busId with station~kv~busId
-   private static void updateBusName(ModelDataService modelDataService){
-      HashMap<String,String> newBusIdForOld = new HashMap<>();
+   private static void updateBusName(ModelDataService modelDataService) {
+      HashMap<String, String> newBusIdForOld = new HashMap<>();
       //For each bus, replace the id
       for (ModelElement bus : modelDataService.getElements(ModelDefService.ElementType.bus)) {
          //Make the new Id
@@ -45,22 +45,22 @@ public class PreProcessing {
          String newBusId = busStation + "~" + busKv + "~" + busId;
 
          //Replace element
-         modelDataService.addElement(ModelDefService.ElementType.bus,newBusId);
-         modelDataService.removeElement(ModelDefService.ElementType.bus,busId);
+         modelDataService.addElement(ModelDefService.ElementType.bus, newBusId);
+         modelDataService.removeElement(ModelDefService.ElementType.bus, busId);
          //Map the new name
-         newBusIdForOld.put(busId,newBusId);
+         newBusIdForOld.put(busId, newBusId);
 
          //Update id in bus-island property
          modelDataService.getProperty(
                ModelDefService.PropertyType.busElecIsland, busId).ifPresent(property -> {
-               modelDataService.addProperty(ModelDefService.PropertyType.busElecIsland, newBusId, property.stringValue);
-               modelDataService.removeProperty(property);
+            modelDataService.addProperty(ModelDefService.PropertyType.busElecIsland, newBusId, property.stringValue);
+            modelDataService.removeProperty(property);
          });
 
       }
       //Update busName in NwEnode-Bus
       for (ModelElement nwEnode : modelDataService.getElements(ModelDefService.ElementType.nwEnode)) {
-         renameProperty(modelDataService, nwEnode.elementId, ModelDefService.PropertyType.busForNwEnode,newBusIdForOld);
+         renameProperty(modelDataService, nwEnode.elementId, ModelDefService.PropertyType.busForNwEnode, newBusIdForOld);
          /*
          modelDataService.getProperty(
                ModelDefService.PropertyType.busForNwEnode,nwEnode.elementId).ifPresent(property -> {
@@ -79,7 +79,7 @@ public class PreProcessing {
          for (ModelDefService.PropertyType pType
                : List.of(ModelDefService.PropertyType.fromBus, ModelDefService.PropertyType.toBus)) {
 
-            renameProperty(modelDataService, branch.elementId, pType,newBusIdForOld);
+            renameProperty(modelDataService, branch.elementId, pType, newBusIdForOld);
             /*
             modelDataService.getProperty(
                   pType, branch.elementId).ifPresent(property -> {
@@ -96,14 +96,14 @@ public class PreProcessing {
 
    //Rename property, e.g., rename BusId
    private static void renameProperty(ModelDataService modelDataService,
-                          String elementId,
-                          ModelDefService.PropertyType pType,
-                          HashMap<String,String> mapOldNew){
+                                      String elementId,
+                                      ModelDefService.PropertyType pType,
+                                      HashMap<String, String> mapOldNew) {
       modelDataService.getProperty(
             pType, elementId).ifPresent(property -> {
          String oldId = property.stringValue;
          Optional.ofNullable(mapOldNew.get(oldId)).ifPresent(newId -> {
-            System.out.println(">>>replace " + pType.name() + " of " +  elementId +  ":" + oldId + "  with:" + newId);
+            System.out.println(">>>replace " + pType.name() + " of " + elementId + ":" + oldId + "  with:" + newId);
             modelDataService.removeProperty(property);
             modelDataService.addProperty(pType, elementId, newId);
          });
@@ -111,7 +111,7 @@ public class PreProcessing {
    }
 
    //Add directional branches
-   private  static void addDirBranches(ModelDataService modelDataService) {
+   private static void addDirBranches(ModelDataService modelDataService) {
       for (ModelElement branch : modelDataService.getElements(ModelDefService.ElementType.branch)) {
 
          String fromBusId = modelDataService.getStringValue(ModelDefService.PropertyType.fromBus, branch.elementId);
@@ -132,7 +132,7 @@ public class PreProcessing {
 
    //Exclude islands
    public static void excludeIsland(ModelDataService modelDataService) {
-      List<String> includeList = List.of("2");
+      List<String> includeList = List.of("1");
 
       System.out.println("Exclude factorPnodeMktEnode");
       //Remove each pnode-enode factor if in excluded island
@@ -165,11 +165,11 @@ public class PreProcessing {
                   ModelDefService.PropertyType.busElecIsland, busId);
             if (!includeList.contains(elecIsland)) {
                //Delete the property, the bus and the branch
-               System.out.println(">>> Deleting branch:" +  " and bus:" + busId + " (island " + elecIsland +")");
+               System.out.println(">>> Deleting branch:" + " and bus:" + busId + " (island " + elecIsland + ")");
                modelDataService.removeProperty(property);
-               modelDataService.removeElement(ModelDefService.ElementType.bus,busId);
+               modelDataService.removeElement(ModelDefService.ElementType.bus, busId);
                String branchId = modelDataService.getElementId(property, ModelDefService.ElementType.branch);
-               modelDataService.removeElement(ModelDefService.ElementType.branch,branchId);
+               modelDataService.removeElement(ModelDefService.ElementType.branch, branchId);
             }
          }
       }
@@ -181,8 +181,8 @@ public class PreProcessing {
                ModelDefService.PropertyType.busElecIsland, bus.elementId);
          if (!includeList.contains(elecIsland)) {
             //Delete the bus
-            System.out.println(">>> Deleting bus:" + bus.elementId + " (island " + elecIsland +")");
-            modelDataService.removeElement(ModelDefService.ElementType.bus,bus.elementId);
+            System.out.println(">>> Deleting bus:" + bus.elementId + " (island " + elecIsland + ")");
+            modelDataService.removeElement(ModelDefService.ElementType.bus, bus.elementId);
          }
       }
    }
@@ -314,7 +314,7 @@ public class PreProcessing {
       for (ModelElement pn : pnodes) {
          //Pnode can potentially map to more than one bus
          //Bus weight is sum of enode weights
-         HashMap<String,Double> busWeightMap = new HashMap<>();
+         HashMap<String, Double> busWeightMap = new HashMap<>();
 
          //for each enode for this pnode
          for (ElementProperty property : modelDataService.getProperties(
@@ -345,9 +345,9 @@ public class PreProcessing {
                   ModelDefService.PropertyType.busForNwEnode, nwEnodeId);
 
             busWeightMap.put(busId,
-            Optional.ofNullable(busWeightMap.get(busId))
-                  .map(existingWeight -> existingWeight + thisWeight)
-                  .orElse(thisWeight));
+                  Optional.ofNullable(busWeightMap.get(busId))
+                        .map(existingWeight -> existingWeight + thisWeight)
+                        .orElse(thisWeight));
          }
          //Assign the total weights
          for (var busWeightEntry : busWeightMap.entrySet()) {

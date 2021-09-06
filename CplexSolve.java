@@ -46,9 +46,9 @@ public class CplexSolve {
             HashMap<String,Double> busNetFlow = new HashMap<>();
             for (int j = 0; j < nvars; ++j) {
                String varId = cplexVars[0][j].getName();
-               /* cplex.output().println("Variable," + j + "," + varId +
+               cplex.output().println("Variable," + j + "," + varId +
                                       "," + x[j] +
-                                      ",$" + dj[j]); */
+                                      ",$" + dj[j]);
                ConstraintDataService.ModelVar modelVar = constraintDataService.modelVars.get(varId);
                if (modelVar != null) {
                   switch (modelVar.varType()) {
@@ -91,14 +91,14 @@ public class CplexSolve {
 
             }
             cplex.output().println("load: " + loadCleared + " gen: " + genCleared);
-            /*
+
             //Net branch flow for bus
             cplex.output().println(busNetFlow);
             for (var busNetFlowEntry : busNetFlow.entrySet()) {
                if (Math.abs(busNetFlowEntry.getValue()) > 0.001) {
                   cplex.output().println(busNetFlowEntry.getKey() + "," + busNetFlowEntry.getValue());
                }
-            }*/
+            }
          }
       } catch (IloException e) {
          System.err.println("Concert exception '" + e + "' caught");

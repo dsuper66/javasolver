@@ -178,7 +178,7 @@ public class ConstraintDataService {
                            //or the parent property from the factorParentProperty of the child
                            //(if no factor found then these default to 1.0)
 
-                           //System.out.println(">>>" + cc.factorProperty);
+                           System.out.println(">>>factorProperty:" + cc.factorProperty);
                            varFactorVal = varFactorVal
                                        //factorProperty of the child
                                        // e.g., dirBranch direction applies to dirBranch
@@ -188,10 +188,7 @@ public class ConstraintDataService {
                                        // e.g., bus child of powerflow has susceptance of parent
                                        * modelDataService.getDoubleValueElseOne
                                  (cc.factorParentProperty, parentElement.elementId)
-                                       //factorProperty of the child applied to child ??
-                                       //* modelDataService.getDoubleValueElseOne
-                                       //(constraintComp.factorProperty, parentElement.elementId)
-                                       //and tranche can map to more than one bus, via factor
+                                       //tranche can map to more than one bus, via factor
                                        * modelDataService.getDoubleValueElseOne
                                  (cc.factorProperty,
                                        List.of(childMatchingType.elementId, parentElement.elementId));
