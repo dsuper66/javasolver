@@ -242,9 +242,11 @@ public class ModelDataService {
       return opt.map(p -> p.doubleValue)
             .orElse(0.0);
    }
-
    public Double getDoubleValue(ModelDefService.PropertyType propertyType, List<String> elementIds) {
       return getDoubleValue(propertyType.name(), elementIds);
+   }
+   public Double getDoubleValue(ModelDefService.PropertyType propertyType, String elementId) {
+      return getDoubleValue(propertyType.name(), List.of(elementId));
    }
 
    public Double getDoubleValueElseOne(String propertyTypeId, String elementId) {

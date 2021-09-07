@@ -104,9 +104,13 @@ public class InputFieldMapping {
 
     private final ArrayList<FieldPropertyMap> fieldPropertyMaps = new ArrayList<>();
 
-    public void addFieldPropertyMap(String sectionName, String fieldName, String propertyType) {
+    public void addFieldPropertyMap(String sectionName, String fieldName, String propertyTypeId) {
         this.fieldPropertyMaps.add(
-              new FieldPropertyMap(sectionName, fieldName, propertyType));
+              new FieldPropertyMap(sectionName, fieldName, propertyTypeId));
+    }
+    public void addFieldPropertyMap(String sectionName, String fieldName, ModelDefService.PropertyType propertyType) {
+        this.fieldPropertyMaps.add(
+              new FieldPropertyMap(sectionName, fieldName, propertyType.name()));
     }
 
     //For the Header row, return matching PROPERTY and associated fieldNum

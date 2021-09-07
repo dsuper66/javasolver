@@ -15,7 +15,8 @@ public class ModelDefService {
       tranche,
       enOfferTranche,
       bidTranche,
-      mathModel
+      mathModel,
+      flowLossSegment
    }
 
    public enum PropertyType {
@@ -43,7 +44,9 @@ public class ModelDefService {
       branchForDirBranch,
       dirBranchDirection,
       busStation,
-      busKv
+      busKv,
+      segLossFlowRatio,
+      segMax
    }
 
    //The properties of an element type

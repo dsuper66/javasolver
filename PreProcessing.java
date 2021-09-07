@@ -112,10 +112,26 @@ public class PreProcessing {
 
    //Add directional branches
    private static void addDirBranches(ModelDataService modelDataService) {
+
+      HashMap<String,Double> branchFwdMaxForBranch = new HashMap<>();
+      //Get branch max from mkt branch
+      for (ModelElement mktBranch : modelDataService.getElements(ModelDefService.ElementType.mktBranch)){
+         String branchId = modelDataService.getStringValue(
+               ModelDefService.PropertyType.branchForMktBranch,mktBranch.elementId);
+
+         Double branchFwdMax = modelDataService.getDoubleValue(
+               ModelDefService.PropertyType.mktBrLimitFwd,mktBranch.elementId);
+         branchFwdMaxForBranch.put(branchId,branchFwdMax);
+      }
+
+      //Create a fwd and rev dirBranch for each branch
+      //(for now just FWD)
       for (ModelElement branch : modelDataService.getElements(ModelDefService.ElementType.branch)) {
 
          String fromBusId = modelDataService.getStringValue(ModelDefService.PropertyType.fromBus, branch.elementId);
          String toBusId = modelDataService.getStringValue(ModelDefService.PropertyType.toBus, branch.elementId);
+         Double resistance = modelDataService.getDoubleValue(ModelDefService.PropertyType.resistance, branch.elementId);
+
          //Map<String,Double> mult = Map.of("FWD",1.0,"REV",-1.0);
          Map<String, Double> mult = Map.of("FWD", 1.0);
          for (String dirString : mult.keySet()) {
@@ -126,6 +142,24 @@ public class PreProcessing {
             modelDataService.addProperty(ModelDefService.PropertyType.fromBus, dirBranchId, fromBusId);
             modelDataService.addProperty(ModelDefService.PropertyType.toBus, dirBranchId, toBusId);
 
+         }
+         //Calculate the segments
+         int totalSegs = 3;
+         Double flowMax = branchFwdMaxForBranch.get(branch.elementId);
+         double segMax = flowMax / totalSegs;
+         double flowAtStartOfSegment = 0.0;
+         double flowAtEndOfSegment = segMax;
+         for (int segNum = 1; segNum <= totalSegs; segNum++){
+            //Add the segment
+            String segId = branch.elementId + "~seg" + segNum;
+            modelDataService.addElement(ModelDefService.ElementType.flowLossSegment,segId);
+            //Assign segment properties
+            modelDataService.addProperty(ModelDefService.PropertyType.segMax, segId, segMax);
+            modelDataService.addProperty(
+                  ModelDefService.PropertyType.segLossFlowRatio, segId,
+                  (Math.pow(flowAtEndOfSegment,2) - Math.pow(flowAtStartOfSegment,2)) * resistance/segMax);
+            flowAtStartOfSegment += segMax;
+            flowAtEndOfSegment += segMax;
          }
       }
    }

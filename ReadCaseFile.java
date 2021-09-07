@@ -25,6 +25,14 @@ public class ReadCaseFile {
                 sectionName,"FACTOR","factorPnodeMktEnode");
 
         //---STATIC MSSNET---
+        sectionName = "BRANCHNODE";
+        inputFieldMapping.addFieldElementMap(sectionName,"ID_BRANCH","branch");
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY1","mktBranch",1);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY2","mktBranch",2);
+        inputFieldMapping.addFieldElementMap(sectionName,"KEY3","mktBranch",3);
+        //Property
+        inputFieldMapping.addFieldPropertyMap(sectionName,"ID_BRANCH",
+              ModelDefService.PropertyType.branchForMktBranch);
         //here the network enode is mapped to enode
         sectionName = "NODE";
         inputFieldMapping.addFieldElementMap(sectionName,"ID_ENODE","nwEnode",1);
@@ -32,8 +40,8 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"ID_KV","mktEnode",2);
         inputFieldMapping.addFieldElementMap(sectionName,"ID_EQUIPMENT","mktEnode",3);
         //properties
-        inputFieldMapping.addFieldPropertyMap(
-                sectionName,"ID_ENODE","nwEnodeForMktEnode");
+        inputFieldMapping.addFieldPropertyMap(sectionName,"ID_ENODE",
+              ModelDefService.PropertyType.nwEnodeForMktEnode);
 
         //----TIME-BASED MSSNET----
         //network enode to bus
@@ -41,12 +49,9 @@ public class ReadCaseFile {
         sectionName = "ENODEBUS";
         inputFieldMapping.addFieldElementMap(
               sectionName,"ID_ENODE",ModelDefService.ElementType.nwEnode.name());
-
         inputFieldMapping.addFieldElementMap(
               sectionName,"ID_BUS",ModelDefService.ElementType.bus.name());
-
-        /*
-        inputFieldMapping.addFieldElementMap(
+        /* inputFieldMapping.addFieldElementMap(
                     sectionName,"ID_ST",ModelDefService.ElementType.bus.name(),1);
         inputFieldMapping.addFieldElementMap(
               sectionName,"ID_KV",ModelDefService.ElementType.bus.name(),2);
@@ -106,7 +111,11 @@ public class ReadCaseFile {
         inputFieldMapping.addFieldElementMap(sectionName,"KEY1","mktBranch",1);
         inputFieldMapping.addFieldElementMap(sectionName,"KEY2","mktBranch",2);
         inputFieldMapping.addFieldElementMap(sectionName,"KEY3","mktBranch",3);
-        inputFieldMapping.addFieldPropertyMap(sectionName,"BASECASEMWLIMITFOR", "mktBrLimit");
+        //Property
+        inputFieldMapping.addFieldPropertyMap(sectionName,"BASECASEMWLIMITFOR",
+              ModelDefService.PropertyType.mktBrLimitFwd);
+        inputFieldMapping.addFieldPropertyMap(sectionName,"BASECASEMWLIMITREV",
+              ModelDefService.PropertyType.mktBrLimitRev);
 
         //Interval 18:00
         //String dt = "2018-03-19T06:00:00+01:00";
