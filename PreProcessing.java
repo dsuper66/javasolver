@@ -158,10 +158,13 @@ public class PreProcessing {
                modelDataService.addElement(ModelDefService.ElementType.flowLossSegment, segId);
                //Assign segment properties
                modelDataService.addProperty(ModelDefService.PropertyType.segMax, segId, segMax);
-               Double lossFlowRatio = (Math.pow(flowAtEndOfSegment, 2) - Math.pow(flowAtStartOfSegment, 2))
-                                      * resistance / segMax;
+               //Loss = P^2 * R
+               Double lossAtStart = Math.pow(flowAtStartOfSegment,2) * resistance/100.0;
+               Double lossAtEnd = Math.pow(flowAtEndOfSegment,2) * resistance/100.0;
+               Double lossFlowRatio = (lossAtEnd - lossAtStart)/segMax;
                modelDataService.addProperty(ModelDefService.PropertyType.segLossFlowRatio, segId, lossFlowRatio);
-               System.out.printf("added seg: %s  flow: %1.2f  ratio: %1.2f%n", segId, segMax, lossFlowRatio);
+               System.out.printf("added seg: %s  r: %1.2f flow: %1.2f loss1: %1.2f loss2: %1.2f ratio: %1.2f%n",
+                     segId, resistance, segMax, lossAtStart, lossAtEnd, lossFlowRatio);
                flowAtStartOfSegment += segMax;
                flowAtEndOfSegment += segMax;
             }
