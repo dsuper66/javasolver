@@ -160,6 +160,8 @@ public class ConstraintDataService {
                               || modelDataService.getStringValue(
                                     cc.propertyMap, parentElement.elementId).equals
                                     (childMatchingType.elementId)
+                              //or child element is same as parent
+                              //e.g. seg loss for flow... loss is "parent" and flow x ratio is "child"
                               || cc.propertyMap.equals("self")
                                  && parentElement.elementId.equals(childMatchingType.elementId)
                         )) {

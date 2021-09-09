@@ -131,6 +131,7 @@ public class PreProcessing {
          String fromBusId = modelDataService.getStringValue(ModelDefService.PropertyType.fromBus, branch.elementId);
          String toBusId = modelDataService.getStringValue(ModelDefService.PropertyType.toBus, branch.elementId);
          Double resistance = modelDataService.getDoubleValue(ModelDefService.PropertyType.resistance, branch.elementId);
+         resistance = resistance / 100.0 / 100.0; //resistance in the file is percent per-unit
 
          //Map<String,Double> mult = Map.of("FWD",1.0,"REV",-1.0);
          Map<String, Double> mult = Map.of("FWD", 1.0);
@@ -156,17 +157,21 @@ public class PreProcessing {
                //Add the segment
                String segId = branch.elementId + "~seg" + segNum;
                modelDataService.addElement(ModelDefService.ElementType.flowLossSegment, segId);
-               //Assign segment properties
+               //Seg max
                modelDataService.addProperty(ModelDefService.PropertyType.segMax, segId, segMax);
+               //Loss-flow ratio
                //Loss = P^2 * R
-               Double lossAtStart = Math.pow(flowAtStartOfSegment,2) * resistance/100.0;
-               Double lossAtEnd = Math.pow(flowAtEndOfSegment,2) * resistance/100.0;
+               Double lossAtStart = Math.pow(flowAtStartOfSegment,2) * resistance;
+               Double lossAtEnd = Math.pow(flowAtEndOfSegment,2) * resistance;
                Double lossFlowRatio = (lossAtEnd - lossAtStart)/segMax;
                modelDataService.addProperty(ModelDefService.PropertyType.segLossFlowRatio, segId, lossFlowRatio);
-               System.out.printf("added seg: %s  r: %1.2f flow: %1.2f loss1: %1.2f loss2: %1.2f ratio: %1.2f%n",
+               System.out.printf("added seg: %s  r: %1.4f flow: %1.2f loss1: %1.2f loss2: %1.2f ratio: %1.4f%n",
                      segId, resistance, segMax, lossAtStart, lossAtEnd, lossFlowRatio);
                flowAtStartOfSegment += segMax;
                flowAtEndOfSegment += segMax;
+
+               //Map seg to branch
+               modelDataService.addProperty(ModelDefService.PropertyType.dirBranchForSeg, segId, branch.elementId);
             }
          }
       }

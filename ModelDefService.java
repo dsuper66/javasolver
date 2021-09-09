@@ -46,7 +46,8 @@ public class ModelDefService {
       busStation,
       busKv,
       segLossFlowRatio,
-      segMax
+      segMax,
+      dirBranchForSeg
    }
 
    //The properties of an element type
