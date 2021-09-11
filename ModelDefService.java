@@ -104,6 +104,7 @@ public class ModelDefService {
                      PropertyType.weightPnodeBus, List.of(ElementType.pnode, ElementType.bus), "double"),
                new PropertyTypeDef(
                      PropertyType.weightTrancheBus, List.of(ElementType.tranche, ElementType.bus), "double"),
+               //dirBranch
                new PropertyTypeDef(
                      PropertyType.fromBus, List.of(ElementType.dirBranch), "busId"),
                new PropertyTypeDef(
@@ -111,7 +112,14 @@ public class ModelDefService {
                new PropertyTypeDef(
                      PropertyType.dirBranchLimit, List.of(ElementType.dirBranch), "double"),
                new PropertyTypeDef(
-                     PropertyType.branchForDirBranch, List.of(ElementType.dirBranch), "branchId")
+                     PropertyType.branchForDirBranch, List.of(ElementType.dirBranch), "branchId"),
+               //segment
+               new PropertyTypeDef(
+                     PropertyType.dirBranchForSeg, List.of(ElementType.flowLossSegment), "dirBranchId"),
+               new PropertyTypeDef(
+                     PropertyType.segMax, List.of(ElementType.flowLossSegment), "double"),
+               new PropertyTypeDef(
+                     PropertyType.segLossFlowRatio, List.of(ElementType.flowLossSegment), "double")
 
          );
 

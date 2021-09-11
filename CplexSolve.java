@@ -155,9 +155,12 @@ public class CplexSolve {
 
          //LHS
          IloLinearNumExpr lhs = model.linearNumExpr();
-         //varFactors = varFactorMap.get(constraint.constraintId);
          for (varIndex = 0; varIndex < varCount; varIndex++) {
+            //VarFactor * Var (Var is created above)
             lhs.addTerm(constraint.varFactorMap.getOrDefault(varIndex, 0.0), cplexVars[0][varIndex]);
+            if (constraint.varFactorMap.get(varIndex) != null) {
+               System.out.printf("---Adding %s\n", cplexVars[0][varIndex].getName());
+            }
          }
 
          //GE LT EQ

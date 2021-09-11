@@ -102,12 +102,14 @@ public class ModelDataService {
    }
 
    //String... create as string or double depending on valueType
+   //https://newbedev.com/if-else-code-execution-with-optional-class
    public void addProperty(
          String propertyTypeId,
          List<String> elementIds,
          String value) {
 
-      modelDefService.propertyTypeDef(propertyTypeId).ifPresent(propertyTypeDef -> {
+      modelDefService.propertyTypeDef(propertyTypeId).ifPresentOrElse(
+            propertyTypeDef -> {
                //Double value
                if (propertyTypeDef.valueType.equals("double")) {
                   addProperty(propertyTypeId, elementIds, Double.parseDouble(value));
@@ -120,19 +122,10 @@ public class ModelDataService {
                   propertiesArray.add(newProperty);
                   propertiesMap.put(makePropertyKey(propertyTypeId, elementIds), newProperty);
                }
-
-               //Debug
-            /*
-                    //if (propertyTypeId.equals("nwEnodeForMktEnode") || propertyTypeId.equals("busForNwEnode")) {
-                        System.out.println(">>>adding:"
-                                           + " key = " + makePropertyKey(propertyTypeId,elementIds)
-                                           + " value = " + value
-                                );
-                    //}
-
-             */
-            }
-      );
+            },
+      () -> {
+         throw new RuntimeException("Property Type " + propertyTypeId + " not found in ModelDefService");
+      });
    }
 
    //Remove property where any element matches

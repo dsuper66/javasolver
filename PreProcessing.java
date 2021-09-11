@@ -144,7 +144,7 @@ public class PreProcessing {
             modelDataService.addProperty(ModelDefService.PropertyType.fromBus, dirBranchId, fromBusId);
             modelDataService.addProperty(ModelDefService.PropertyType.toBus, dirBranchId, toBusId);
 
-            //Calculate the segments
+            //Add segments
             Double flowMax = branchFwdMaxForBranch.get(branch.elementId);
             if (flowMax != null) {
                int totalSegs = 3;
@@ -154,7 +154,7 @@ public class PreProcessing {
                double flowAtEndOfSegment = segMax;
                for (int segNum = 1; segNum <= totalSegs; segNum++) {
                   //Add the segment
-                  String segId = branch.elementId + "~seg" + segNum;
+                  String segId = dirBranchId + "~seg" + segNum;
                   modelDataService.addElement(ModelDefService.ElementType.flowLossSegment, segId);
                   //Seg max
                   modelDataService.addProperty(ModelDefService.PropertyType.segMax, segId, segMax);
@@ -171,6 +171,7 @@ public class PreProcessing {
 
                   //Map seg to branch
                   modelDataService.addProperty(ModelDefService.PropertyType.dirBranchForSeg, segId, dirBranchId);
+                  System.out.printf("segId: %s, dirBranchId: %s\n", segId, dirBranchId);
                }
             }
          }
