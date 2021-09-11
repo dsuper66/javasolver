@@ -237,8 +237,9 @@ public class ConstraintDataService {
    private String addVar(String elementId, String varType) {
       String varId = String.format("var_%s.%s", elementId, varType);
       modelVars.putIfAbsent(varId,new ModelVar(varId,varType,elementId));
+      //Unrestricted vars
       if (varType.equals("branchFlow") || varType.equals("phaseAngle")){
-         lowerBounds.putIfAbsent(varId,-Double.MAX_VALUE);
+         //lowerBounds.putIfAbsent(varId,-Double.MAX_VALUE);
       }
       return varId;
    }
