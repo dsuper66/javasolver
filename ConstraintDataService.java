@@ -120,6 +120,7 @@ public class ConstraintDataService {
             //but adding it is conditional
             boolean addTheConstraint = true; //Constraint is not added if it can be replaced by bounds on the Var
 
+            System.out.print(">>>Constraint:" + constraintId);
             //Check for Var Factor from parent
             if (!constraintDef.varType.equals("")) {
 
