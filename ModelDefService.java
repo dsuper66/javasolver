@@ -42,7 +42,7 @@ public class ModelDefService {
       //displayName,
       branchForMktBranch,
       branchForDirBranch,
-      dirBranchDirection,
+      dirBranchDirMult,
       busStation,
       busKv,
       segLossFlowRatio,

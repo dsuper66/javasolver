@@ -140,9 +140,13 @@ public class PreProcessing {
             modelDataService.addElement(ModelDefService.ElementType.dirBranch, dirBranchId);
             //Properties
             modelDataService.addProperty(ModelDefService.PropertyType.branchForDirBranch, dirBranchId, branch.elementId);
-            modelDataService.addProperty(ModelDefService.PropertyType.dirBranchDirection, dirBranchId, mult.get(dirString));
-            modelDataService.addProperty(ModelDefService.PropertyType.fromBus, dirBranchId, fromBusId);
-            modelDataService.addProperty(ModelDefService.PropertyType.toBus, dirBranchId, toBusId);
+            Double dirMult = mult.get(dirString);
+            modelDataService.addProperty(ModelDefService.PropertyType.dirBranchDirMult, dirBranchId, dirMult);
+            //From/to bus are reversed for the reverse branch
+            modelDataService.addProperty(ModelDefService.PropertyType.fromBus, dirBranchId,
+                  (dirMult == 1.0) ? fromBusId : toBusId);
+            modelDataService.addProperty(ModelDefService.PropertyType.toBus, dirBranchId,
+                  (dirMult == 1.0) ? toBusId : fromBusId);
 
             //Add segments
             Double flowMax = branchFwdMaxForBranch.get(branch.elementId);
