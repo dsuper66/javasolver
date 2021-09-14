@@ -1,6 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -116,6 +117,22 @@ public class ReadCaseFile {
               ModelDefService.PropertyType.mktBrLimitFwd);
         inputFieldMapping.addFieldPropertyMap(sectionName,"BASECASEMWLIMITREV",
               ModelDefService.PropertyType.mktBrLimitRev);
+
+        //Write the mapping to JSON
+        //https://crunchify.com/in-java-how-to-convert-arraylist-to-jsonobject/
+        //https://stackoverflow.com/questions/29319434/how-to-save-data-with-gson-in-a-json-file
+        ArrayList<InputFieldMapping.FieldPropertyMap> readMapProperties = inputFieldMapping.getFieldPropertyMaps();
+        ArrayList<InputFieldMapping.FieldElementMap> readMapElements = inputFieldMapping.getFieldElementMaps();
+        //GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        String inputMapFile = "/Users/davidbullen/java/inputMap.json";
+        //String prettyJson = prettyGson.toJson(readMapProperties);
+        //System.out.println(prettyJson);
+
+        try (Writer writer = new FileWriter(inputMapFile)) {
+            Gson gson = new GsonBuilder().create();
+            prettyGson.toJson(readMapProperties, writer);
+        }
 
         //Interval 18:00
         //String dt = "2018-03-19T06:00:00+01:00";

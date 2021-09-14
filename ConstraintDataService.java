@@ -61,7 +61,6 @@ public class ConstraintDataService {
       try {
          //https://stackoverflow.com/questions/29965764/how-to-parse-json-file-with-gson
          Gson gson = new Gson();
-
          JsonReader reader = new JsonReader(new FileReader(dir + defFile));
          constraintDefs = Arrays.asList(gson.fromJson(reader, ConstraintDef[].class));
          //constraintDefs.forEach(cd -> System.out.println(">>>constraint def:" + cd.constraintType));

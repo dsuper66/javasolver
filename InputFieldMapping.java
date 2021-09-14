@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class InputFieldMapping {
 
     //-------Element mapping-------
-    private static class FieldElementMap {
+    static class FieldElementMap {
         final String sectionName;
         final String fieldName;
         final String elementType;
@@ -32,6 +32,10 @@ public class InputFieldMapping {
     public void addFieldElementMap(String sectionName, String fieldName, String elementType, Integer order) {
         this.fieldElementMaps.add(
               new FieldElementMap(sectionName, fieldName, elementType, order));
+    }
+
+    public ArrayList<FieldElementMap> getFieldElementMaps(){
+        return fieldElementMaps;
     }
 
     //For the Header row, return matching ELEMENTS and the orderNum,fieldNum that hold their component(s)
@@ -87,7 +91,7 @@ public class InputFieldMapping {
 
     //-------Property mapping-------
 
-    private static class FieldPropertyMap {
+    static class FieldPropertyMap {
         final String sectionName;
         final String fieldName;
         final String propertyType;
@@ -112,6 +116,11 @@ public class InputFieldMapping {
         this.fieldPropertyMaps.add(
               new FieldPropertyMap(sectionName, fieldName, propertyType.name()));
     }
+
+    public ArrayList<FieldPropertyMap> getFieldPropertyMaps(){
+        return fieldPropertyMaps;
+    }
+
 
     //For the Header row, return matching PROPERTY and associated fieldNum
     public HashMap<String,Integer> getPropertyFieldMapForSectionFieldNames(
