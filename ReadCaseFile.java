@@ -121,18 +121,27 @@ public class ReadCaseFile {
         //Write the mapping to JSON
         //https://crunchify.com/in-java-how-to-convert-arraylist-to-jsonobject/
         //https://stackoverflow.com/questions/29319434/how-to-save-data-with-gson-in-a-json-file
-        ArrayList<InputFieldMapping.FieldPropertyMap> readMapProperties = inputFieldMapping.getFieldPropertyMaps();
-        ArrayList<InputFieldMapping.FieldElementMap> readMapElements = inputFieldMapping.getFieldElementMaps();
+
         //GsonBuilder gsonBuilder = new GsonBuilder();
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-        String inputMapFile = "/Users/davidbullen/java/inputMap.json";
+        //Properties map
+        String propertiesMapFile = "/Users/davidbullen/java/readMapForProperties.json";
+        ArrayList<InputFieldMapping.FieldPropertyMap> readMapForProperties = inputFieldMapping.getFieldPropertyMaps();
+        try (Writer writer = new FileWriter(propertiesMapFile)) {
+            prettyGson.toJson(readMapForProperties, writer);
+        }
+        //Elements map
+        String elementsMapFile = "/Users/davidbullen/java/readMapForElements.json";
+        ArrayList<InputFieldMapping.FieldElementMap> readMapForElements = inputFieldMapping.getFieldElementMaps();
+        try (Writer writer = new FileWriter(elementsMapFile)) {
+            prettyGson.toJson(readMapForElements, writer);
+        }
+
         //String prettyJson = prettyGson.toJson(readMapProperties);
         //System.out.println(prettyJson);
 
-        try (Writer writer = new FileWriter(inputMapFile)) {
-            Gson gson = new GsonBuilder().create();
-            prettyGson.toJson(readMapProperties, writer);
-        }
+
+
 
         //Interval 18:00
         //String dt = "2018-03-19T06:00:00+01:00";
