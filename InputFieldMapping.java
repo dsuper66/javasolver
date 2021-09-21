@@ -1,7 +1,8 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+
+import java.io.FileReader;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InputFieldMapping {
@@ -24,7 +25,7 @@ public class InputFieldMapping {
             this.order = order;
         }
     }
-    private final ArrayList<FieldElementMap> fieldElementMaps = new ArrayList<>();
+    private List<FieldElementMap> fieldElementMaps = new ArrayList<>();
 
     public void addFieldElementMap(String sectionName, String fieldName, String elementType) {
         addFieldElementMap(sectionName, fieldName, elementType,1);
@@ -34,7 +35,7 @@ public class InputFieldMapping {
               new FieldElementMap(sectionName, fieldName, elementType, order));
     }
 
-    public ArrayList<FieldElementMap> getFieldElementMaps(){
+    public List<FieldElementMap> getFieldElementMaps(){
         return fieldElementMaps;
     }
 
@@ -90,7 +91,6 @@ public class InputFieldMapping {
     }
 
     //-------Property mapping-------
-
     static class FieldPropertyMap {
         final String sectionName;
         final String fieldName;
@@ -105,8 +105,7 @@ public class InputFieldMapping {
             this.propertyType = propertyType;
         }
     }
-
-    private final ArrayList<FieldPropertyMap> fieldPropertyMaps = new ArrayList<>();
+    private List<FieldPropertyMap> fieldPropertyMaps = new ArrayList<>();
 
     public void addFieldPropertyMap(String sectionName, String fieldName, String propertyTypeId) {
         this.fieldPropertyMaps.add(
@@ -117,7 +116,7 @@ public class InputFieldMapping {
               new FieldPropertyMap(sectionName, fieldName, propertyType.name()));
     }
 
-    public ArrayList<FieldPropertyMap> getFieldPropertyMaps(){
+    public List<FieldPropertyMap> getFieldPropertyMaps(){
         return fieldPropertyMaps;
     }
 
@@ -153,6 +152,25 @@ public class InputFieldMapping {
         }
 
         return propertyTypeFieldMap;
+    }
+
+    public void readInputMaps() {
+        String dir = "/Users/davidbullen/java/";
+        String elementsFile = "field-element-maps.json";
+        String propertiesFile = "field-property-maps.json";
+        //https://attacomsian.com/blog/jackson-read-json-file
+        try {
+            //https://stackoverflow.com/questions/29965764/how-to-parse-json-file-with-gson
+            Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new FileReader(dir + elementsFile));
+            fieldElementMaps = Arrays.asList(gson.fromJson(reader, FieldElementMap[].class));
+
+            reader = new JsonReader(new FileReader(dir + propertiesFile));
+            fieldPropertyMaps = Arrays.asList(gson.fromJson(reader, FieldPropertyMap[].class));
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

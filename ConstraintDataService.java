@@ -54,10 +54,9 @@ public class ConstraintDataService {
 
    public void readConstraints() {
       String dir = "/Users/davidbullen/java/";
-      String defFile = "constraint-defs2.json";
-      String compFile = "constraint-comps2.json";
+      String defFile = "constraint-defs3.json";
+      String compFile = "constraint-comps3.json";
       //https://attacomsian.com/blog/jackson-read-json-file
-      //ObjectMapper mapper = new ObjectMapper();
       try {
          //https://stackoverflow.com/questions/29965764/how-to-parse-json-file-with-gson
          Gson gson = new Gson();
@@ -66,7 +65,6 @@ public class ConstraintDataService {
          //constraintDefs.forEach(cd -> System.out.println(">>>constraint def:" + cd.constraintType));
 
          reader = new JsonReader(new FileReader(dir + compFile));
-         //final List<ConstraintComp> constraintComps = Arrays.asList(gson.fromJson(reader, ConstraintComp[].class));
          constraintComps = Arrays.asList(gson.fromJson(reader, ConstraintComp[].class));
          //constraintComps.forEach(cc -> System.out.println(">>>constraint comp:" + cc.constraintType));
 

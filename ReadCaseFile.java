@@ -1,7 +1,6 @@
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -13,6 +12,7 @@ public class ReadCaseFile {
 
     public static void readCase(ModelDataService modelDataService) throws IOException {
 
+        /*
         //DAILY
         //here enode is mapped to pnode
         //Map a field name to an element type
@@ -52,12 +52,6 @@ public class ReadCaseFile {
               sectionName,"ID_ENODE",ModelDefService.ElementType.nwEnode.name());
         inputFieldMapping.addFieldElementMap(
               sectionName,"ID_BUS",ModelDefService.ElementType.bus.name());
-        /* inputFieldMapping.addFieldElementMap(
-                    sectionName,"ID_ST",ModelDefService.ElementType.bus.name(),1);
-        inputFieldMapping.addFieldElementMap(
-              sectionName,"ID_KV",ModelDefService.ElementType.bus.name(),2);
-        inputFieldMapping.addFieldElementMap(
-              sectionName,"ID_BUS",ModelDefService.ElementType.bus.name(),3);*/
         //properties
         inputFieldMapping.addFieldPropertyMap(
               sectionName,"ID_BUS",ModelDefService.PropertyType.busForNwEnode.name());
@@ -125,22 +119,21 @@ public class ReadCaseFile {
         //GsonBuilder gsonBuilder = new GsonBuilder();
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         //Properties map
-        String propertiesMapFile = "/Users/davidbullen/java/readMapForProperties.json";
-        ArrayList<InputFieldMapping.FieldPropertyMap> readMapForProperties = inputFieldMapping.getFieldPropertyMaps();
+        String propertiesMapFile = "/Users/davidbullen/java/input-map-properties.json";
+        List<InputFieldMapping.FieldPropertyMap> readMapForProperties = inputFieldMapping.getFieldPropertyMaps();
         try (Writer writer = new FileWriter(propertiesMapFile)) {
             prettyGson.toJson(readMapForProperties, writer);
         }
         //Elements map
-        String elementsMapFile = "/Users/davidbullen/java/readMapForElements.json";
-        ArrayList<InputFieldMapping.FieldElementMap> readMapForElements = inputFieldMapping.getFieldElementMaps();
+        String elementsMapFile = "/Users/davidbullen/java/input-map-elements.json";
+        List<InputFieldMapping.FieldElementMap> readMapForElements = inputFieldMapping.getFieldElementMaps();
         try (Writer writer = new FileWriter(elementsMapFile)) {
             prettyGson.toJson(readMapForElements, writer);
         }
+        */
 
-        //String prettyJson = prettyGson.toJson(readMapProperties);
-        //System.out.println(prettyJson);
-
-
+        //Read the mapping from field to element and field to property
+        inputFieldMapping.readInputMaps();
 
 
         //Interval 18:00
