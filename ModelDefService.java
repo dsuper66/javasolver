@@ -51,7 +51,7 @@ public class ModelDefService {
    }
 
    //The properties of an element type
-   static final List<PropertyTypeDef> propertyTypeDefDefs =
+   static final List<PropertyTypeDef> propertyTypeDefs =
          List.of(
                //branch
                new PropertyTypeDef(
@@ -133,7 +133,7 @@ public class ModelDefService {
 
    //https://x-team.com/blog/using-optional-to-transform-your-java-code/
    public Optional<PropertyTypeDef> propertyTypeDef(String propertyType) {
-      return propertyTypeDefDefs
+      return propertyTypeDefs
             .stream()
             .filter(e -> e.propertyTypeId.equals(propertyType))
             .findFirst();

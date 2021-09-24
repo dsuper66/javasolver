@@ -228,6 +228,21 @@ public class ModelDataService {
             .orElse("");
    }
 
+   public String getStringValue(ElementProperty property, ModelDefService.PropertyType propertyType) {
+      //Find the elementTypes for this property
+      String[] result = {""};
+      //Get the property type
+      modelDefService.propertyTypeDef(property.propertyTypeId).ifPresent(propertyTypeDef -> {
+         //Find the location of the requested property type
+         int indexOfType = propertyTypeDef.elementTypes.indexOf(propertyType.name());
+         //Get the value for the property type
+         if (indexOfType >= 0) {
+            result[0] = property.elementIds.get(indexOfType);
+         }
+      });
+      return result[0];
+   }
+
    //Get double value for PropertyType(ElementIds), e.g., factorPnodeMktEnode(pnodeId,mktEnodeId)
    public Double getDoubleValue(String propertyTypeId, List<String> elementIds) {
       Optional<ElementProperty> opt = Optional.ofNullable(

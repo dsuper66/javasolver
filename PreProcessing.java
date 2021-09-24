@@ -10,7 +10,7 @@ public class PreProcessing {
    public static void calculateDerivedProperties(ModelDataService modelDataService) {
       System.out.println("pre-proc: calculateDerivedProperties");
 
-      //Exclude island 0 bus, enode, branch
+      //Exclude bus, enode, branch
       excludeIsland(modelDataService);
 
       updateBusName(modelDataService);
@@ -255,7 +255,7 @@ public class PreProcessing {
 
          //weightTrancheBus... if the tranche has non-zero weight then it clears at the bus
          String pnodeId = modelDataService.getStringValue(
-               ModelDefService.PropertyType.tranchePnode, List.of(enOfferTrancheId));
+               ModelDefService.PropertyType.tranchePnode, enOfferTrancheId);
 
          //Get bus weights for the pnode and assign them to the OFFER tranche
          //For each bus-weight
@@ -266,10 +266,11 @@ public class PreProcessing {
                ModelDefService.ElementType.pnode,
                pnodeId)) {
 
-            //This should be updated so that the bus id is extracted by index from the def
-            String busId = weightPnodeBusProperty.elementIds.get(1);
+            //This should be updated so that the bus id is extracted by index from the property def
+            //String busId = weightPnodeBusProperty.elementIds.get(1);
+            String busId = modelDataService.getElementId(weightPnodeBusProperty, ModelDefService.ElementType.bus);
 
-            //Only add the tranch if the pnode has a mapping i.e. bus not removed
+            //Only add the weight if not zero
             if (weightPnodeBusProperty.doubleValue > 0.0) {
                sumWeights += weightPnodeBusProperty.doubleValue;
                modelDataService.addProperty(
@@ -323,7 +324,7 @@ public class PreProcessing {
 
             //Add the tranch (if there are non-zero weights)
             if (sumWeights > 0.0) {
-               //Add the tranch, using the pnode Id
+               //Add the tranch element
                modelDataService.addElement(ModelDefService.ElementType.bidTranche, tranchId);
                //Create a tranch from the pnode load
                modelDataService.addProperty(
