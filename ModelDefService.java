@@ -47,10 +47,11 @@ public class ModelDefService {
       busKv,
       segLossFlowRatio,
       segMax,
-      dirBranchForSeg
+      dirBranchForSeg,
+      sixSecFlag
    }
 
-   //The properties of an element type
+   //Define properties
    static final List<PropertyTypeDef> propertyTypeDefs =
          List.of(
                //branch
@@ -91,7 +92,9 @@ public class ModelDefService {
                new PropertyTypeDef(
                      PropertyType.trancheLimit, List.of(ElementType.tranche), "double"),
                new PropertyTypeDef(
-                     PropertyType.trancheType, List.of(ElementType.tranche), "string"),
+                     PropertyType.trancheType, List.of(ElementType.tranche), "trancheType"),
+               new PropertyTypeDef(
+                     PropertyType.sixSecFlag, List.of(ElementType.tranche), "sixSecFlag"),
                //mktBranch
                new PropertyTypeDef(
                      PropertyType.mktBrLimitFwd, List.of(ElementType.mktBranch), "double"),

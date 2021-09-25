@@ -245,51 +245,56 @@ public class PreProcessing {
       //enOfferTranche elements as tranche where trancheType = "ENOF"
       //This is effectively just a set of elements that is a subset of the tranche elements
       //the properties are unchanged because the i.d. is the same
-      String enOfferType = "ENOF";
-      for (String enOfferTrancheId
-            : modelDataService.getElementIds(
-            ModelDefService.ElementType.tranche,
-            ModelDefService.PropertyType.trancheType,
-            enOfferType
-      )) {
+      for (String offerType : new String[]{"ENOF", "PLRO", "TWRO"}) {
+         for (String offerTrancheId : modelDataService.getElementIds(
+               ModelDefService.ElementType.tranche,
+               ModelDefService.PropertyType.trancheType,
+               offerType
+         )) {
 
-         //weightTrancheBus... if the tranche has non-zero weight then it clears at the bus
-         String pnodeId = modelDataService.getStringValue(
-               ModelDefService.PropertyType.tranchePnode, enOfferTrancheId);
+            //weightTrancheBus... if the tranche has non-zero weight then it clears at the bus
+            String pnodeId = modelDataService.getStringValue(
+                  ModelDefService.PropertyType.tranchePnode, offerTrancheId);
 
-         //Get bus weights for the pnode and assign them to the OFFER tranche
-         //For each bus-weight
-         double sumWeights = 0.0; //only add tranch if weights > 0
-         for (ElementProperty weightPnodeBusProperty
-               : modelDataService.getProperties(
-               ModelDefService.PropertyType.weightPnodeBus,
-               ModelDefService.ElementType.pnode,
-               pnodeId)) {
+            //Get bus weights for the pnode and assign them to the OFFER tranche
+            //For each bus-weight
+            double sumWeights = 0.0; //only add tranch if weights > 0
+            for (ElementProperty weightPnodeBusProperty
+                  : modelDataService.getProperties(
+                  ModelDefService.PropertyType.weightPnodeBus,
+                  ModelDefService.ElementType.pnode,
+                  pnodeId)) {
 
-            //This should be updated so that the bus id is extracted by index from the property def
-            //String busId = weightPnodeBusProperty.elementIds.get(1);
-            String busId = modelDataService.getElementId(weightPnodeBusProperty, ModelDefService.ElementType.bus);
+               //This should be updated so that the bus id is extracted by index from the property def
+               //String busId = weightPnodeBusProperty.elementIds.get(1);
+               String busId = modelDataService.getElementId(weightPnodeBusProperty, ModelDefService.ElementType.bus);
 
-            //Only add the weight if not zero
-            if (weightPnodeBusProperty.doubleValue > 0.0) {
-               sumWeights += weightPnodeBusProperty.doubleValue;
-               modelDataService.addProperty(
-                     ModelDefService.PropertyType.weightTrancheBus,
-                     List.of(enOfferTrancheId, busId),
-                     weightPnodeBusProperty.doubleValue);
+               //Only add the weight if not zero
+               if (weightPnodeBusProperty.doubleValue > 0.0) {
+                  sumWeights += weightPnodeBusProperty.doubleValue;
+                  modelDataService.addProperty(
+                        ModelDefService.PropertyType.weightTrancheBus,
+                        List.of(offerTrancheId, busId),
+                        weightPnodeBusProperty.doubleValue);
+               }
+            }
+            //Add the tranch if there are weights
+            if (sumWeights > 0.0) {
+               modelDataService.addElement(ModelDefService.ElementType.enOfferTranche, offerTrancheId);
+            }
+
+
+            //debug... price and limit
+            Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit, List.of(offerTrancheId));
+            Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice, List.of(offerTrancheId));
+            String sixSecFlag = modelDataService.getStringValue(ModelDefService.PropertyType.sixSecFlag, List.of(offerTrancheId));
+
+            if (offerType.equals("PLRO") || offerType.equals("TWRO")) {
+               offerTrancheId = offerTrancheId.replace(offerType,
+                     offerType.charAt(0) + (sixSecFlag.equals("1") ? "FIR" : "SIR"));
+               System.out.println(">>>" + offerTrancheId + " " + sixSecFlag + " " + limit + " $" + price);
             }
          }
-         //Add the tranch if there are weights
-         if (sumWeights > 0.0) {
-            modelDataService.addElement(ModelDefService.ElementType.enOfferTranche, enOfferTrancheId);
-         }
-
-
-         //debug... price and limit
-         Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit, List.of(enOfferTrancheId));
-         Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice, List.of(enOfferTrancheId));
-
-         //System.out.println(">>>" + pnode + " " + limit + " $" + price);
       }
 
       //---BIDS--- Energy bids from pnodeload
