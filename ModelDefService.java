@@ -48,7 +48,8 @@ public class ModelDefService {
       segLossFlowRatio,
       segMax,
       dirBranchForSeg,
-      sixSecFlag
+      sixSecFlag,
+      nwEnodeStation
    }
 
    //Define properties
@@ -71,6 +72,8 @@ public class ModelDefService {
                      PropertyType.busForNwEnode, List.of(ElementType.nwEnode), "busId"),
                new PropertyTypeDef(
                      PropertyType.nwEnodeElecIsland, List.of(ElementType.nwEnode), "string"),
+               new PropertyTypeDef(
+                     PropertyType.nwEnodeStation, List.of(ElementType.nwEnode), "string"),
                //pnode
                new PropertyTypeDef(
                      PropertyType.pnodeLoad, List.of(ElementType.pnode), "double"),

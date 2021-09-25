@@ -184,21 +184,25 @@ public class PreProcessing {
 
    //Exclude islands
    public static void excludeIsland(ModelDataService modelDataService) {
-      List<String> includeList = List.of("1");
+      List<String> includeIsland = List.of("1");
+      List<String> includeStations = List.of("ARA","WRK");
 
       System.out.println("Exclude factorPnodeMktEnode");
-      //Remove each pnode-enode factor if in excluded island
+      //Remove each pnode-enode factor if not included
       for (ElementProperty property : modelDataService.getProperties(
             ModelDefService.PropertyType.factorPnodeMktEnode)) {
 
          String mktEnodeId = modelDataService.getElementId(property, ModelDefService.ElementType.mktEnode);
-         //Get the nwEnodeId and electrical island for the mktEnode
+         //Get the nwEnodeId details for the mktEnode
          String nwEnodeId = modelDataService.getStringValue(
                ModelDefService.PropertyType.nwEnodeForMktEnode, mktEnodeId);
          String elecIsland = modelDataService.getStringValue(
                ModelDefService.PropertyType.nwEnodeElecIsland, nwEnodeId);
+         String station = modelDataService.getStringValue(
+               ModelDefService.PropertyType.nwEnodeStation, nwEnodeId);
 
-         if (!includeList.contains(elecIsland)) {
+         //if (!includeIsland.contains(elecIsland)) {
+         if (!includeStations.contains(station)) {
             System.out.println("removing property: " + property.propertyTypeId + " " + property.elementIds);
             modelDataService.removeProperty(property);
             //No need to remove enodes because they have no associated constraints
@@ -206,16 +210,17 @@ public class PreProcessing {
       }
 
       System.out.println("Exclude branch with bus in excluded island");
-      //Remove branch and bus if bus is in excluded island
+      //Remove branch and bus if bus is not included
       for (ModelDefService.PropertyType pType
             : List.of(ModelDefService.PropertyType.fromBus, ModelDefService.PropertyType.toBus)) {
 
          for (ElementProperty property : modelDataService.getProperties(pType)) {
             String busId = property.stringValue;
-            //Get the island for the bus
-            String elecIsland = modelDataService.getStringValue(
-                  ModelDefService.PropertyType.busElecIsland, busId);
-            if (!includeList.contains(elecIsland)) {
+            //Get the details for the bus
+            String elecIsland = modelDataService.getStringValue(ModelDefService.PropertyType.busElecIsland, busId);
+            String station = modelDataService.getStringValue(ModelDefService.PropertyType.busStation, busId);
+            //if (!includeIsland.contains(elecIsland)) {
+            if (!includeStations.contains(station)) {
                //Delete the property, the bus and the branch
                System.out.println(">>> Deleting branch:" + " and bus:" + busId + " (island " + elecIsland + ")");
                modelDataService.removeProperty(property);
@@ -231,7 +236,7 @@ public class PreProcessing {
          //Get the island for the bus
          String elecIsland = modelDataService.getStringValue(
                ModelDefService.PropertyType.busElecIsland, bus.elementId);
-         if (!includeList.contains(elecIsland)) {
+         if (!includeIsland.contains(elecIsland)) {
             //Delete the bus
             System.out.println(">>> Deleting bus:" + bus.elementId + " (island " + elecIsland + ")");
             modelDataService.removeElement(ModelDefService.ElementType.bus, bus.elementId);
