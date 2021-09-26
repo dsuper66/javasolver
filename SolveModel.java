@@ -8,6 +8,7 @@ public class SolveModel {
         System.out.println("Hello World!"); // Display the string.
 
         ModelDataService modelDataService = new ModelDataService();
+        modelDataService.writeDefs();
         //ReadCaseFile readCaseFile = new ReadCaseFile();
         ReadCaseFile.readCase(modelDataService);
         PreProcessing.calculateDerivedProperties(modelDataService);

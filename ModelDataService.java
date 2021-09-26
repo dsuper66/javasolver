@@ -1,3 +1,9 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +18,21 @@ public class ModelDataService {
 
    public final ArrayList<ElementProperty> propertiesArray = new ArrayList<>();
    public final HashMap<String, ElementProperty> propertiesMap = new HashMap<>();
+
+   public void writeDefs() {
+      //Write the property defs to JSON
+      //https://crunchify.com/in-java-how-to-convert-arraylist-to-jsonobject/
+      //https://stackoverflow.com/questions/29319434/how-to-save-data-with-gson-in-a-json-file
+      //GsonBuilder gsonBuilder = new GsonBuilder();
+      Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+      //Properties map
+      String propertiesMapFile = "/Users/davidbullen/java/property_defs.json";
+      try (Writer writer = new FileWriter(propertiesMapFile)) {
+         prettyGson.toJson(modelDefService.propertyTypeDefs, writer);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
 
    //--------Elements-----------
 

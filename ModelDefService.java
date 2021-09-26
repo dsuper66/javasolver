@@ -14,9 +14,12 @@ public class ModelDefService {
       bus,
       tranche,
       enOfferTranche,
+      resOfferTrancheFir,
+      resOfferTrancheSir,
       bidTranche,
       mathModel,
-      flowLossSegment
+      flowLossSegment,
+      riskIsland
    }
 
    public enum PropertyType {
@@ -49,7 +52,9 @@ public class ModelDefService {
       segMax,
       dirBranchForSeg,
       sixSecFlag,
-      nwEnodeStation
+      nwEnodeStation,
+      riskFlag,
+      pnodeRiskIsland
    }
 
    //Define properties
@@ -77,7 +82,10 @@ public class ModelDefService {
                //pnode
                new PropertyTypeDef(
                      PropertyType.pnodeLoad, List.of(ElementType.pnode), "double"),
-               //pnode,mktEnode
+               new PropertyTypeDef(
+                     PropertyType.riskFlag, List.of(ElementType.pnode), "string"),
+               new PropertyTypeDef(
+                     PropertyType.pnodeRiskIsland, List.of(ElementType.pnode), "string"),
                new PropertyTypeDef(
                      PropertyType.factorPnodeMktEnode, List.of(ElementType.pnode, ElementType.mktEnode), "double"),
                //bus
@@ -106,6 +114,7 @@ public class ModelDefService {
                new PropertyTypeDef(
                      PropertyType.branchForMktBranch, List.of(ElementType.mktBranch), "branchId"),
                //----Derived---
+               //weights
                new PropertyTypeDef(
                      PropertyType.weightPnodeBus, List.of(ElementType.pnode, ElementType.bus), "double"),
                new PropertyTypeDef(
@@ -126,7 +135,6 @@ public class ModelDefService {
                      PropertyType.segMax, List.of(ElementType.flowLossSegment), "double"),
                new PropertyTypeDef(
                      PropertyType.segLossFlowRatio, List.of(ElementType.flowLossSegment), "double")
-
          );
 
    //https://stackoverflow.com/questions/41485751/java-8-optional-ifpresent-return-object-orelsethrow-exception
