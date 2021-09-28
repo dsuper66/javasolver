@@ -61,80 +61,48 @@ public class ModelDefService {
    static final List<PropertyTypeDef> propertyTypeDefs =
          List.of(
                //branch
-               new PropertyTypeDef(
-                     PropertyType.fromBus, List.of(ElementType.branch), "busId"),
-               new PropertyTypeDef(
-                     PropertyType.toBus, List.of(ElementType.branch), "busId"),
-               new PropertyTypeDef(
-                     PropertyType.susceptance, List.of(ElementType.branch), "double"),
-               new PropertyTypeDef(
-                     PropertyType.resistance, List.of(ElementType.branch), "double"),
+               new PropertyTypeDef(PropertyType.fromBus,false, List.of(ElementType.branch)),
+               new PropertyTypeDef(PropertyType.toBus,false, List.of(ElementType.branch)),
+               new PropertyTypeDef(PropertyType.susceptance,true, List.of(ElementType.branch)),
+               new PropertyTypeDef(PropertyType.resistance,true, List.of(ElementType.branch)),
                //mktEnode
-               new PropertyTypeDef(
-                     PropertyType.nwEnodeForMktEnode, List.of(ElementType.mktEnode), "nwEnodeId"),
+               new PropertyTypeDef(PropertyType.nwEnodeForMktEnode,false, List.of(ElementType.mktEnode)),
                //nwEnode
-               new PropertyTypeDef(
-                     PropertyType.busForNwEnode, List.of(ElementType.nwEnode), "busId"),
-               new PropertyTypeDef(
-                     PropertyType.nwEnodeElecIsland, List.of(ElementType.nwEnode), "string"),
-               new PropertyTypeDef(
-                     PropertyType.nwEnodeStation, List.of(ElementType.nwEnode), "string"),
+               new PropertyTypeDef(PropertyType.busForNwEnode,false, List.of(ElementType.nwEnode)),
+               new PropertyTypeDef(PropertyType.nwEnodeElecIsland,false, List.of(ElementType.nwEnode)),
+               new PropertyTypeDef(PropertyType.nwEnodeStation,false, List.of(ElementType.nwEnode)),
                //pnode
-               new PropertyTypeDef(
-                     PropertyType.pnodeLoad, List.of(ElementType.pnode), "double"),
-               new PropertyTypeDef(
-                     PropertyType.riskFlag, List.of(ElementType.pnode), "string"),
-               new PropertyTypeDef(
-                     PropertyType.pnodeRiskIsland, List.of(ElementType.pnode), "string"),
-               new PropertyTypeDef(
-                     PropertyType.factorPnodeMktEnode, List.of(ElementType.pnode, ElementType.mktEnode), "double"),
+               new PropertyTypeDef(PropertyType.pnodeLoad,true, List.of(ElementType.pnode)),
+               new PropertyTypeDef(PropertyType.riskFlag,false, List.of(ElementType.pnode)),
+               new PropertyTypeDef(PropertyType.pnodeRiskIsland,false, List.of(ElementType.pnode)),
+               new PropertyTypeDef(PropertyType.factorPnodeMktEnode,true, List.of(ElementType.pnode, ElementType.mktEnode)),
                //bus
-               new PropertyTypeDef(
-                     PropertyType.busElecIsland, List.of(ElementType.bus), "string"),
-               new PropertyTypeDef(
-                     PropertyType.busStation, List.of(ElementType.bus), "string"),
-               new PropertyTypeDef(
-                     PropertyType.busKv, List.of(ElementType.bus), "string"),
+               new PropertyTypeDef(PropertyType.busElecIsland,false, List.of(ElementType.bus)),
+               new PropertyTypeDef(PropertyType.busStation,false, List.of(ElementType.bus)),
+               new PropertyTypeDef(PropertyType.busKv,false, List.of(ElementType.bus)),
                //offer
-               new PropertyTypeDef(
-                     PropertyType.tranchePnode, List.of(ElementType.tranche), "pnodeId"),
-               new PropertyTypeDef(
-                     PropertyType.tranchePrice, List.of(ElementType.tranche), "double"),
-               new PropertyTypeDef(
-                     PropertyType.trancheLimit, List.of(ElementType.tranche), "double"),
-               new PropertyTypeDef(
-                     PropertyType.trancheType, List.of(ElementType.tranche), "trancheType"),
-               new PropertyTypeDef(
-                     PropertyType.sixSecFlag, List.of(ElementType.tranche), "sixSecFlag"),
+               new PropertyTypeDef(PropertyType.tranchePnode,false, List.of(ElementType.tranche)),
+               new PropertyTypeDef(PropertyType.tranchePrice,true, List.of(ElementType.tranche)),
+               new PropertyTypeDef(PropertyType.trancheLimit,true, List.of(ElementType.tranche)),
+               new PropertyTypeDef(PropertyType.trancheType,false, List.of(ElementType.tranche)),
+               new PropertyTypeDef(PropertyType.sixSecFlag,false, List.of(ElementType.tranche)),
                //mktBranch
-               new PropertyTypeDef(
-                     PropertyType.mktBrLimitFwd, List.of(ElementType.mktBranch), "double"),
-               new PropertyTypeDef(
-                     PropertyType.mktBrLimitRev, List.of(ElementType.mktBranch), "double"),
-               new PropertyTypeDef(
-                     PropertyType.branchForMktBranch, List.of(ElementType.mktBranch), "branchId"),
+               new PropertyTypeDef(PropertyType.mktBrLimitFwd,true, List.of(ElementType.mktBranch)),
+               new PropertyTypeDef(PropertyType.mktBrLimitRev,true, List.of(ElementType.mktBranch)),
+               new PropertyTypeDef(PropertyType.branchForMktBranch,false, List.of(ElementType.mktBranch)),
                //----Derived---
                //weights
-               new PropertyTypeDef(
-                     PropertyType.weightPnodeBus, List.of(ElementType.pnode, ElementType.bus), "double"),
-               new PropertyTypeDef(
-                     PropertyType.weightTrancheBus, List.of(ElementType.tranche, ElementType.bus), "double"),
+               new PropertyTypeDef(PropertyType.weightPnodeBus,true, List.of(ElementType.pnode, ElementType.bus)),
+               new PropertyTypeDef(PropertyType.weightTrancheBus,true, List.of(ElementType.tranche, ElementType.bus)),
                //dirBranch
-               new PropertyTypeDef(
-                     PropertyType.fromBus, List.of(ElementType.dirBranch), "busId"),
-               new PropertyTypeDef(
-                     PropertyType.toBus, List.of(ElementType.dirBranch), "busId"),
-               new PropertyTypeDef(
-                     PropertyType.dirBranchLimit, List.of(ElementType.dirBranch), "double"),
-               new PropertyTypeDef(
-                     PropertyType.branchForDirBranch, List.of(ElementType.dirBranch), "branchId"),
+               new PropertyTypeDef(PropertyType.fromBus,false, List.of(ElementType.dirBranch)),
+               new PropertyTypeDef(PropertyType.toBus,false, List.of(ElementType.dirBranch)),
+               new PropertyTypeDef(PropertyType.dirBranchLimit,true, List.of(ElementType.dirBranch)),
+               new PropertyTypeDef(PropertyType.branchForDirBranch,false, List.of(ElementType.dirBranch)),
                //segment
-               new PropertyTypeDef(
-                     PropertyType.dirBranchForSeg, List.of(ElementType.flowLossSegment), "dirBranchId"),
-               new PropertyTypeDef(
-                     PropertyType.segMax, List.of(ElementType.flowLossSegment), "double"),
-               new PropertyTypeDef(
-                     PropertyType.segLossFlowRatio, List.of(ElementType.flowLossSegment), "double")
+               new PropertyTypeDef(PropertyType.dirBranchForSeg,false, List.of(ElementType.flowLossSegment)),
+               new PropertyTypeDef(PropertyType.segMax,true, List.of(ElementType.flowLossSegment)),
+               new PropertyTypeDef(PropertyType.segLossFlowRatio,true, List.of(ElementType.flowLossSegment))
          );
 
    //https://stackoverflow.com/questions/41485751/java-8-optional-ifpresent-return-object-orelsethrow-exception

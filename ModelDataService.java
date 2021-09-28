@@ -132,7 +132,7 @@ public class ModelDataService {
       modelDefService.propertyTypeDef(propertyTypeId).ifPresentOrElse(
             propertyTypeDef -> {
                //Double value
-               if (propertyTypeDef.valueType.equals("double")) {
+               if (propertyTypeDef.isDouble) {
                   addProperty(propertyTypeId, elementIds, Double.parseDouble(value));
                }
                //String value

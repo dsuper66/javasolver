@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class PreProcessing {
 
-   public static void calculateDerivedProperties(ModelDataService modelDataService) {
-      System.out.println("pre-proc: calculateDerivedProperties");
+   public static void doPreProcessing(ModelDataService modelDataService) {
+      System.out.println("pre-proc: doPreProcessing");
 
       //Exclude bus, enode, branch
       excludeIsland(modelDataService);

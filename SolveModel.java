@@ -9,9 +9,9 @@ public class SolveModel {
 
         ModelDataService modelDataService = new ModelDataService();
         modelDataService.writeDefs();
-        //ReadCaseFile readCaseFile = new ReadCaseFile();
+
         ReadCaseFile.readCase(modelDataService);
-        PreProcessing.calculateDerivedProperties(modelDataService);
+        PreProcessing.doPreProcessing(modelDataService);
 
         ConstraintDataService constraintDataService = new ConstraintDataService();
         constraintDataService.readConstraints();
