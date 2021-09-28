@@ -1,3 +1,8 @@
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+
+import java.io.FileReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +63,7 @@ public class ModelDefService {
    }
 
    //Define properties
-   static final List<PropertyTypeDef> propertyTypeDefs =
+   static List<PropertyTypeDef> propertyTypeDefs =
          List.of(
                //branch
                new PropertyTypeDef(PropertyType.fromBus,false, List.of(ElementType.branch)),
@@ -104,6 +109,17 @@ public class ModelDefService {
                new PropertyTypeDef(PropertyType.segMax,true, List.of(ElementType.flowLossSegment)),
                new PropertyTypeDef(PropertyType.segLossFlowRatio,true, List.of(ElementType.flowLossSegment))
          );
+
+   public void readPropertyTypeDefs() {
+      try {
+         String dir = "/Users/davidbullen/java/";
+         Gson gson = new Gson();
+         JsonReader reader = new JsonReader(new FileReader(dir + "field-element-maps.json"));
+         propertyTypeDefs = Arrays.asList(gson.fromJson(reader, PropertyTypeDef[].class));
+      } catch (Exception ex) {
+         ex.printStackTrace();
+      }
+   }
 
    //https://stackoverflow.com/questions/41485751/java-8-optional-ifpresent-return-object-orelsethrow-exception
    //https://stackoverflow.com/questions/23773024/functional-style-of-java-8s-optional-ifpresent-and-if-not-present

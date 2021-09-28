@@ -155,17 +155,17 @@ public class InputFieldMapping {
     }
 
     public void readInputMaps() {
-        String dir = "/Users/davidbullen/java/";
-        String elementsFile = "field-element-maps.json";
-        String propertiesFile = "field-property-maps.json";
-        //https://attacomsian.com/blog/jackson-read-json-file
         try {
+        String dir = "/Users/davidbullen/java/";
+        //String elementsFile = "field-element-maps.json";
+        //String propertiesFile = "field-property-maps.json";
+        //https://attacomsian.com/blog/jackson-read-json-file
             //https://stackoverflow.com/questions/29965764/how-to-parse-json-file-with-gson
             Gson gson = new Gson();
-            JsonReader reader = new JsonReader(new FileReader(dir + elementsFile));
+            JsonReader reader = new JsonReader(new FileReader(dir + "field-element-maps.json"));
             fieldElementMaps = Arrays.asList(gson.fromJson(reader, FieldElementMap[].class));
 
-            reader = new JsonReader(new FileReader(dir + propertiesFile));
+            reader = new JsonReader(new FileReader(dir + "field-property-maps.json"));
             fieldPropertyMaps = Arrays.asList(gson.fromJson(reader, FieldPropertyMap[].class));
 
         } catch (Exception ex) {
