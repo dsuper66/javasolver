@@ -164,6 +164,13 @@ public class InputFieldMapping {
             Gson gson = new Gson();
             JsonReader reader = new JsonReader(new FileReader(dir + "field-element-maps.json"));
             fieldElementMaps = Arrays.asList(gson.fromJson(reader, FieldElementMap[].class));
+            //Confirm that all the elements are defined
+            List<FieldElementMap> unMatchedElementTypes = fieldElementMaps
+                  .stream()
+                  .filter(fem -> Arrays
+                        .stream(ModelDefService.ElementType.values())
+                        .noneMatch(v -> v.name().equals(fem.elementType))).collect(Collectors.toList());
+
 
             reader = new JsonReader(new FileReader(dir + "field-property-maps.json"));
             fieldPropertyMaps = Arrays.asList(gson.fromJson(reader, FieldPropertyMap[].class));
