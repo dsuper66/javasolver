@@ -24,6 +24,13 @@ public class InputFieldMapping {
             this.elementType = elementType;
             this.order = order;
         }
+
+        @Override
+        public String toString() {
+            return ("sectionName:"+ this.sectionName+
+                    " fieldName: "+ this.fieldName +
+                    " elementType: "+ this.elementType);
+        }
     }
     private List<FieldElementMap> fieldElementMaps = new ArrayList<>();
 
@@ -154,6 +161,7 @@ public class InputFieldMapping {
         return propertyTypeFieldMap;
     }
 
+    //Read the map from case file to elements and properties
     public void readInputMaps() {
         try {
         String dir = "/Users/davidbullen/java/";
@@ -162,7 +170,8 @@ public class InputFieldMapping {
         //https://attacomsian.com/blog/jackson-read-json-file
             //https://stackoverflow.com/questions/29965764/how-to-parse-json-file-with-gson
             Gson gson = new Gson();
-            JsonReader reader = new JsonReader(new FileReader(dir + "field-element-maps.json"));
+            String fieldToElementMapFile = "field-element-maps.json";
+            JsonReader reader = new JsonReader(new FileReader(dir + fieldToElementMapFile));
             fieldElementMaps = Arrays.asList(gson.fromJson(reader, FieldElementMap[].class));
             //Confirm that all the elements are defined
             List<FieldElementMap> unMatchedElementTypes = fieldElementMaps
@@ -170,13 +179,17 @@ public class InputFieldMapping {
                   .filter(fem -> Arrays
                         .stream(ModelDefService.ElementType.values())
                         .noneMatch(v -> v.name().equals(fem.elementType))).collect(Collectors.toList());
-
+            if (unMatchedElementTypes.size() > 0) {
+                throw new RuntimeException("Element map file" + fieldToElementMapFile
+                                           + " contain undefined element(s) " + unMatchedElementTypes);
+            }
 
             reader = new JsonReader(new FileReader(dir + "field-property-maps.json"));
             fieldPropertyMaps = Arrays.asList(gson.fromJson(reader, FieldPropertyMap[].class));
 
         } catch (Exception ex) {
             ex.printStackTrace();
+            System.exit(1);
         }
     }
 
