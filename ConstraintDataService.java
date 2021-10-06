@@ -52,10 +52,11 @@ public class ConstraintDataService {
       String factorProperty;
    }
 
-   public void readConstraints() {
+   //Read constraint defs
+   public void readConstraintDefs() {
       String dir = "/Users/davidbullen/java/";
-      String defFile = "constraint-defs3.json";
-      String compFile = "constraint-comps3.json";
+      String defFile = "constraint-defs4.json";
+      String compFile = "constraint-comps4.json";
       //https://attacomsian.com/blog/jackson-read-json-file
       try {
          //https://stackoverflow.com/questions/29965764/how-to-parse-json-file-with-gson
@@ -124,7 +125,7 @@ public class ConstraintDataService {
                //If this constraint has no components
                //then the limit on this var can be applied directly to the bounds of the variable
                //and the constraint will not be added
-               String varId = addVarIdIfAbsent(parentElement.elementId, constraintDef.varType);
+               String varId = getVarId(parentElement.elementId, constraintDef.varType);
                if (constraintComps.stream()
                      .noneMatch(cc -> cc.constraintType.equals(constraintDef.constraintType))) {
                   //Add the variable with bounds
@@ -220,7 +221,7 @@ public class ConstraintDataService {
                                        List.of(childElement.elementId, parentElement.elementId));
 
                            //Set the varFactor
-                           String varId = addVarIdIfAbsent(childElement.elementId, cc.varType);
+                           String varId = getVarId(childElement.elementId, cc.varType);
                            newConstraint.varFactorMap.put(getVarIndex(varId),varFactorVal);
 
                            constraintString[0] = constraintString[0]
@@ -251,7 +252,8 @@ public class ConstraintDataService {
 
    }
 
-   private String addVarIdIfAbsent(String elementId, String varType) {
+   //Get varId, add if new
+   private String getVarId(String elementId, String varType) {
       //Add the var i.d. to the map if not already there
       String varId = String.format("var_%s.%s", elementId, varType);
       modelVars.putIfAbsent(varId,new ModelVar(varId,varType,elementId));
@@ -263,7 +265,7 @@ public class ConstraintDataService {
       return varId;
    }
 
-   //Create variable if not already
+   //Get var index, add if new
    private Integer getVarIndex(String varId) {
       //add the variable if it is new and this is not the objective constraint
       Integer existingIndex = varIdIndexMap.get(varId);

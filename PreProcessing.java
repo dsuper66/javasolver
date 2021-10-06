@@ -11,7 +11,7 @@ public class PreProcessing {
       System.out.println("pre-proc: doPreProcessing");
 
       //Exclude bus, enode, branch
-      excludeIsland(modelDataService);
+      excludedData(modelDataService);
 
       updateBusName(modelDataService);
 
@@ -178,17 +178,30 @@ public class PreProcessing {
    }
 
    //Exclude islands
-   public static void excludeIsland(ModelDataService modelDataService) {
+   public static void excludedData(ModelDataService modelDataService) {
       List<String> includeIsland = List.of("1");
+      List<String> includeRiskIslands = List.of("NI");
       List<String> includeStations = List.of("ARA","WRK");
+
+      System.out.println("Exclude riskIsland");
+      //Remove each riskIsland if not included
+      for (ModelElement modelElement :
+            modelDataService.getElements(ModelDefService.ElementType.riskIsland)) {
+
+         String riskIslandId = modelElement.elementId;
+         if (!includeRiskIslands.contains(riskIslandId)) {
+            modelDataService.removeElement(ModelDefService.ElementType.riskIsland,riskIslandId);
+         }
+      }
 
       System.out.println("Exclude factorPnodeMktEnode");
       //Remove each pnode-enode factor if not included
       for (ElementProperty property : modelDataService.getProperties(
             ModelDefService.PropertyType.factorPnodeMktEnode)) {
 
+         //Get the mktEnode for the pnode
          String mktEnodeId = modelDataService.getElementId(property, ModelDefService.ElementType.mktEnode);
-         //Get the nwEnodeId details for the mktEnode
+         //Get the network details for the mktEnode to check for inclusion
          String nwEnodeId = modelDataService.getStringValue(
                ModelDefService.PropertyType.nwEnodeForMktEnode, mktEnodeId);
          String elecIsland = modelDataService.getStringValue(

@@ -14,7 +14,7 @@ public class SolveModel {
         PreProcessing.doPreProcessing(modelDataService);
 
         ConstraintDataService constraintDataService = new ConstraintDataService();
-        constraintDataService.readConstraints();
+        constraintDataService.readConstraintDefs();
         constraintDataService.processConstraintDefs(modelDataService);
 
         CplexSolve cplexSolve = new CplexSolve();
