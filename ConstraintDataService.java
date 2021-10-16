@@ -78,7 +78,7 @@ public class ConstraintDataService {
       final String[] msg = {""};
       //Constraint Defs
       for (ConstraintDef constraintDef : constraintDefs) {
-         System.out.println(">>>ConstraintDef:" + constraintDef.constraintType);
+         System.out.println(">>>ConstraintDef:" + constraintDef.constraintType + " elementType:" + constraintDef.elementType);
          //===Define the Constraint===
          //Get the parent elements that match the ConstraintDef elementType
          //e.g. for node balance, do each bus

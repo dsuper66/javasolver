@@ -224,12 +224,13 @@ public class PreProcessing {
                modelDataService.getProperties(
                      ModelDefService.PropertyType.factorPnodeMktEnode, ModelDefService.ElementType.pnode, pnode.elementId);
          if (pnodeMktEnodeFactors.isEmpty()) {
-            for (String tranchId
+            for (String trancheId
                   : modelDataService.getElementIds(
                   ModelDefService.ElementType.tranche,
                   ModelDefService.PropertyType.tranchePnode,
                   pnode.elementId)) {
-               modelDataService.removeElement(ModelDefService.ElementType.tranche, tranchId);
+               modelDataService.removeElement(ModelDefService.ElementType.tranche, trancheId);
+               System.out.println("removing:" + trancheId);
             }
          }
       }
@@ -288,7 +289,12 @@ public class PreProcessing {
             String pnodeId = modelDataService.getStringValue(
                   ModelDefService.PropertyType.tranchePnode, offerTrancheId);
 
-            System.out.println("processing offer:" + offerTrancheId);
+            //Get other data
+            String sixSecFlag = modelDataService.getStringValue(ModelDefService.PropertyType.sixSecFlag, offerTrancheId);
+            Double tranchePrice = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice, offerTrancheId);
+            Double trancheLimit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit, offerTrancheId);
+            String riskIsland = modelDataService.getStringValue(ModelDefService.PropertyType.pnodeRiskIsland, pnodeId);
+            System.out.println("processing offer:" + offerTrancheId + " type:" + offerType + " sixsec:" + sixSecFlag);
 
             //enOfferTranche
             if (offerType.equals("ENOF")) {
@@ -323,23 +329,33 @@ public class PreProcessing {
 
             //FIR and SIR
             //Add fir and sir elements and properties (price, limit, island), remove the existing tranche
-            String sixSecFlag = modelDataService.getStringValue(ModelDefService.PropertyType.sixSecFlag, offerTrancheId);
-            Double tranchePrice = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice, offerTrancheId);
-            Double trancheLimit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit, offerTrancheId);
-            String trancheRiskIsland = modelDataService.getStringValue(ModelDefService.PropertyType.pnodeRiskIsland, pnodeId);
             if (offerType.equals("PLRO") || offerType.equals("TWRO")) {
                String newOfferTrancheId = "";
                if (sixSecFlag.equals("1")) { //FIR
                   newOfferTrancheId = offerTrancheId.replace(offerType,offerType.charAt(0) + "FIR");
                   modelDataService.addElement(ModelDefService.ElementType.firOfferTranche,newOfferTrancheId);
+                  System.out.println("Adding:" + newOfferTrancheId + " type:" + ModelDefService.ElementType.firOfferTranche.toString());
                }
                else { //SIR
                   newOfferTrancheId = offerTrancheId.replace(offerType,offerType.charAt(0) + "SIR");
                   modelDataService.addElement(ModelDefService.ElementType.sirOfferTranche,newOfferTrancheId);
+                  System.out.println("Adding:" + newOfferTrancheId);
                }
                //Add properties for new id
-
+               modelDataService.addProperty(
+                     ModelDefService.PropertyType.tranchePrice,
+                     newOfferTrancheId,
+                     tranchePrice);
+               modelDataService.addProperty(
+                     ModelDefService.PropertyType.trancheLimit,
+                     newOfferTrancheId,
+                     trancheLimit);
+               modelDataService.addProperty(
+                     ModelDefService.PropertyType.trancheRiskIsland,
+                     newOfferTrancheId,
+                     riskIsland);
                //Remove properties for the old offer id
+               modelDataService.removePropertiesContaining(offerTrancheId);
             }
 
             //debug... price and limit
