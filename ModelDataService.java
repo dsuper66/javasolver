@@ -66,6 +66,7 @@ public class ModelDataService {
       if (elementToRemove != null) {
          modelElementsMap.remove(elKey);
          modelElementsArray.remove(elementToRemove);
+         removePropertiesContaining(elementId);
       }
       //this.modelElementsArray
    }
@@ -164,6 +165,10 @@ public class ModelDataService {
    public void removeProperty(ElementProperty p) {
       propertiesMap.remove(makePropertyKey(p.propertyTypeId, p.elementIds));
       propertiesArray.remove(p);
+   }
+
+   public void removePropertiesContaining(String elementId) {
+      propertiesArray.removeIf(p -> p.elementIds.contains(elementId));
    }
 
    //Get all properties of a certain type

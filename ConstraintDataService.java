@@ -129,6 +129,7 @@ public class ConstraintDataService {
                if (constraintComps.stream()
                      .noneMatch(cc -> cc.constraintType.equals(constraintDef.constraintType))) {
                   //Add the variable with bounds
+                  System.out.print("...No components");
                   //***For now ASSUME it is LE***
                   upperBounds.put(varId,rhsValue); //assumes var will be added by a constraint
                   addTheConstraint = false;

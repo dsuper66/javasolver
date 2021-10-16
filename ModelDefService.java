@@ -19,8 +19,8 @@ public class ModelDefService {
       bus,
       tranche,
       enOfferTranche,
-      resOfferTrancheFir,
-      resOfferTrancheSir,
+      firOfferTranche,
+      sirOfferTranche,
       bidTranche,
       mathModel,
       flowLossSegment,
@@ -59,7 +59,8 @@ public class ModelDefService {
       sixSecFlag,
       nwEnodeStation,
       riskFlag,
-      pnodeRiskIsland
+      pnodeRiskIsland,
+      trancheRiskIsland
    }
 
    //Define properties
@@ -85,7 +86,7 @@ public class ModelDefService {
                new PropertyTypeDef(PropertyType.busElecIsland,false, List.of(ElementType.bus)),
                new PropertyTypeDef(PropertyType.busStation,false, List.of(ElementType.bus)),
                new PropertyTypeDef(PropertyType.busKv,false, List.of(ElementType.bus)),
-               //offer
+               //tranche
                new PropertyTypeDef(PropertyType.tranchePnode,false, List.of(ElementType.tranche)),
                new PropertyTypeDef(PropertyType.tranchePrice,true, List.of(ElementType.tranche)),
                new PropertyTypeDef(PropertyType.trancheLimit,true, List.of(ElementType.tranche)),
@@ -96,6 +97,9 @@ public class ModelDefService {
                new PropertyTypeDef(PropertyType.mktBrLimitRev,true, List.of(ElementType.mktBranch)),
                new PropertyTypeDef(PropertyType.branchForMktBranch,false, List.of(ElementType.mktBranch)),
                //----Derived---
+               //tranche
+               new PropertyTypeDef(PropertyType.trancheRiskIsland,false, List.of(ElementType.firOfferTranche)),
+               new PropertyTypeDef(PropertyType.trancheRiskIsland,false, List.of(ElementType.sirOfferTranche)),
                //weights
                new PropertyTypeDef(PropertyType.weightPnodeBus,true, List.of(ElementType.pnode, ElementType.bus)),
                new PropertyTypeDef(PropertyType.weightTrancheBus,true, List.of(ElementType.tranche, ElementType.bus)),

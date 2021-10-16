@@ -217,7 +217,24 @@ public class PreProcessing {
          }
       }
 
-      System.out.println("Exclude branch with bus in excluded island");
+      //If a pnode has no factors then remove its tranches
+      //(specifically to remove reserve tranches, because energy removed by removal of mapping)
+      for (ModelElement pnode : modelDataService.getElements(ModelDefService.ElementType.pnode)) {
+         List<ElementProperty> pnodeMktEnodeFactors =
+               modelDataService.getProperties(
+                     ModelDefService.PropertyType.factorPnodeMktEnode, ModelDefService.ElementType.pnode, pnode.elementId);
+         if (pnodeMktEnodeFactors.isEmpty()) {
+            for (String tranchId
+                  : modelDataService.getElementIds(
+                  ModelDefService.ElementType.tranche,
+                  ModelDefService.PropertyType.tranchePnode,
+                  pnode.elementId)) {
+               modelDataService.removeElement(ModelDefService.ElementType.tranche, tranchId);
+            }
+         }
+      }
+
+      System.out.println("Exclude branch with bus not in included island/station");
       //Remove branch and bus if bus is not included
       for (ModelDefService.PropertyType pType
             : List.of(ModelDefService.PropertyType.fromBus, ModelDefService.PropertyType.toBus)) {
@@ -239,14 +256,16 @@ public class PreProcessing {
          }
       }
 
-      //Remove bus if in excluded island
+      //Remove bus if in excluded island, or not map to station
       for (ModelElement bus : modelDataService.getElements(ModelDefService.ElementType.bus)) {
          //Get the island for the bus
-         String elecIsland = modelDataService.getStringValue(
-               ModelDefService.PropertyType.busElecIsland, bus.elementId);
-         if (!includeIsland.contains(elecIsland)) {
+         String busId = bus.elementId;
+         //String elecIsland = modelDataService.getStringValue(ModelDefService.PropertyType.busElecIsland, busId);
+         String station = modelDataService.getStringValue(ModelDefService.PropertyType.busStation, busId);
+         //if (!includeIsland.contains(elecIsland)) {
+         if (!includeStations.contains(station)) {
             //Delete the bus
-            System.out.println(">>> Deleting bus:" + bus.elementId + " (island " + elecIsland + ")");
+            //System.out.println(">>> Deleting bus:" + bus.elementId + " (island " + elecIsland + ")");
             modelDataService.removeElement(ModelDefService.ElementType.bus, bus.elementId);
          }
       }
@@ -269,6 +288,8 @@ public class PreProcessing {
             String pnodeId = modelDataService.getStringValue(
                   ModelDefService.PropertyType.tranchePnode, offerTrancheId);
 
+            System.out.println("processing offer:" + offerTrancheId);
+
             //enOfferTranche
             if (offerType.equals("ENOF")) {
                //Get bus weights for the pnode and assign them to the tranche
@@ -280,7 +301,7 @@ public class PreProcessing {
                      ModelDefService.ElementType.pnode,
                      pnodeId)) {
 
-                  //This should be updated so that the bus id is extracted by index from the property def
+                  //This has been updated so that the bus id is extracted by index from the property def
                   //String busId = weightPnodeBusProperty.elementIds.get(1);
                   String busId = modelDataService.getElementId(weightPnodeBusProperty, ModelDefService.ElementType.bus);
 
@@ -293,29 +314,38 @@ public class PreProcessing {
                            weightPnodeBusProperty.doubleValue);
                   }
                }
-               //Add the energy tranch ELEMENT if there are weights
+               //Add the energy tranche ELEMENT if there are weights
+               //offerTrancheId is the link to the original properties
                if (sumWeights > 0.0) {
                   modelDataService.addElement(ModelDefService.ElementType.enOfferTranche, offerTrancheId);
                }
             }
 
             //FIR and SIR
-            String sixSecFlag = modelDataService.getStringValue(ModelDefService.PropertyType.sixSecFlag, List.of(offerTrancheId));
+            //Add fir and sir elements and properties (price, limit, island), remove the existing tranche
+            String sixSecFlag = modelDataService.getStringValue(ModelDefService.PropertyType.sixSecFlag, offerTrancheId);
+            Double tranchePrice = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice, offerTrancheId);
+            Double trancheLimit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit, offerTrancheId);
+            String trancheRiskIsland = modelDataService.getStringValue(ModelDefService.PropertyType.pnodeRiskIsland, pnodeId);
             if (offerType.equals("PLRO") || offerType.equals("TWRO")) {
+               String newOfferTrancheId = "";
                if (sixSecFlag.equals("1")) { //FIR
-                  offerTrancheId = offerTrancheId.replace(offerType,offerType.charAt(0) + "FIR");
-                  modelDataService.addElement(ModelDefService.ElementType.resOfferTrancheFir,offerTrancheId);
+                  newOfferTrancheId = offerTrancheId.replace(offerType,offerType.charAt(0) + "FIR");
+                  modelDataService.addElement(ModelDefService.ElementType.firOfferTranche,newOfferTrancheId);
                }
                else { //SIR
-                  offerTrancheId = offerTrancheId.replace(offerType,offerType.charAt(0) + "SIR");
-                  modelDataService.addElement(ModelDefService.ElementType.resOfferTrancheSir,offerTrancheId);
+                  newOfferTrancheId = offerTrancheId.replace(offerType,offerType.charAt(0) + "SIR");
+                  modelDataService.addElement(ModelDefService.ElementType.sirOfferTranche,newOfferTrancheId);
                }
+               //Add properties for new id
+
+               //Remove properties for the old offer id
             }
 
             //debug... price and limit
             Double limit = modelDataService.getDoubleValue(ModelDefService.PropertyType.trancheLimit, List.of(offerTrancheId));
             Double price = modelDataService.getDoubleValue(ModelDefService.PropertyType.tranchePrice, List.of(offerTrancheId));
-            System.out.println(">>>" + offerTrancheId + " " + sixSecFlag + " " + limit + " $" + price);
+            System.out.println("offer>>>" + offerTrancheId + " " + sixSecFlag + " " + limit + " $" + price);
          }
       }
 
