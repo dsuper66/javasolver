@@ -218,6 +218,7 @@ public class PreProcessing {
       }
 
       //If a pnode has no factors then remove its tranches
+      //and remove the pnode
       //(specifically to remove reserve tranches, because energy removed by removal of mapping)
       for (ModelElement pnode : modelDataService.getElements(ModelDefService.ElementType.pnode)) {
          List<ElementProperty> pnodeMktEnodeFactors =
@@ -232,6 +233,9 @@ public class PreProcessing {
                modelDataService.removeElement(ModelDefService.ElementType.tranche, trancheId);
                System.out.println("removing:" + trancheId);
             }
+            //Remove the pnode
+            modelDataService.removeElement(ModelDefService.ElementType.pnode,pnode.elementId);
+            modelDataService.removePropertiesContaining(pnode.elementId);
          }
       }
 
@@ -341,7 +345,12 @@ public class PreProcessing {
                   modelDataService.addElement(ModelDefService.ElementType.sirOfferTranche,newOfferTrancheId);
                   System.out.println("Adding:" + newOfferTrancheId);
                }
+
                //Add properties for new id
+               modelDataService.addProperty(
+                     ModelDefService.PropertyType.tranchePnode,
+                     newOfferTrancheId,
+                     pnodeId);
                modelDataService.addProperty(
                      ModelDefService.PropertyType.tranchePrice,
                      newOfferTrancheId,

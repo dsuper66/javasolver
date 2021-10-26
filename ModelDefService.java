@@ -24,7 +24,8 @@ public class ModelDefService {
       bidTranche,
       mathModel,
       flowLossSegment,
-      riskIsland
+      riskIsland,
+      trancheParent
    }
 
    public enum PropertyType {
@@ -60,7 +61,12 @@ public class ModelDefService {
       nwEnodeStation,
       riskFlag,
       pnodeRiskIsland,
-      trancheRiskIsland
+      trancheRiskIsland,
+      trancheParentTradeType,
+      trancheParentPnode,
+      capacityMax,
+      rampRateUp,
+      rampRateDn
    }
 
    //Define properties
@@ -86,6 +92,12 @@ public class ModelDefService {
                new PropertyTypeDef(PropertyType.busElecIsland,false, List.of(ElementType.bus)),
                new PropertyTypeDef(PropertyType.busStation,false, List.of(ElementType.bus)),
                new PropertyTypeDef(PropertyType.busKv,false, List.of(ElementType.bus)),
+               //trancheParent
+               new PropertyTypeDef(PropertyType.trancheParentPnode,false, List.of(ElementType.trancheParent)),
+               new PropertyTypeDef(PropertyType.trancheParentTradeType,false, List.of(ElementType.trancheParent)),
+               new PropertyTypeDef(PropertyType.capacityMax,false, List.of(ElementType.trancheParent)),
+               new PropertyTypeDef(PropertyType.rampRateUp,false, List.of(ElementType.trancheParent)),
+               new PropertyTypeDef(PropertyType.rampRateDn,false, List.of(ElementType.trancheParent)),
                //tranche
                new PropertyTypeDef(PropertyType.tranchePnode,false, List.of(ElementType.tranche)),
                new PropertyTypeDef(PropertyType.tranchePrice,true, List.of(ElementType.tranche)),
@@ -97,6 +109,8 @@ public class ModelDefService {
                new PropertyTypeDef(PropertyType.mktBrLimitRev,true, List.of(ElementType.mktBranch)),
                new PropertyTypeDef(PropertyType.branchForMktBranch,false, List.of(ElementType.mktBranch)),
                //----Derived---
+               //pnode
+               new PropertyTypeDef(PropertyType.capacityMax,true, List.of(ElementType.pnode)),
                //tranche
                new PropertyTypeDef(PropertyType.trancheRiskIsland,false, List.of(ElementType.firOfferTranche)),
                new PropertyTypeDef(PropertyType.trancheRiskIsland,false, List.of(ElementType.sirOfferTranche)),
