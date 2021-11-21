@@ -26,7 +26,7 @@ public class ModelDataService {
       //GsonBuilder gsonBuilder = new GsonBuilder();
       Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
       //Properties map
-      String propertiesMapFile = "/Users/davidbullen/java/property_defs.json";
+      String propertiesMapFile = "../../property_defs.json";
       try (Writer writer = new FileWriter(propertiesMapFile)) {
          prettyGson.toJson(modelDefService.propertyTypeDefs, writer);
       } catch (IOException e) {

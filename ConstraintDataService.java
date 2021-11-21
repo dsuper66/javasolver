@@ -54,7 +54,8 @@ public class ConstraintDataService {
 
    //Read constraint defs
    public void readConstraintDefs() {
-      String dir = "/Users/davidbullen/java/";
+      //String dir = "/Users/davidbullen/java/";
+      String dir = "../../";
       String defFile = "constraint-defs4.json";
       String compFile = "constraint-comps4.json";
       //https://attacomsian.com/blog/jackson-read-json-file

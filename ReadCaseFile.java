@@ -147,7 +147,8 @@ public class ReadCaseFile {
         //String caseFileDir = "/Users/davidbullen/java/MSS_51112021071200687_0X/";
 
         //String caseFileDir = "/Users/davidbullen/java/small-model/";
-        String caseFileDir = "/Users/davidbullen/java/full-model/";
+        //String caseFileDir = "/Users/davidbullen/java/full-model/";
+        String caseFileDir = "../../full-model/";
         String caseId = "MSS_51112021071200687_0X";
 
         //Make the file name for time based MSSNET

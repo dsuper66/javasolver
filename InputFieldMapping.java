@@ -164,7 +164,8 @@ public class InputFieldMapping {
     //Read the map from case file to elements and properties
     public void readInputMaps() {
         try {
-        String dir = "/Users/davidbullen/java/";
+        //String dir = "/Users/davidbullen/java/";
+            String dir = "../../";
         //String elementsFile = "field-element-maps.json";
         //String propertiesFile = "field-property-maps.json";
         //https://attacomsian.com/blog/jackson-read-json-file

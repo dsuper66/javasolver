@@ -92,12 +92,12 @@ public class ModelDefService {
                new PropertyTypeDef(PropertyType.busElecIsland,false, List.of(ElementType.bus)),
                new PropertyTypeDef(PropertyType.busStation,false, List.of(ElementType.bus)),
                new PropertyTypeDef(PropertyType.busKv,false, List.of(ElementType.bus)),
-               //trancheParent
-               new PropertyTypeDef(PropertyType.trancheParentPnode,false, List.of(ElementType.trancheParent)),
-               new PropertyTypeDef(PropertyType.trancheParentTradeType,false, List.of(ElementType.trancheParent)),
-               new PropertyTypeDef(PropertyType.capacityMax,false, List.of(ElementType.trancheParent)),
-               new PropertyTypeDef(PropertyType.rampRateUp,false, List.of(ElementType.trancheParent)),
-               new PropertyTypeDef(PropertyType.rampRateDn,false, List.of(ElementType.trancheParent)),
+               //trancheParent (pnode)
+               //new PropertyTypeDef(PropertyType.trancheParentPnode,false, List.of(ElementType.trancheParent)),
+               //new PropertyTypeDef(PropertyType.trancheParentTradeType,false, List.of(ElementType.trancheParent)),
+               new PropertyTypeDef(PropertyType.capacityMax,true, List.of(ElementType.pnode)),
+               new PropertyTypeDef(PropertyType.rampRateUp,true, List.of(ElementType.pnode)),
+               new PropertyTypeDef(PropertyType.rampRateDn,true, List.of(ElementType.pnode)),
                //tranche
                new PropertyTypeDef(PropertyType.tranchePnode,false, List.of(ElementType.tranche)),
                new PropertyTypeDef(PropertyType.tranchePrice,true, List.of(ElementType.tranche)),
